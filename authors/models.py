@@ -1,3 +1,12 @@
-from django.db import models
+from django.db.models import CharField
+from django.contrib.auth.models import AbstractUser
 
-# Create your models here.
+
+class User(AbstractUser):
+
+    username = CharField(
+        unique=True, max_length=16,
+        error_messages={
+            "unique": "Username not available"
+        }
+    )
