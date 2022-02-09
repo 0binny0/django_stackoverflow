@@ -18,18 +18,18 @@ from django.urls import path, include
 
 from posts import views as pv
 from posts import endpoints as pe
-from authors import view as av
+from authors import views as av
 from authors import endpoints as ae
 
 posts_patterns = ([], "posts")
-posts_api_patterns ([], "posts")
+posts_api_patterns = []
 authors_patterns =  ([], "authors")
-authors_api_patterns = ([], "authors")
+authors_api_patterns = []
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("acuthors/", include(posts_patterns), name="posts"),
+    path("authors/", include(posts_patterns), name="posts"),
     path("questions/", include(authors_patterns), name="authors"),
-    path("api/v1/authors", inlude(authors_api_patterns), name="authors_api"),
+    path("api/v1/authors", include(authors_api_patterns), name="authors_api"),
     path("api/v1/questions", include(posts_api_patterns), name="posts_api"),
 ]
