@@ -1,5 +1,8 @@
-from django.db.models import CharField
+from django.db.models import (
+    Model, OneToOneField, ForeignKey, CharField, CASCADE
+)
 from django.contrib.auth.models import AbstractUser
+from django.conf import settings
 
 
 class User(AbstractUser):
@@ -10,3 +13,7 @@ class User(AbstractUser):
             "unique": "Username not available"
         }
     )
+
+
+class Profile(Model):
+    user = OneToOneField(settings.AUTH_USER_MODEL, on_delete=CASCADE)
