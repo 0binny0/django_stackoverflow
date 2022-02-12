@@ -4,13 +4,14 @@ from datetime import date
 from django.db.models import (
     Model, ManyToManyField, ForeignKey, CASCADE, SET_NULL, CharField,
      TextField, PositiveIntegerField, IntegerField, DateField,
-     GenericIPAddressField
+     GenericIPAddressField, Manager, OuterRef, Subquery
 )
 
 from django.contrib.contenttypes.fields import (
     GenericForeignKey,  GenericRelation
 )
 from django.contrib.contenttypes.models import ContentType
+
 
 
 class Tag(Model):
@@ -22,7 +23,7 @@ class Post(Model):
 
     body = TextField()
     date = DateField(default=date.today)
-    comment = ForeignKey('Comment', on_delete=CASCADE)
+    comment = ForeignKey('Comment', on_delete=CASCADE, null=True)
     profile = ForeignKey(
         'authors.Profile', on_delete=SET_NULL, null=True,
         related_name='%(class)ss',
@@ -46,7 +47,10 @@ class Question(Post):
 
 
 class Answer(Post):
-    pass
+    question = ForeignKey(
+        "Question", on_delete=CASCADE,
+        related_name="answers", related_query_name="answer"
+    )
 
 
 class Comment(Post):
