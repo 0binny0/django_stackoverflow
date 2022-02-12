@@ -70,6 +70,10 @@ TEMPLATES = [
     },
 ]
 
+FIXTURE_DIRS = [
+    os.path.join(BASE_DIR, "posts", "test", "fixtures")
+]
+
 WSGI_APPLICATION = 'stackoverflow_clone.wsgi.application'
 
 
