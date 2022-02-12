@@ -174,5 +174,123 @@
             3
         ]
     }
+},
+{
+    "model": "authors.user",
+    "pk": 1,
+    "fields": {
+        "password": "pbkdf2_sha256$260000$39XuSy4ED0i4eeKXzGFM5X$LiH6gA9y6NEQ+liPrQzRa1vyf9pxlPAPTCTEdxLWJQY=",
+        "last_login": "2022-02-11T06:28:09.544Z",
+        "is_superuser": true,
+        "first_name": "",
+        "last_name": "",
+        "email": "benjaminhh@gmx.com",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2022-02-11T06:26:35.225Z",
+        "username": "MainUser",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "authors.user",
+    "pk": 2,
+    "fields": {
+        "password": "",
+        "last_login": null,
+        "is_superuser": false,
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2022-02-12T03:07:30.737Z",
+        "username": "User_A",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "authors.user",
+    "pk": 3,
+    "fields": {
+        "password": "",
+        "last_login": null,
+        "is_superuser": false,
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2022-02-12T03:07:36.516Z",
+        "username": "User_B",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "authors.user",
+    "pk": 4,
+    "fields": {
+        "password": "",
+        "last_login": null,
+        "is_superuser": false,
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2022-02-12T03:07:45.374Z",
+        "username": "User_C",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "authors.user",
+    "pk": 5,
+    "fields": {
+        "password": "",
+        "last_login": null,
+        "is_superuser": false,
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2022-02-12T03:07:49.841Z",
+        "username": "User_D",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "authors.profile",
+    "pk": 1,
+    "fields": {
+        "user": 2
+    }
+},
+{
+    "model": "authors.profile",
+    "pk": 2,
+    "fields": {
+        "user": 3
+    }
+},
+{
+    "model": "authors.profile",
+    "pk": 3,
+    "fields": {
+        "user": 4
+    }
+},
+{
+    "model": "authors.profile",
+    "pk": 4,
+    "fields": {
+        "user": 5
+    }
 }
 ]
