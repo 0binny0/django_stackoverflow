@@ -1,42 +1,65 @@
 from django.contrib import admin
+from django.contrib.contenttypes import admin as generic_admin
 
-from .models import Question, Answer, Tag
+from .models import Question, Answer, Tag, Vote, QuestionPageHit
 
-# class InlineAnswer(admin.StackedInline):
-#     model = Answer
-#     fieldsets = (
-#         "Answers", {
-#             "fields": (("date", "profile", "score"), "body"),
-#             "classes": ("collapse", )
-#         }
-#     )
-    #
+
+class InlineVote(generic_admin.GenericTabularInline):
+
+    model = Vote
+
+
+class InlineQuestionPageHit(admin.TabularInline):
+
+    model = QuestionPageHit
+
+
+class AdminPost(admin.ModelAdmin):
+
+    exclude = ("comment", )
+    inlines = [
+        InlineAdminVote
+    ]
+
+
+class InlineAnswer(admin.StackedInline):
+
+    model = Answer
+    classes = ("collapse", )
+    readonly_fields = ('question', 'profile', 'body')
+
+
+
+class AdminQuestion(AdminPost):
+
+    fields = (('title', 'profile', 'date', ), "body", "tags")
+    # raw_id_fields = ('tags', )
+    inlines = [
+        InlineAnswer,
+        InlineVote,
+        InlineQuestionPageHit
+    ]
+    filter_horizontal = ("tags", )
+
+
+class AdminAnswer(AdminPost):
+
+    fields = (('date', 'profile', ), "question", "body")
+
 
 class AdminTag(admin.ModelAdmin):
+    pass
 
-    fields = ('name',)
+
+class AdminVote(generic_admin.GenericStackedInline):
+    pass
 
 
-class AdminQuestion(admin.ModelAdmin):
+class AdminPageHit(admin.ModelAdmin):
 
-    actions_on_bottom = False
-    actions_on_bottom = True
-
-    fieldsets = (
-        (
-            None, {
-                "fields": (("title", "profile", "date"), "tags", "body")
-            }
-        ),
-    )
-    exclude = ("comment", )
-    # readonly_fields = ("title", "body", "tags", "profile")
-
-    # inlines = [
-    #     InlineAnswer,
-    # ]
+    fields = ("question", "address")
 
 
 admin.site.register(Question, AdminQuestion)
+admin.site.register(Answer, AdminAnswer)
 admin.site.register(Tag, AdminTag)
-# admin.site.register(Answer, InlineAnswer)
