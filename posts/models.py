@@ -1,5 +1,5 @@
 
-from datetime import date
+from datetime import date, timedelta
 
 from django.db.models import (
     Model, ManyToManyField, ForeignKey, CASCADE, SET_NULL, CharField,
@@ -11,6 +11,32 @@ from django.contrib.contenttypes.fields import (
     GenericForeignKey,  GenericRelation
 )
 from django.contrib.contenttypes.models import ContentType
+
+
+class QuestionSearchManager(Manager):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(
+            tags__name__in=profile.questions.values_list(
+                "tags__name", flat=True
+            )
+        ).distinct()
+
+    def by_week(self, profile):
+        today = date.today()
+        weekago = today - timedelta(days=7)
+        return self.get_queryset().filter(
+            date__range=(weekago, today)
+        )
+
+
+    def by_month(self, profile):
+        queryset = self.by_week(profile)
+        return queryset.filter()
 
 
 
@@ -29,9 +55,10 @@ class Post(Model):
         related_name='%(class)ss',
         related_query_name="%(class)s"
     )
-    score = GenericRelation(
+    vote = GenericRelation(
         'Vote', related_query_name="%(class)s"
     )
+    score = IntegerField(default=0)
 
 
     class Meta:
@@ -44,6 +71,12 @@ class Question(Post):
     tags = ManyToManyField(
         'Tag', related_name="questions", related_query_name="question"
     )
+    objects = Manager()
+    postings = QuestionSearchManager()
+
+
+    class Meta:
+        ordering = ["-score" , "-date"]
 
 
 class Answer(Post):
@@ -64,6 +97,7 @@ class Vote(Model):
         'authors.Profile', on_delete=SET_NULL, null=True,
         related_name="votes"
     )
+    type = CharField(max_length=7)
     content_type = ForeignKey(ContentType, on_delete=CASCADE)
     object_id = PositiveIntegerField()
     content_object = GenericForeignKey()
