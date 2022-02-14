@@ -45,6 +45,10 @@ class Tag(Model):
     name = CharField(unique=True, max_length=25)
 
 
+    class Meta:
+        db_table = "Tag"
+
+
 class Post(Model):
 
     body = TextField()
@@ -76,6 +80,7 @@ class Question(Post):
 
 
     class Meta:
+        db_table = "Question"
         ordering = ["-score" , "-date"]
 
 
@@ -86,9 +91,18 @@ class Answer(Post):
     )
 
 
+    class Meta:
+        db_table = "Answer"
+
+
 class Comment(Post):
 
     comment = None
+
+
+    class Meta:
+        db_table = "Comment"
+
 
 
 class Vote(Model):
@@ -103,10 +117,18 @@ class Vote(Model):
     content_object = GenericForeignKey()
 
 
+    class Meta:
+        db_table = "Vote"
+
+
 class QuestionPageHit(Model):
 
     question = ForeignKey("Question", on_delete=CASCADE, related_name="views")
     address = GenericIPAddressField()
+
+
+    class Meta:
+        db_table = "QuestionPageHit"
 
 
 class Bookmark(Model):
@@ -114,3 +136,7 @@ class Bookmark(Model):
     profile = ForeignKey(
         "authors.Profile", on_delete=CASCADE, related_name="bookmarks"
     )
+
+
+    class Meta:
+        db_table = "Bookmark"
