@@ -75,6 +75,7 @@ class Question(Post):
     tags = ManyToManyField(
         'Tag', related_name="questions", related_query_name="question"
     )
+    views = IntegerField(default=0)
     objects = Manager()
     postings = QuestionSearchManager()
 
@@ -123,9 +124,9 @@ class Vote(Model):
 
 class QuestionPageHit(Model):
 
-    question = ForeignKey("Question", on_delete=CASCADE, related_name="views")
+    question = ForeignKey("Question", on_delete=CASCADE, related_name="_views")
     address = GenericIPAddressField()
-
+    
 
     class Meta:
         db_table = "questionpagehit"
