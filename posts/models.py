@@ -46,7 +46,7 @@ class Tag(Model):
 
 
     class Meta:
-        db_table = "Tag"
+        db_table = "tag"
 
 
 class Post(Model):
@@ -80,7 +80,7 @@ class Question(Post):
 
 
     class Meta:
-        db_table = "Question"
+        db_table = "question"
         ordering = ["-score" , "-date"]
 
 
@@ -92,7 +92,7 @@ class Answer(Post):
 
 
     class Meta:
-        db_table = "Answer"
+        db_table = "answer"
 
 
 class Comment(Post):
@@ -101,7 +101,7 @@ class Comment(Post):
 
 
     class Meta:
-        db_table = "Comment"
+        db_table = "comment"
 
 
 
@@ -118,7 +118,7 @@ class Vote(Model):
 
 
     class Meta:
-        db_table = "Vote"
+        db_table = "vote"
 
 
 class QuestionPageHit(Model):
@@ -128,7 +128,7 @@ class QuestionPageHit(Model):
 
 
     class Meta:
-        db_table = "QuestionPageHit"
+        db_table = "questionpagehit"
 
 
 class Bookmark(Model):
@@ -139,4 +139,4 @@ class Bookmark(Model):
 
 
     class Meta:
-        db_table = "Bookmark"
+        db_table = "bookmark"

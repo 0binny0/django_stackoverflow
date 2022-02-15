@@ -17,9 +17,6 @@ class InlineQuestionPageHit(admin.TabularInline):
 class AdminPost(admin.ModelAdmin):
 
     exclude = ("comment", )
-    inlines = [
-        InlineAdminVote
-    ]
 
 
 class InlineAnswer(admin.StackedInline):
@@ -32,11 +29,10 @@ class InlineAnswer(admin.StackedInline):
 
 class AdminQuestion(AdminPost):
 
-    fields = (('title', 'profile', 'date', ), "body", "tags")
-    # raw_id_fields = ('tags', )
+    fields = (('title', 'profile', 'date', "score"), "body", "tags")
+    date_heirarchy = "date"
     inlines = [
         InlineAnswer,
-        InlineVote,
         InlineQuestionPageHit
     ]
     filter_horizontal = ("tags", )
@@ -44,7 +40,7 @@ class AdminQuestion(AdminPost):
 
 class AdminAnswer(AdminPost):
 
-    fields = (('date', 'profile', ), "question", "body")
+    fields = (('date', 'profile', ), ("question", "score"), "body")
 
 
 class AdminTag(admin.ModelAdmin):
