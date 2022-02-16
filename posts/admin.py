@@ -9,9 +9,10 @@ class InlineVote(generic_admin.GenericTabularInline):
     model = Vote
 
 
-class InlineQuestionPageHit(admin.TabularInline):
+class AdminQuestionPageHit(admin.ModelAdmin):
 
     model = QuestionPageHit
+    fields = ('question', 'address')
 
 
 class AdminPost(admin.ModelAdmin):
@@ -29,11 +30,10 @@ class InlineAnswer(admin.StackedInline):
 
 class AdminQuestion(AdminPost):
 
-    fields = (('title', 'profile', 'date', "score"), "body", "tags")
+    fields = (('title', 'profile', 'date', "score", "views"), "body", "tags")
     date_heirarchy = "date"
     inlines = [
         InlineAnswer,
-        InlineQuestionPageHit
     ]
     filter_horizontal = ("tags", )
 
@@ -51,11 +51,7 @@ class AdminVote(generic_admin.GenericStackedInline):
     pass
 
 
-class AdminPageHit(admin.ModelAdmin):
-
-    fields = ("question", "address")
-
-
 admin.site.register(Question, AdminQuestion)
 admin.site.register(Answer, AdminAnswer)
 admin.site.register(Tag, AdminTag)
+admin.site.register(QuestionPageHit, AdminQuestionPageHit)

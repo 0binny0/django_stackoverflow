@@ -4,7 +4,7 @@ from datetime import date, timedelta
 from django.db.models import (
     Model, ManyToManyField, ForeignKey, CASCADE, SET_NULL, CharField,
      TextField, PositiveIntegerField, IntegerField, DateField,
-     GenericIPAddressField, Manager, OuterRef, Subquery
+     GenericIPAddressField, Manager, OuterRef, Subquery, Count
 )
 
 from django.contrib.contenttypes.fields import (
@@ -20,23 +20,53 @@ class QuestionSearchManager(Manager):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        return queryset.filter(
+        return queryset.annotate(
+            answer_tally=Count('answer')
+        ).order_by("-date", "views", "-score")
+
+
+    def interesting(self, profile):
+        return self.get_queryset().filter(
             tags__name__in=profile.questions.values_list(
                 "tags__name", flat=True
             )
+        )
+
+    def recent(self, profile):
+        today = date.today()
+        days_ago = today - timedelta(days=3)
+        return self.get_queryset().filter(
+            date__range=(days_ago, today)
+        ).filter(
+            tags__name__in=profile.questions.filter(
+                date__range=(days_ago, today)
+            ).values_list("tags__name", flat=True)
         ).distinct()
 
     def by_week(self, profile):
         today = date.today()
         weekago = today - timedelta(days=7)
         return self.get_queryset().filter(
-            date__range=(weekago, today)
-        )
-
+            date__range=(weekago, today),
+        ).filter(
+            tags__name__in=profile.questions.filter(
+                date__range=(weekago, today)
+            ).values_list("tags__name", flat=True)
+        ).distinct()
 
     def by_month(self, profile):
-        queryset = self.by_week(profile)
-        return queryset.filter()
+        today = date.today()
+        monthago = today - timedelta(days=31)
+        return self.get_queryset().filter(
+            date__range=(monthago, today)
+        ).filter(
+            tags__name__in=profile.questions.values_list(
+                "tags__name", flat=True
+            )
+        ).distinct()
+
+    def unanswered(self):
+        return self.get_queryset().filter(answer__isnull=True)
 
 
 
@@ -85,6 +115,10 @@ class Question(Post):
         ordering = ["-score" , "-date"]
 
 
+    def __repr__(self):
+        return f"{self.__class__.__name__}(title={self.title})"
+
+
 class Answer(Post):
     question = ForeignKey(
         "Question", on_delete=CASCADE,
@@ -126,7 +160,7 @@ class QuestionPageHit(Model):
 
     question = ForeignKey("Question", on_delete=CASCADE, related_name="_views")
     address = GenericIPAddressField()
-    
+
 
     class Meta:
         db_table = "questionpagehit"
