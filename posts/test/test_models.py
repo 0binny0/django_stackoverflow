@@ -6,12 +6,15 @@ from unittest.mock import Mock, patch
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
-from ..models import Tag, Question
+from ..models import Tag, Question, Vote
 from authors.models import Profile
+
+from django.db.models import F
 
 class TestQuestionManager(TestCase):
     '''Verify that the QuestionSearchManager returns QuerySets
     based on tags contained in a User's questions and date duration'''
+
     fixtures = ["postings.json", ]
 
     @classmethod
@@ -73,3 +76,32 @@ class TestQuestionManager(TestCase):
                 "Question(title=Question__003)",
             ], transform=repr
         )
+
+
+class TestQuestionScoreUpVote(TestCase):
+    '''Verify that a Question's score changes by one point
+    dependent upon whether a user likes or dislikes a question'''
+
+    @classmethod
+    def setUpTestData(cls):
+        tag1 = Tag.objects.create(name="Tag1")
+        user = get_user_model().objects.create_user("TestUser")
+        cls.profile = Profile.objects.create(user=user)
+        cls.question = Question.objects.create(
+            title="Question__001",
+            body="Content of Question 001",
+            profile=cls.profile
+        )
+        cls.question.tags.add(tag1)
+
+    def test_new_user_like_vote_on_question(self):
+        user_vote = Vote.objects.create(
+            profile=self.profile, type="like", content_object=self.question
+        )
+        self.assertEqual(self.question.score, 1)
+
+    def test_new_user_dislike_vote_on_question(self):
+        user_vote = Vote.objects.create(
+            profile=self.profile, type="dislike", content_object=self.question
+        )
+        self.assertEqual(self.question.score, -1)

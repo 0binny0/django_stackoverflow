@@ -4,7 +4,7 @@ from datetime import date, timedelta
 from django.db.models import (
     Model, ManyToManyField, ForeignKey, CASCADE, SET_NULL, CharField,
      TextField, PositiveIntegerField, IntegerField, DateField,
-     GenericIPAddressField, Manager, OuterRef, Subquery, Count
+     GenericIPAddressField, Manager, OuterRef, Subquery, Count, F
 )
 
 from django.contrib.contenttypes.fields import (
@@ -150,6 +150,16 @@ class Vote(Model):
     content_type = ForeignKey(ContentType, on_delete=CASCADE)
     object_id = PositiveIntegerField()
     content_object = GenericForeignKey()
+
+    def save(self, *args, **kwargs):
+        post = self.content_object
+        if self.type == "like":
+            post.score = F("score") + 1
+        else:
+            post.score = F("score") - 1
+        post.save(update_fields=['score'])
+        post.refresh_from_db()
+        super().save(*args, **kwargs)
 
 
     class Meta:
