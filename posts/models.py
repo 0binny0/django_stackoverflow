@@ -101,7 +101,7 @@ class Post(Model):
 
 class Question(Post):
 
-    title = CharField(max_length=75)
+    title = CharField(max_length=75, unique_for_date="date")
     tags = ManyToManyField(
         'Tag', related_name="questions", related_query_name="question"
     )
