@@ -76,6 +76,7 @@ class Tag(Model):
 
 
     class Meta:
+        managed = True
         db_table = "tag"
 
 
@@ -97,6 +98,7 @@ class Post(Model):
 
     class Meta:
         abstract = True
+        managed = True
 
 
 class Question(Post):
@@ -110,7 +112,7 @@ class Question(Post):
     postings = QuestionSearchManager()
 
 
-    class Meta:
+    class Meta(Post.Meta):
         db_table = "question"
         ordering = ["-score" , "-date"]
 
@@ -126,7 +128,7 @@ class Answer(Post):
     )
 
 
-    class Meta:
+    class Meta(Post.Meta):
         db_table = "answer"
 
 
@@ -135,7 +137,7 @@ class Comment(Post):
     comment = None
 
 
-    class Meta:
+    class Meta(Post.Meta):
         db_table = "comment"
 
 
@@ -163,6 +165,7 @@ class Vote(Model):
 
 
     class Meta:
+        managed = True
         db_table = "vote"
 
 
@@ -173,6 +176,7 @@ class QuestionPageHit(Model):
 
 
     class Meta:
+        managed = True
         db_table = "questionpagehit"
 
 
@@ -184,4 +188,5 @@ class Bookmark(Model):
 
 
     class Meta:
+        managed = True
         db_table = "bookmark"
