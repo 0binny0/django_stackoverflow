@@ -26,7 +26,7 @@ class TestCustomQuestionFormFields(SimpleTestCase):
 
     def test_custom_tags_field(self):
         self.assertIsInstance(self.tags_field.widget, TextInput)
-        self.assertFalse(self.tags_field.widget.attrs['required'])
+        self.assertFalse(self.tags_field.required)
         self.assertEqual(
             self.tags_field.help_text,
             "Add up to 4 tags for your question"
@@ -42,3 +42,52 @@ class TestCustomQuestionFormFields(SimpleTestCase):
                     self.body_field.error_messages[key],
                     error_msg
                 )
+
+
+class TestQuestionSubmissionTitleField(TestCase):
+    """Verify that an error is raised when the title exceeds
+    the maximum character limit."""
+
+    @classmethod
+    def setUpTestData(cls):
+        user = get_user_model().objects.create_user("TestUser")
+        profile = Profile.objects.create(user=user)
+        msg = "This is a very very very very very very very very long title"
+        data = {
+            'title': msg,
+            'body': "The context to this post doesn't explain alot does it"
+        }
+        cls.form = QuestionForm(data)
+
+    def test_invalid_question_title_length(self):
+        import pdb; pdb.set_trace()
+        self.assertFalse(self.form.is_valid())
+        self.assertTrue(self.form.has_error("title"))
+        self.assertEqual(
+            self.form.errors.as_data()['title'][0].message,
+            "The title of your question is too long"
+        )
+
+
+class TestQuestionSubmissionBodyField(TestCase):
+    '''Verify that an error is raised when the content of the body
+    field doesn\'t meet the minimum character limit.'''
+
+    @classmethod
+    def setUpTestData(cls):
+        user = get_user_model().objects.create_user("TestUser")
+        profile = Profile.objects.create(user=user)
+        data = {
+            "title": "This is the question title",
+            "body": "",
+            "profile": profile
+        }
+        cls.form = QuestionForm(data)
+
+    def test_question_body_field_no_content(self):
+        self.assertFalse(self.form.is_valid())
+        self.assertTrue(self.form.has_error("body"))
+        self.assertEqual(
+            self.form.errors.as_data()['body'][0].message,
+            "Elaborate on your question"
+        )

@@ -1,11 +1,16 @@
 
-from django.forms import ModelForm, CharField
+from django.forms import Form, CharField
 from django.forms.widgets import TextInput, Textarea
 
 from .models import Question
 
 
-class QuestionForm(ModelForm):
+class QuestionForm(Form):
+
+    title = CharField(
+        max_length=55, widget=TextInput({"class": "question_input_field"}),
+        error_messages={"max_length": "The title of your question is too long"}
+    )
 
     body = CharField(
         widget=Textarea(attrs={"class": "question_input_field"}),
@@ -18,8 +23,8 @@ class QuestionForm(ModelForm):
     )
 
     tags = CharField(widget=TextInput(
-        attrs={"required": False, "class": "question_input_field"}
-    ), help_text="Add up to 4 tags for your question")
+        attrs={"class": "question_input_field"}
+    ), required=False, help_text="Add up to 4 tags for your question")
 
 
     class Meta:
