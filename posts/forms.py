@@ -2,8 +2,6 @@
 from django.forms import Form, CharField
 from django.forms.widgets import TextInput, Textarea
 
-from .models import Question
-
 
 class QuestionForm(Form):
 
@@ -25,8 +23,3 @@ class QuestionForm(Form):
     tags = CharField(widget=TextInput(
         attrs={"class": "question_input_field"}
     ), required=False, help_text="Add up to 4 tags for your question")
-
-
-    class Meta:
-        model = Question
-        fields = ['title', 'body', 'tags']
