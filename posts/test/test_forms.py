@@ -5,20 +5,21 @@ from unittest.mock import Mock, patch
 
 from django.test import SimpleTestCase, TestCase
 from django.contrib.auth import get_user_model
+from django.forms.widgets import TextInput
 
 from ..forms import QuestionForm
 from ..models import Question, Tag
 from authors.models import Profile
 
 
-class TestDuplicateQuestionSameDate(TestCase):
-    '''Verify that a User cannot post a duplicate question
-    on the same date.'''
+class TestQuestionFormCustomTagsField(SimpleTestCase):
+    '''Verify that the widget used for the tags field
+    is a TextInput and is not required.'''
 
-    @classmethod
-    def setUpTestData(cls):
-        pass
+    def setUp(self):
+        form = QuestionForm()
+        self.tags_field = form['tags'].field
 
-    @patch("posts.models.date")
-    def test_user_question_already_posted(self, mock_date):
-        pass
+    def test_custom_tags_widget(self):
+        self.assertIsInstance(self.tags_field.widget, TextInput)
+        self.assertFalse(self.tags_field.widget.attrs['required'])
