@@ -1,0 +1,74 @@
+[
+{
+    "model": "authors.user",
+    "pk": 13,
+    "fields": {
+        "password": "pbkdf2_sha256$260000$tcAtUYuLzbmG7QhY6WNqqU$uzfXmjGICsMGZ7QvPPu8EFIh2F0qkrOyukv6ZFk0+J4=",
+        "last_login": "2022-02-21T01:52:29.049Z",
+        "is_superuser": true,
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2022-02-21T01:51:51.676Z",
+        "username": "Python$!",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "authors.profile",
+    "pk": 12,
+    "fields": {
+        "user": 13
+    }
+},
+{
+    "model": "posts.tag",
+    "pk": 9,
+    "fields": {
+        "name": "Tag1"
+    }
+},
+{
+    "model": "posts.tag",
+    "pk": 10,
+    "fields": {
+        "name": "Tag2"
+    }
+},
+{
+    "model": "posts.tag",
+    "pk": 11,
+    "fields": {
+        "name": "Tag3"
+    }
+},
+{
+    "model": "posts.tag",
+    "pk": 12,
+    "fields": {
+        "name": "Tag4"
+    }
+},
+{
+    "model": "posts.question",
+    "pk": 1,
+    "fields": {
+        "body": "This extra, extra context for the post Test Question 1!",
+        "date": "2022-02-20",
+        "comment": null,
+        "profile": 12,
+        "score": 0,
+        "title": "Test Question 1",
+        "views": 0,
+        "tags": [
+            9,
+            10,
+            11,
+            12
+        ]
+    }
+}
+]
