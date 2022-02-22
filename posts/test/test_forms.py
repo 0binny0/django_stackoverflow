@@ -60,7 +60,6 @@ class TestQuestionSubmissionTitleField(TestCase):
         cls.form = QuestionForm(data)
 
     def test_invalid_question_title_length(self):
-        import pdb; pdb.set_trace()
         self.assertFalse(self.form.is_valid())
         self.assertTrue(self.form.has_error("title"))
         self.assertEqual(
