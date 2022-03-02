@@ -1,0 +1,17 @@
+
+{% extends 'index.html' %}
+{% block page_content %}
+  <div class="page_title_context">
+    <div class="title_container">
+      <h2 class="title">{{ title }}</h2><a class="btn ask_btn" href="#">Ask Question</a>
+    </div>
+    {% with url_name=request.resolver_match.url_name %}
+      <ul class="list query_buttons">
+      {% for button in query_buttons %}
+        <li class="query_button">{{ button }}<a href="#"></a></li>
+      {% endfor %}
+      </ul>
+    {% endwith %}
+  </div>
+  {% include './listing.html' %}
+{% endblock %}

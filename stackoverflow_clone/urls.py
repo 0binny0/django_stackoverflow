@@ -21,15 +21,17 @@ from posts import endpoints as pe
 from authors import views as av
 from authors import endpoints as ae
 
-posts_patterns = ([], "posts")
+posts_patterns = ([
+    path("", pv.QuestionListingPage.as_view(), name="main")
+], "posts")
 posts_api_patterns = []
 authors_patterns =  ([], "authors")
 authors_api_patterns = []
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("authors/", include(posts_patterns), name="posts"),
-    path("questions/", include(authors_patterns), name="authors"),
+    path("authors/", include(authors_patterns), name="authors"),
+    path("questions/", include(posts_patterns), name="posts"),
     path("api/v1/authors", include(authors_api_patterns), name="authors_api"),
     path("api/v1/questions", include(posts_api_patterns), name="posts_api"),
 ]

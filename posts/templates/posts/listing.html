@@ -1,0 +1,28 @@
+
+<div class="content_wrapper">
+{% for question in questions %}
+  <div class="user_question_info">
+    <div class="question_stats">
+      <p class="stat">{{ question.score }} vote{{ question.score|pluralize }}</p>
+      <p class="stat">{{ question.answers }} answer{{ question.score|pluralize  }}</p>
+      <p class="stat">{{ question.views }} view{{ question.score|pluralize  }}</p>
+    </div>
+    <div class="question_content">
+      <h3>{{ question.title }}</h3>
+      <div class="inline_tags_author">
+        <div>
+        {% for tag in question.tags.all %}
+          <a class="btn" href="">
+        {% endfor %}
+        </div>
+        <p class="authored_by">{{ question.author }} {% if question.answers %}answered{% else %}asked{% endif %}</p>
+    </div>
+  </div>
+  {% endfor %}
+{% if request.resolver_match.url_name == "main" %}
+  <h3 class="page_footer">Looking for more? Browse the complete list of questions. Help us answer unanswered questions.</h3>
+{% else %}
+
+{% endif %}
+
+</div>

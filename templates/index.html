@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}" />
+    <link rel="stylesheet" href="{% static 'posts/css/post_styles.css' %}" />
+  </head>
+  <body class="site_page">
+    <header class="searchbar orange-stroke">
+      <!-- wraps the form widget and help text to the same width -->
+      <div class="search_query_container">
+        <!-- svg icon absolutely positioned to sit inline with form widget  -->
+        <div class="icon_search_form">
+          <form class="search_form">
+          {% for field in search_form %}
+            {{ field }}
+          {% endfor %}
+          </form>
+          <!-- <svg class="icon">
+
+          </svg> -->
+        </div>
+        <ul class="list query_help_tips">
+          <li>A</li>
+          <li>B</li>
+          <li>C</li>
+        </ul>
+      </div><nav class="main_site_nav">
+      {% if user.is_authenticated %}
+        <a class="btn nav_btn">Home</a><a class="btn nav_btn">Profile</a><a class="btn nav_btn">Logout</a>
+      {% else %}
+        <a class="btn nav_btn">Home</a><a class="btn nav_btn">Register</a><a class="btn nav_btn">Login</a>
+      {% endif %}
+      </nav>
+    </header>
+    <section class="question_box_wrapper">
+    {% block page_content %}{% endblock %}
+    </section>
+  </body>
+</html>

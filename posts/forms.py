@@ -23,3 +23,12 @@ class QuestionForm(Form):
     tags = CharField(widget=TextInput(
         attrs={"class": "question_input_field"}
     ), required=False, help_text="Add up to 4 tags for your question")
+
+
+class SearchForm(Form):
+    q = CharField(widget=TextInput(
+        attrs={
+            "placeholder": "Search...", "class": "search_query_widget grey-outline",
+            "autocomplete": "off"
+        }
+    ))
