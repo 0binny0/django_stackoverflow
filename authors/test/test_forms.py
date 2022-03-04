@@ -1,10 +1,9 @@
 
 from django.test import SimpleTestCase
 
-from ..forms import RegisterUserForm
+from ..forms import RegisterUserForm, LoginUserForm
 
 class TestRegisterUserForm(SimpleTestCase):
-
 
     def setUp(self):
         form = RegisterUserForm()
@@ -30,3 +29,18 @@ class TestRegisterUserForm(SimpleTestCase):
             self.password2_field.widget.attrs['class']
         )
         self.assertTrue(self.password2_field.widget.attrs['disabled'])
+
+
+class TestLoginUserForm(SimpleTestCase):
+
+    def setUp(self):
+        self.form = LoginUserForm()
+
+    def test_form_field_attrs(self):
+        for field in self.form.fields.values():
+            'Each field represents a username field and a password field'
+            with self.subTest(field=field):
+                self.assertEqual(
+                    field.widget.attrs['class'],
+                    "widget_style user_form_input",
+                )
