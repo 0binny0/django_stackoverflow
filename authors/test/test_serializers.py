@@ -1,11 +1,14 @@
 
-from rest_framework.test import APISimpleTestCase
+from django.contrib.auth import get_user_model
+
+from rest_framework.test import APISimpleTestCase, APITestCase
 from rest_framework.exceptions import ValidationError
 
 from ..validators import character_validator
 from ..serializers import LoginSerializer
 
-class TestCharacterValidator(APISimpleTestCase):
+
+class TestCharacterValidator(APITestCase):
     '''Verify that a ValidationError is raised based on whether a string
     contains characters that are not letters, numbers, and single underscores'''
 
@@ -21,7 +24,7 @@ class TestCharacterValidator(APISimpleTestCase):
                     character_validator(string)
 
 
-class TestLoginSerializerUsernameField(APISimpleTestCase):
+class TestLoginSerializerUsernameField(APITestCase):
 
     def setUp(self):
         self.username_strings1 = [
@@ -32,24 +35,41 @@ class TestLoginSerializerUsernameField(APISimpleTestCase):
             "_____This_is_", "This_is_my_full_username", "WhoAm+"
         ]
 
-    def test_validated_username_strings_pass(self):
+    def test_validated_username_strings_fail(self):
         for string in self.username_strings1:
             with self.subTest(string=string):
                 serializer = LoginSerializer(
                     data={"username": string}, partial=True
                 )
-                serializer.is_valid()
-                self.assertEqual(
-                    serializer.validated_data["username"],
-                    string
-                )
+                self.assertFalse(serializer.is_valid())
+                self.assertIn("username", serializer.errrors)
+
 
     def test_validated_username_strings_fail(self):
         for string in self.username_strings2:
             with self.subTest(string=string):
-                import pdb; pdb.set_trace()
                 serializer = LoginSerializer(
                     data={"username": string}, partial=True
                 )
                 self.assertFalse(serializer.is_valid())
                 self.assertIn("username", serializer.errors)
+
+
+class TestLoginSerializerPassword(APITestCase):
+    '''Verify that a ValidationError is raised when the password
+    provided upon a login attempt is not the password used
+    to register'''
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = get_user_model().objects.create_user(
+            username="MainUser", password="s3cretC0de"
+        )
+        cls.serializer = LoginSerializer(
+            data={"username": "MainUser", "password": "secretCode"}
+        )
+
+
+    def test_user_signin_password_correct(self):
+        self.assertFalse(self.serializer.is_valid())
+        self.assertIn("password", self.serializer.errors)
