@@ -5,7 +5,7 @@ from rest_framework.test import APISimpleTestCase, APITestCase
 from rest_framework.exceptions import ValidationError
 
 from ..validators import character_validator
-from ..serializers import LoginSerializer
+from ..serializers import LoginSerializer, RegisterSerializer
 
 
 class TestCharacterValidator(APITestCase):
@@ -73,3 +73,66 @@ class TestLoginSerializerPassword(APITestCase):
     def test_user_signin_password_correct(self):
         self.assertFalse(self.serializer.is_valid())
         self.assertIn("password", self.serializer.errors)
+
+
+class TestRegisterSerializerUsernameField(APITestCase):
+    '''Verify that a username can only take in lowercase letters,
+    uppercase letters, up to 3 numbers, and single underscores.'''
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.invalid_characters = "!@#$%^&*()-+={[]}:;\"'<,>.?/~`"
+        cls.username_strings = [
+            "_This_is_ME_", "_This_is_001ME", "This_is_ME_", "ThisisME",
+            "This_is_N0Tme"
+        ]
+
+        cls.invalid_username_strings = [
+            '____This_is__MEagain+', '000000h..ooo()o',
+        ]
+
+    def test_error_raised_invalid_characters_in_string(self):
+        for char in self.invalid_characters:
+            with self.subTest(char=char):
+                serializer = RegisterSerializer(
+                    data={"username": f"0h..ooo{char}o"}, partial=True
+                )
+                self.assertFalse(serializer.is_valid())
+                self.assertIn("username", serializer.errors)
+
+    def test_error_raised_too_many_digits(self):
+        serializer = RegisterSerializer(data={
+            "username": "This_is_n00000_good"
+        }, partial=True)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("username", serializer.errors)
+
+    def test_username_string_valid_characters(self):
+        for string in self.username_strings:
+            with self.subTest(string=string):
+                serializer = RegisterSerializer(
+                    data={"username": string}, partial=True
+                )
+                self.assertTrue(serializer.is_valid())
+                self.assertEqual(
+                    serializer.validated_data['username'],
+                    string
+                )
+
+
+class TestRegisterSerializerPasswordField(APITestCase):
+    '''Verify that a password cannot take in the following
+    characters: <>`':;,.'''
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.invalid_characters = "<>`':;,.\""
+
+    def test_validated_password_string_characters(self):
+        for char in self.invalid_characters:
+            with self.subTest(char=char):
+                serializer = RegisterSerializer(
+                    data={"password": f"secretC{char}od{char}"}
+                )
+                self.assertFalse(serializer.is_valid())
+                self.assertIn("password", serializer.errors)

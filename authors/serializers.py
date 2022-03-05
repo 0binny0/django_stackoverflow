@@ -3,14 +3,14 @@ import re
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import check_password
+from django.core.validators import RegexValidator
 
 from rest_framework.serializers import (
     ModelSerializer, RegexField, CharField
 )
 from rest_framework.exceptions import ValidationError
 
-from .validators import character_validator
-
+from .validators import character_validator, total_digits_validator
 
 
 class LoginSerializer(ModelSerializer):
@@ -38,6 +38,31 @@ class LoginSerializer(ModelSerializer):
                 return data
         raise ValidationError({"password": "No username provided"})
 
+
     class Meta:
         model = get_user_model()
         fields = ['username', 'password']
+
+
+class RegisterSerializer(ModelSerializer):
+
+    username = RegexField(
+        re.compile("^(_?[a-zA-Z0-9]+_?)+"),
+        min_length=6, max_length=20,
+        validators=[character_validator, total_digits_validator]
+    )
+
+    password = CharField(
+        min_length=7, max_length=12,
+        validators=[RegexValidator("[<>`':;,.\"]", inverse_match=True)]
+    )
+
+    password2 = CharField(
+        min_length=7, max_length=12,
+        validators=[RegexValidator("[<>`':;,.\"]", inverse_match=True)]
+    )
+
+
+    class Meta:
+        model = get_user_model()
+        fields = ["username", "password", "password2"]
