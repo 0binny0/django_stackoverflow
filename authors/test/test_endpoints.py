@@ -48,3 +48,23 @@ class TestRegisterEndpointFailedRegistration(APITestCase):
             "registration failed",
             response.data["non_field_errors"][0]
         )
+
+
+class TestRegisterEndpointPasswordMismatch(APITestCase):
+    '''Verify that a 400 status code is delivered to the client in the event
+    that the password confirmation and password fields do not match.'''
+
+    @classmethod
+    def setUpTestData(cls):
+        path = reverse("api_authors:register")
+        query = QueryDict("password=T0p$ecret&password2=T()pSecret").urlencode()
+        cls.url = f"{path}?{query}"
+
+    def test_password_fields_not_equal(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("non_field_errors", response.data)
+        self.assertEqual(
+            response.data["non_field_errors"][0],
+            "password confirmation failed"
+        )
