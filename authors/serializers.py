@@ -68,18 +68,11 @@ class RegisterSerializer(ModelSerializer):
             data.get("username", None), data.get("password", None),
             data.get("password2", None)
         ]
-<<<<<<< HEAD
-        # import pdb; pdb.set_trace()
         if len(data) == 3 and (username == password
-=======
-        if len(data) == 3:
-            if (username == password
->>>>>>> 25489416b905b398d913d269cb29cc63b92b9cfd
                         and username == password2 and password == password2):
                 raise ValidationError(
                     {"non_field_errors": "registration failed"}
                 )
-<<<<<<< HEAD
         elif (len(data) == 3 or (len(data) == 2 and not username)
                                                 and password != password2):
                 raise ValidationError(
@@ -87,14 +80,6 @@ class RegisterSerializer(ModelSerializer):
                 )
         elif username == password:
             raise ValidationError({"password2": "password cannot be username"})
-=======
-        elif (len(data) == 3 or len(data) == 2
-                and username not in [password, password2]
-                                                    and password == password2):
-            raise ValidationError(
-                {"non_field_errors": "password confirmation failed"}
-            )
->>>>>>> 25489416b905b398d913d269cb29cc63b92b9cfd
         return data
 
     class Meta:
