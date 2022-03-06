@@ -17,16 +17,18 @@ from django.contrib import admin
 from django.urls import path, include
 
 from posts import views as pv
-from posts import endpoints as pe
+from posts import endpoints as api
 from authors import views as av
-from authors import endpoints as ae
+from authors import endpoints as api
 
 posts_patterns = ([
     path("", pv.QuestionListingPage.as_view(), name="main")
 ], "posts")
 posts_api_patterns = []
 authors_patterns =  ([], "authors")
-authors_api_patterns = []
+authors_api_patterns = ([
+    path("authors", api.RegisterEndpoint.as_view(), name="register")
+], "api_authors")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
