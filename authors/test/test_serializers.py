@@ -81,6 +81,7 @@ class TestRegisterSerializerUsernameField(APITestCase):
 
     @classmethod
     def setUpTestData(cls):
+        user = get_user_model().objects.create_user("TestUser")
         cls.invalid_characters = "!@#$%^&*()-+={[]}:;\"'<,>.?/~`"
         cls.username_strings = [
             "_This_is_ME_", "_This_is_001ME", "This_is_ME_", "ThisisME",
@@ -118,6 +119,13 @@ class TestRegisterSerializerUsernameField(APITestCase):
                     serializer.validated_data['username'],
                     string
                 )
+
+    def test_register_username_already_taken(self):
+        serializer = RegisterSerializer(
+            data={"username": "TestUser"}, partial=True
+        )
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("username", serializer.errors)
 
 
 class TestRegisterSerializerPasswordField(APITestCase):

@@ -9,6 +9,7 @@ from rest_framework.serializers import (
     ModelSerializer, RegexField, CharField
 )
 from rest_framework.exceptions import ValidationError
+from rest_framework.validators import UniqueValidator
 
 from .validators import character_validator, total_digits_validator
 
@@ -49,7 +50,10 @@ class RegisterSerializer(ModelSerializer):
     username = RegexField(
         re.compile("^(_?[a-zA-Z0-9]+_?)+"),
         min_length=6, max_length=20,
-        validators=[character_validator, total_digits_validator]
+        validators=[
+            character_validator, total_digits_validator,
+            UniqueValidator(get_user_model().objects.all())
+        ]
     )
 
     password = CharField(
