@@ -63,6 +63,25 @@ class RegisterSerializer(ModelSerializer):
     )
 
 
+    def validate(self, data):
+        username, password, password2 = [
+            data.get("username", None), data.get("password", None),
+            data.get("password2", None)
+        ]
+        if len(data) == 3:
+            if (username == password
+                        and username == password2 and password == password2):
+                raise ValidationError(
+                    {"non_field_errors": "registration failed"}
+                )
+        elif (len(data) == 3 or len(data) == 2
+                and username not in [password, password2]
+                                                    and password == password2):
+            raise ValidationError(
+                {"non_field_errors": "password confirmation failed"}
+            )
+        return data
+
     class Meta:
         model = get_user_model()
         fields = ["username", "password", "password2"]

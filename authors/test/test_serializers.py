@@ -136,3 +136,51 @@ class TestRegisterSerializerPasswordField(APITestCase):
                 )
                 self.assertFalse(serializer.is_valid())
                 self.assertIn("password", serializer.errors)
+
+
+class TestRegisterSerializerRegistrationFailed(APITestCase):
+    '''Verify that an error is raised when the username,
+    password, and password confirmation values are of the
+    same value.'''
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.data = {
+            "username": "Whoopsie",
+            "password": "Whoopsie",
+            "password2": "Whoopsie"
+        }
+        cls.serializer = RegisterSerializer(
+            data=cls.data, partial=True
+        )
+
+    def test_duplicate_values_in_all_registration_fields(self):
+        self.assertFalse(self.serializer.is_valid())
+        self.assertEqual(
+            str(self.serializer.errors['non_field_errors'][0]),
+            "registration failed"
+        )
+
+
+class TestRegisterSerializerPasswordConfirmation(APITestCase):
+    '''Verify that an error is raised when the password
+    confirmation does not match the password entered in a
+    registration form.'''
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.data = {
+            "username": "Its_not_me_again",
+            "password": "T()p$ecret",
+            "password2": "T0pSecret"
+        }
+        cls.serializer = RegisterSerializer(
+            data=cls.data, partial=True
+        )
+
+    def test_password_confirmation_fail(self):
+        self.assertFalse(self.serializer.is_valid())
+        self.assertIn(
+            "password confirmation failed",
+            str(self.serializer.errors["non_field_errors"][0])
+        )
