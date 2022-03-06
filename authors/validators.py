@@ -10,7 +10,7 @@ def character_validator(string):
     return string
 
 def total_digits_validator(string):
-    match = re.findall(r"\d+", string)
+    match = re.findall(r"\d", string)
     if match and len(match) > 3:
         raise ValidationError("only up to 3 digits allowed in username")
     return string
