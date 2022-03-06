@@ -69,8 +69,9 @@ class RegisterSerializer(ModelSerializer):
 
     def validate(self, data):
         username, password, password2 = [
-            data.get("username", None), data.get("password", None),
-            data.get("password2", None)
+            data[key].lower() if data.get(key) else None for key in [
+                "username", "password", "password2"
+            ]
         ]
         if len(data) == 3 and (username == password
                         and username == password2 and password == password2):
