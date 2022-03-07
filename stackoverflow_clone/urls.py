@@ -27,7 +27,7 @@ posts_patterns = ([
 posts_api_patterns = []
 authors_patterns =  ([], "authors")
 authors_api_patterns = ([
-    path("authors", api.RegisterEndpoint.as_view(), name="register")
+    path("authors", api.AccountsEndpoint.as_view(), name="main")
 ], "api_authors")
 
 urlpatterns = [

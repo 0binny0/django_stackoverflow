@@ -17,7 +17,7 @@ from .validators import character_validator, total_digits_validator
 class LoginSerializer(ModelSerializer):
 
     username = CharField(min_length=6, max_length=20)
-    password = CharField(max_length=7, min_length=12)
+    password = CharField(min_length=7, max_length=12)
 
     def validate(self, data):
         username_provided = data.get("username", None)
