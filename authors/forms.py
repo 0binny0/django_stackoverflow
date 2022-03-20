@@ -1,7 +1,24 @@
 
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import (
+    UserCreationForm, AuthenticationForm,
+)
+
+from django.forms import CharField, TextInput, PasswordInput
 
 class RegisterUserForm(UserCreationForm):
+
+    username = CharField(
+        widget=TextInput(attrs={'min_length': 6, 'max_length': 20})
+    )
+
+    password1 = CharField(
+        widget=PasswordInput(attrs={'min_length': 7, 'max_length': 12})
+    )
+
+    password2 = CharField(
+        widget=PasswordInput(attrs={'min_length': 7, 'max_length': 12})
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -11,6 +28,10 @@ class RegisterUserForm(UserCreationForm):
             )
             if label == "password2":
                 field.widget.attrs.update({"disabled": True})
+
+    def __str__(self):
+        return f"{self.__class__.__name__}"
+
 
 
 class LoginUserForm(AuthenticationForm):

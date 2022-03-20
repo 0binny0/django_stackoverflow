@@ -28,6 +28,19 @@
 }
 
 
+.error_status {
+  border: 1px solid red;
+}
+
+.valid_status {
+  border: 1px solid green;
+}
+
+.default_status {
+  border: 1px solid lightgrey;
+}
+
+
 @media screen and (min-width: 400px) {
 
   /*---------------

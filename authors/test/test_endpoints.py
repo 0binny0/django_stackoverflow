@@ -24,9 +24,9 @@ class TestAccountsEndpointRegisterUsernameAndPassword(APITestCase):
     def test_invalid_username_and_password_combo_provided(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 400)
-        self.assertIn("password2", response.data)
+        self.assertIn("non_field_errors", response.data)
         self.assertEqual(
-            response.data["password2"][0],
+            response.data["non_field_errors"][0],
             "password cannot be username"
         )
 

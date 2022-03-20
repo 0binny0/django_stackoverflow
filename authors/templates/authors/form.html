@@ -1,0 +1,17 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block page_content %}
+  <div class="form_wrapper">
+    <h2 class="page_form_title">{{ title }}</h2>
+    <form name={{form}} class="user_credentials_form" method="post" action="#">
+    {% for field in form %}
+      <fieldset>
+        <p class="input_label">{{ field.label }}</p>
+        {{ field }}
+      </fieldset>
+    {% endfor %}
+      <button  name="button" id="account_submit_btn" class="submit_btn"><a class="btn" href='#'>Sign up</a></button>
+    </form>
+  </div>
+  <script src="{% static 'authors/js/fillout.js' %}"></script>
+{% endblock %}

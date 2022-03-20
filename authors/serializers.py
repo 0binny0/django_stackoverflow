@@ -2,8 +2,10 @@
 import re
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password as review_user_password
 from django.contrib.auth.hashers import check_password
 from django.core.validators import RegexValidator
+# from django.core.exceptions import ValidationError
 
 from rest_framework.serializers import (
     ModelSerializer, RegexField, CharField
@@ -48,7 +50,8 @@ class LoginSerializer(ModelSerializer):
 class RegisterSerializer(ModelSerializer):
 
     username = RegexField(
-        re.compile("^(_?[a-zA-Z0-9]+_?)+"),
+        re.compile("^(_?[a-zA-Z0-9]+)+"),
+        required=False,
         min_length=6, max_length=20,
         validators=[
             character_validator, total_digits_validator,
@@ -57,19 +60,34 @@ class RegisterSerializer(ModelSerializer):
     )
 
     password = CharField(
+        required=False,
         min_length=7, max_length=12,
         validators=[RegexValidator("[<>`':;,.\"]", inverse_match=True)]
     )
 
     password2 = CharField(
+        required=False,
         min_length=7, max_length=12,
         validators=[RegexValidator("[<>`':;,.\"]", inverse_match=True)]
     )
 
+    def validate_password(self, value):
+        try:
+            password = review_user_password(value)
+        except ValidationError:
+            password2_value = self.initial_data.get("password2")
+            if password2_value and value != password2_value:
+                raise ValidationError(
+                    {"non_field_errors": "password confirmation failed"}
+                )
+            else:
+                raise
+        return value
+
 
     def validate(self, data):
         username, password, password2 = [
-            data[key].lower() if data.get(key) else None for key in [
+            data[key].lower().strip() if data.get(key) else None for key in [
                 "username", "password", "password2"
             ]
         ]
@@ -78,13 +96,12 @@ class RegisterSerializer(ModelSerializer):
                 raise ValidationError(
                     {"non_field_errors": "registration failed"}
                 )
-        elif (len(data) == 3 or (len(data) == 2 and not username)
-                                                and password != password2):
+        elif password != password2 and (len(data) == 3 or (len(data) == 2 and not username)):
                 raise ValidationError(
                     {"non_field_errors": "password confirmation failed"}
                 )
         elif username == password:
-            raise ValidationError({"password2": "password cannot be username"})
+            raise ValidationError({"non_field_errors": "password cannot be username"})
         return data
 
     class Meta:

@@ -25,15 +25,17 @@ posts_patterns = ([
     path("", pv.QuestionListingPage.as_view(), name="main")
 ], "posts")
 posts_api_patterns = []
-authors_patterns =  ([], "authors")
+authors_patterns =  ([
+    path("signup/", av.RegisterNewUserPage.as_view(), name="register")
+], "authors")
 authors_api_patterns = ([
-    path("authors", api.AccountsEndpoint.as_view(), name="main")
+    path("", api.AccountsEndpoint.as_view(), name="main")
 ], "api_authors")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("authors/", include(authors_patterns), name="authors"),
+    path("users/", include(authors_patterns), name="authors"),
     path("questions/", include(posts_patterns), name="posts"),
-    path("api/v1/authors", include(authors_api_patterns), name="authors_api"),
+    path("api/v1/users", include(authors_api_patterns), name="authors_api"),
     path("api/v1/questions", include(posts_api_patterns), name="posts_api"),
 ]

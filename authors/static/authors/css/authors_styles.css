@@ -1,0 +1,72 @@
+
+.widget_style {
+  outline: none;
+  border: 1px solid lightgrey;
+  padding-left: 10px;
+}
+
+.submit_btn {
+  width: 375px;
+  height: 40px;
+  margin: 0 auto 30px;
+  text-decoration: none;
+}
+
+.input_label {
+  margin-left: 15px;
+  margin-bottom: 0;
+}
+
+fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+@media screen and (min-width: 400px) {
+
+
+  .form_wrapper {
+    width: 400px;
+    margin: 80px auto 0;
+  }
+
+  .user_credentials_form {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    border: 1px solid lightgrey;
+    height: 300px;
+  }
+
+  .user_form_input {
+    display: block;
+    margin: 0px 12.5px 15px;
+    height: 40px;
+    width: 375px;
+  }
+
+  .page_form_title {
+    margin-bottom: 25px;
+  }
+
+}
+
+@media screen and (min-width: 650px) {
+
+
+
+}
+
+
+@media screen and (min-width: 805px) {
+
+
+}
+.error_status {
+  border: 1px solid red;
+}
+
+.valid_status {
+  border: 1px solid lime;
+}

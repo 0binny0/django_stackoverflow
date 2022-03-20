@@ -4,6 +4,7 @@
   <head>
     <link rel="stylesheet" href="{% static 'css/main.css' %}" />
     <link rel="stylesheet" href="{% static 'posts/css/post_styles.css' %}" />
+    <link rel="stylesheet" href="{% static 'authors/css/authors_styles.css' %}" />
   </head>
   <body class="site_page">
     <header class="searchbar orange-stroke">
@@ -33,7 +34,7 @@
       {% endif %}
       </nav>
     </header>
-    <section class="question_box_wrapper">
+    <section class="content_box">
     {% block page_content %}{% endblock %}
     </section>
   </body>

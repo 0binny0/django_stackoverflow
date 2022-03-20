@@ -28,7 +28,7 @@ class TestLoginSerializerUsernameField(APITestCase):
 
     def setUp(self):
         self.username_strings1 = [
-            "_This_is_me", "_This_is_me001_", "This_is_me_"
+            "_This_is_me", "_This_is_me001_", "This__is________not_me, ""This_is_me_"
         ]
 
         self.username_strings2 = [

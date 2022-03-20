@@ -14,6 +14,7 @@ class AccountsEndpoint(APIView):
             serializer = LoginSerializer
         else:
             serializer = RegisterSerializer
+        # import pdb; pdb.set_trace()
         serialized_object = serializer(data=query_string, partial=True)
         if serialized_object.is_valid(raise_exception=True):
             return Response(data=serialized_object.validated_data)
