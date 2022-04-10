@@ -7,7 +7,7 @@ from django.test import SimpleTestCase, TestCase
 from django.contrib.auth import get_user_model
 from django.forms.widgets import TextInput, Textarea
 
-from ..forms import QuestionForm
+from ..forms import QuestionForm, TagField, MultiTagWidget
 from ..models import Question, Tag
 from authors.models import Profile
 
@@ -25,8 +25,7 @@ class TestCustomQuestionFormFields(SimpleTestCase):
         ]
 
     def test_custom_tags_field(self):
-        self.assertIsInstance(self.tags_field.widget, TextInput)
-        self.assertFalse(self.tags_field.required)
+        self.assertIsInstance(self.tags_field.widget, MultiTagWidget)
         self.assertEqual(
             self.tags_field.help_text,
             "Add up to 4 tags for your question"
@@ -52,10 +51,11 @@ class TestQuestionSubmissionTitleField(TestCase):
     def setUpTestData(cls):
         user = get_user_model().objects.create_user("TestUser")
         profile = Profile.objects.create(user=user)
-        msg = "This is a very very very very very very very very long title"
+        msg = "This is a very very very very very very very very very very very very very very very long title"
         data = {
             'title': msg,
-            'body': "The context to this post doesn't explain alot does it"
+            'body': "The context to this post doesn't explain alot does it",
+            "tags_0": "TagA"
         }
         cls.form = QuestionForm(data)
 
@@ -90,3 +90,27 @@ class TestQuestionSubmissionBodyField(TestCase):
             self.form.errors.as_data()['body'][0].message,
             "Elaborate on your question"
         )
+
+
+class TestCustomTagsField(SimpleTestCase):
+
+    def setUp(self):
+        self.tag_field = TagField(
+            widget=MultiTagWidget(
+                attrs={
+                    "min_length": 1, "max_length": 25,
+                    "class": "question_input_shade inline_tag_input"
+                }
+            ), require_all_fields=False
+        )
+
+    def test_tag_field_config(self):
+        self.assertEqual(len(self.tag_field.fields), 4)
+        for i in range(4):
+            with self.subTest(i=i):
+                if i == 0:
+                    self.assertTrue(self.tag_field.fields[i].required)
+                else:
+                    self.assertFalse(self.tag_field.fields[i].required)
+                self.assertEqual(self.tag_field.fields[i].min_length, 1)
+                self.assertEqual(self.tag_field.fields[i].max_length, 25)

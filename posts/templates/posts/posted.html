@@ -1,0 +1,18 @@
+<div class="rating_box">
+  <div class="vote">
+    <svg id="upvote_{{ id }}" class="vote_button">
+      <polygon points="0,20 15,0 30,20" fill="silver" />
+    </svg>
+    <p class="posted_score">{{ post.score }}</p>
+    <svg id="downvote_{{ id }}" class="vote_button">
+      <polygon points="0,0 15,20 30,0" fill="silver" />
+    </svg>
+  </div>
+  <p class="post_body_content">{{ post.body }}</p>
+  {% if request.user.is_authenticated %}
+    <ul class="option_list">
+      <li class="post_option"><a class="blk_link" href="{% url 'posts:edit' id=post.id %}">Edit</a></li>
+      <li id="delete_post{{ id }}" class="post_option"><a class="blk_link" href="#">Delete</a></li>
+    </ul>
+  {% endif %}
+</div>

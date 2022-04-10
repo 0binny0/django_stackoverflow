@@ -21,21 +21,30 @@ from posts import endpoints as api
 from authors import views as av
 from authors import endpoints as api
 
+
 posts_patterns = ([
-    path("", pv.QuestionListingPage.as_view(), name="main")
+    path("", pv.QuestionListingPage.as_view(), name="main"),
+    path("questions/ask/", pv.AskQuestionPage.as_view(), name="ask"),
+    path("questions/edit/<id>/", pv.EditQuestionPage.as_view(), name="edit"),
+    path("questions/<id>/", pv.PostedQuestionPage.as_view(), name="question")
 ], "posts")
+
 posts_api_patterns = []
+
 authors_patterns =  ([
-    path("signup/", av.RegisterNewUserPage.as_view(), name="register")
+    path("signup/", av.RegisterNewUserPage.as_view(), name="register"),
+    path("login/", av.LoginUserPage.as_view(), name="login"),
+    path("logout/", av.LogoutUser.as_view(), name="logout")
 ], "authors")
+
 authors_api_patterns = ([
     path("", api.AccountsEndpoint.as_view(), name="main")
 ], "api_authors")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("users/", include(authors_patterns), name="authors"),
-    path("questions/", include(posts_patterns), name="posts"),
+    path("users/", include(authors_patterns, namespace="authors")),
+    path("", include(posts_patterns, namespace="posts")),
     path("api/v1/users", include(authors_api_patterns), name="authors_api"),
     path("api/v1/questions", include(posts_api_patterns), name="posts_api"),
 ]

@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 
 
-from posts.models import Question, Answer, Comment
+from posts.models import Question, Answer
 
 class User(AbstractUser):
 
@@ -25,12 +25,9 @@ class Profile(Model):
             (vote, created) = Vote.objects.get_or_create(
                 question=post, profile=post.profile
             ).exists()
-        elif isinstance(post, Answer):
-            (vote, created) = Vote.objects.get_or_create(
-                answer=post, profile=post.profile
-            ).exists()
         else:
-            (vote, created) = Vote.objects.get_or_create(
-                comment=post, profile=post.profile, type=type
-            ).exists()
+            if isinstance(post, Answer):
+                (vote, created) = Vote.objects.get_or_create(
+                    answer=post, profile=post.profile
+                ).exists()
         return (vote, created)

@@ -1,10 +1,12 @@
 
 from datetime import date, timedelta
 
+from django.conf import settings
 from django.db.models import (
     Model, ManyToManyField, ForeignKey, CASCADE, SET_NULL, CharField,
      TextField, PositiveIntegerField, IntegerField, DateField,
-     GenericIPAddressField, Manager, OuterRef, Subquery, Count, F
+     GenericIPAddressField, Manager, OuterRef, Subquery, Count, F,
+     UniqueConstraint
 )
 
 from django.contrib.contenttypes.fields import (
@@ -19,7 +21,7 @@ class QuestionSearchManager(Manager):
         super().__init__(*args, **kwargs)
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = super().get_queryset().prefetch_related("tags")
         return queryset.annotate(
             answer_tally=Count('answer')
         ).order_by("-date", "views", "-score")
@@ -80,6 +82,13 @@ class Tag(Model):
         db_table = "tag"
 
 
+    def __str__(self):
+        return f"{self.name}"
+
+    def get_absolute_url(self):
+        return f"/questions/posted/{self.name}"
+
+
 class Post(Model):
 
     body = TextField()
@@ -104,7 +113,7 @@ class Post(Model):
 class Question(Post):
 
     title = CharField(
-        max_length=55, unique_for_date="date",
+        max_length=80, unique_for_date="date",
         help_text="Concisely state the problem you're having",
         error_messages={
             "max_length": "The title of your question is too long"
@@ -121,6 +130,9 @@ class Question(Post):
     class Meta(Post.Meta):
         db_table = "question"
         ordering = ["-score" , "-date"]
+        constraints = [UniqueConstraint(fields=[
+            'title', 'date', 'profile'
+        ], name="duplicated_post_by_date")]
 
 
     def __repr__(self):
@@ -178,6 +190,7 @@ class Vote(Model):
 class QuestionPageHit(Model):
 
     question = ForeignKey("Question", on_delete=CASCADE, related_name="_views")
+    profile = ForeignKey(settings.AUTH_USER_MODEL, on_delete=SET_NULL, null=True)
     address = GenericIPAddressField()
 
 

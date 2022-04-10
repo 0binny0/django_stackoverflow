@@ -25,6 +25,9 @@ fieldset {
 
 @media screen and (min-width: 400px) {
 
+  fieldset {
+    margin-top: 10px;
+  }
 
   .form_wrapper {
     width: 400px;
@@ -34,9 +37,9 @@ fieldset {
   .user_credentials_form {
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
+    justify-content: center;
     border: 1px solid lightgrey;
-    height: 300px;
+    /* height: 350px; */
   }
 
   .user_form_input {

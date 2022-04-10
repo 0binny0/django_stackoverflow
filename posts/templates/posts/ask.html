@@ -1,0 +1,56 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block page_content %}
+  <div class="question_posting_form">
+    <h2>{{ title }}</h2>
+    {% if form.non_field_errors %}
+    <ul class="non_field_errors">
+    {% for error in form.non_field_errors %}
+      <li>{{ error }}</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    <form id="id_{{ form }}" method="post" action="{{ request.path }}">
+      {% csrf_token %}
+      {% for field in form %}
+        {% if field.html_name == "body" %}
+          <div class="content_posting">
+            {% include "./markdown_help.html" %}
+            <fieldset class="form_fieldset_widget">
+              <p>{{ field.label }}<p>
+              <p>{{ field.help_text }}</p>
+              {{ field }}
+            </fieldset>
+            <div class="post_draft" id="post_preview_question"></div>
+          </div>
+        {% elif field.html_name == "tags" %}
+          <fieldset id="tag_fieldset" class="form_fieldset_widget">
+            <p>{{ field.label }}</p>
+            <p>{{ field.help_text }}</p>
+            <div class="tag_boxes">
+              {% for field in field.subwidgets %}
+                {{ field }}
+              {% endfor %}
+            </div>
+          </fieldset>
+        {% else %}
+          <fieldset class="form_fieldset_widget">
+            <p>{{ field.label }}<p>
+            <p>{{ field.help_text }}</p>
+            {{ field }}
+          </fieldset>
+        {% endif %}
+      {% endfor %}
+      {% if request.resolver_match.url_name == "edit" %}
+        <button id="submit_question" type="submit">Edit Question</button>
+      {% else %}
+        <button id="submit_question" type="submit">Ask Question</button>
+      {% endif %}
+    </form>
+  </div>
+  {% comment 'Represents the page for creating & editing a question' %}{% endcomment %}
+  {% comment "see settings.py - DEBUG; added 'text/javascript' MIME type to resolve JS scripting error" %}{% endcomment %}
+  {% comment "https://stackoverflow.com/questions/64013643/failed-to-load-module-script-the-server-responded-with-a-non-javascript-mime-ty" %}{% endcomment %}
+  <script type="module" src="{% static 'posts/js/create_post.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+{% endblock page_content %}

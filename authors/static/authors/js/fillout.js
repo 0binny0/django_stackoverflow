@@ -3,11 +3,6 @@ let username_field = document.querySelector("#id_username");
 let password_fields = Array.from(document.querySelectorAll(`input[id*=password]`));
 let form_fields = [username_field, ...password_fields];
 
-document.addEventListener("DOMContentLoaded", function(event) {
-    password_fields[0].name = "password";
-    password_fields[0].id = "id_password";
-})
-
 function create_api_request() {
   if (!this.value) {
     throw new Error();
@@ -16,6 +11,10 @@ function create_api_request() {
   for (const key of form.keys()) {
     if (key === "csrfmiddlwaretoken" || !form.get(key)) {
       form.delete(key);
+    } else if (key === "password1") {
+      const password_value = form.get(key);
+      form.delete(key);
+      form.append("password", password_value)
     }
   }
   const query_string = new URLSearchParams(form);
@@ -58,6 +57,7 @@ function handle_empty_form_field(event) {
         }
       }
     }
+  } else {
     this.classList.remove("valid_status");
     this.classList.remove("error_status");
   }

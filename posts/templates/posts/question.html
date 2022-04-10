@@ -1,0 +1,72 @@
+
+{% extends 'index.html' %}
+{% load static %}
+{% load identifiers %}
+{% load humanize %}
+{% block page_content %}
+  <div class="main_topic">
+      {% if messages %}
+        <ul>
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+      <h2 class="question_title">{{ question.title }}</h2>
+      <div class="page_stats">
+        <p class="page_stat">asked {{ question.date }}  </p><p class="page_stat">  - viewed {{ question.views.all }} times</p>
+      </div>
+      {% voting_booth question question=question.id %}
+      <ul class="list tagging">
+      {% for tag in question.tags.all %}
+        <li class="inline_linked tag bg-blue"><a href="">{{ tag }}</a></li>
+      {% endfor %}
+      </ul>
+      {% if request.user.is_authenticated %}
+        <ul class="option_list">
+          <li class="post_option"><a class="blk_link" href="{% url 'posts:edit' id=question.id %}">Edit</a></li>
+          <li id="delete_post" class="post_option"><a class="blk_link" href="#">Delete</a></li>
+        </ul><div class="post_user_info">
+          <p class="post_date">asked {{ question.date }}</p>
+          <p class="post_author">{{ question.profile.user.username }}</p>
+        </div>
+      {% endif %}
+      <div class="question_answers">
+      {% if request.resolver_match.url_name == "question" %}
+        <h3 class="total_answers">{{ question.answers.count }} answers</h3>
+          {% for answer in question.answers.all %}
+            {% voting_booth answer question=question.id answer=answer.id %}  {% comment "" %}{% endcomment %}
+            {% if request.user.is_authenticated %}
+              <ul class="option_list">
+                <li class="post_option"><a class="blk_link" href="#">Edit</a></li>
+                <li id="delete_post" class="post_option"><a class="blk_link" href="#">Delete</a></li>
+              </ul>
+            {% endif %}
+          {% endfor %}
+      {% endif %}
+      <div class="posted answer_form">
+        {% include "./markdown_help.html" %}
+        <div class="post_draft" id="post_preview_answer"></div>
+        {% if form.errors %}
+          <ul class="list form_submission_errors">
+          {% for error in form.errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+          </ul>
+        {% endif %}
+        <form action="{% url 'posts:question' id=question.id %}" method="post">
+          {% csrf_token %}
+          {% for field in answer_form %}
+            <p class="field_help_text">{{ field.help_text }}</p>
+            {{ field }}
+          {% endfor %}
+          {% if request.resolver_match.url_name == "question" %}
+            <button type="submit">Answer Question</button>
+          {% else %}
+            <button type="submit">Edit Answer</button>
+          {% endif %}
+        </form>
+      </div>
+  </div>
+  <!-- <script type="module" src="{% static 'posts/js/create_post.js' %}"></script> -->
+{% endblock %}

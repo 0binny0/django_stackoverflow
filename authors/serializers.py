@@ -18,27 +18,31 @@ from .validators import character_validator, total_digits_validator
 
 class LoginSerializer(ModelSerializer):
 
-    username = CharField(min_length=6, max_length=20)
-    password = CharField(min_length=7, max_length=12)
+    username = CharField()
+    password = CharField()
+
+    def validate_username(self, value):
+        try:
+            user = self.Meta.model.objects.get(username=value)
+        except self.Meta.model.DoesNotExist:
+            msg = "No account registered with that username"
+            raise ValidationError(msg)
+        return value
 
     def validate(self, data):
         username_provided = data.get("username", None)
         password_provided = data.get("password", None)
         if username_provided:
-            try:
-                user = self.Meta.model.objects.get(username=data['username'])
-            except self.Meta.model.DoesNotExist:
-                msg = "No account registered with that username"
-                raise ValidationError({"username": msg})
-            else:
-                if password_provided:
-                    pass_match = check_password(data['password'], user.password)
-                    if not pass_match:
-                        raise ValidationError(
-                            {"password": "Password mismatch"},
-                            code="invalid_password"
-                        )
-                return data
+            username = self.validate_username(username_provided)
+            user = get_user_model().objects.get(username=username)
+            if password_provided:
+                pass_match = check_password(data['password'], user.password)
+                if not pass_match:
+                    raise ValidationError(
+                        {"password": "Password mismatch"},
+                        code="invalid_password"
+                    )
+            return data
         raise ValidationError({"password": "No username provided"})
 
 

@@ -50,7 +50,7 @@ class TestAccountsEndpointFailedRegistration(APITestCase):
         self.assertIn("non_field_errors", response.data)
         self.assertEqual(
             "registration failed",
-            response.data["non_field_errors"][0]
+            str(response.data["non_field_errors"][0])
         )
 
 

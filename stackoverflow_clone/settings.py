@@ -25,6 +25,9 @@ SECRET_KEY = 'django-insecure-tofhq6a4)7i=20e8a7%yp=$9l6fhq^6gd8ys=s^4+gl#4^$m%0
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+if DEBUG:
+    import mimetypes
+    mimetypes.add_type("text/javascript", ".js")
 
 ALLOWED_HOSTS = []
 
@@ -41,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'authors',
     'posts',
+    'django.contrib.humanize'
 ]
 
 MIDDLEWARE = [

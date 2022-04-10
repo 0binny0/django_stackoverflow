@@ -2,12 +2,15 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/main.css' %}" />
     <link rel="stylesheet" href="{% static 'posts/css/post_styles.css' %}" />
     <link rel="stylesheet" href="{% static 'authors/css/authors_styles.css' %}" />
   </head>
-  <body class="site_page">
-    <header class="searchbar orange-stroke">
+  <body id="page_body" class="site_page">
+    <header class="searchbar">
       <!-- wraps the form widget and help text to the same width -->
       <div class="search_query_container">
         <!-- svg icon absolutely positioned to sit inline with form widget  -->
@@ -21,16 +24,16 @@
 
           </svg> -->
         </div>
-        <ul class="list query_help_tips">
+        <ul class="list hide query_help_tips">
           <li>A</li>
           <li>B</li>
           <li>C</li>
         </ul>
-      </div><nav class="main_site_nav">
+      </div><nav class="main_site_nav grey_bg">
       {% if user.is_authenticated %}
-        <a class="btn nav_btn">Home</a><a class="btn nav_btn">Profile</a><a class="btn nav_btn">Logout</a>
+        <a href="{% url 'posts:main' %}" class="btn nav_btn">Home</a><a href="#" class="btn nav_btn">Profile</a><a href="{% url 'authors:logout' %}" class="btn nav_btn">Logout</a>
       {% else %}
-        <a class="btn nav_btn">Home</a><a class="btn nav_btn">Register</a><a class="btn nav_btn">Login</a>
+        <a href="{% url 'posts:main' %}" class="btn nav_btn">Home</a><a href="{% url 'authors:register' %}" class="btn nav_btn">Register</a><a href="{% url 'authors:login' %}" class="btn nav_btn">Login</a>
       {% endif %}
       </nav>
     </header>

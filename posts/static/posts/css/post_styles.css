@@ -1,11 +1,20 @@
 
 
-.query_button:hover {
-  background: ghostwhite;
-}
-
 .query_button:active {
   box-shadow: inset 0px 0px 2px 1px darkgrey;
+}
+
+.hide_mkd_block {
+  display: none;
+}
+
+.menu_style {
+  border: 1px solid lightgrey;
+  padding: 5px;
+}
+
+.post_draft {
+  margin-top: 10px;
 }
 
 @media screen and (min-width: 400px) {
@@ -23,6 +32,7 @@
     margin: 60px auto 0;
   }
 
+
   /*---------------
     query buttons lqyout
   --------------*/
@@ -31,21 +41,67 @@
     display: flex;
     position: absolute;
     width: 100%;
-    top: 60px;
+    top: 50px;
     left: 0;
   }
 
   .query_button {
     flex: 1;
     text-align: center;
-    line-height: 2.5;
+    /* line-height: 2.5; */
     border: 1px solid lightgrey;
     transition: box-shadow 200ms linear;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+  }
+
+  .query_buttons a {
+    color: black;
+    width: 100%;
+    height: 40px;
   }
 
   /*---------------
     page_content
   ---------------*/
+
+  .content_posting,
+  .form_fieldset_widget:nth-of-type(3) {
+    margin-top: 20px;
+  }
+
+  .adjust_box {
+    resize: vertical;
+    margin-top: 10px;
+  }
+
+  .question_posting_form {
+    margin: 30px auto;
+    width: 90%;
+  }
+
+  .question_input_shade {
+    outline: none;
+    border: 1px solid lightgrey;
+  }
+
+  .form_fieldset_widget {
+    margin-top: 10px;
+  }
+
+  .form_fieldset_widget:nth-of-type(3) {
+    margin-top: 10px;
+  }
+
+  .mk_item {
+    display: inline-block;
+    margin-left: 10px;
+  }
+
+  .mk_item:first-child {
+    margin-left: 0;
+  }
 
   .content_wrapper {
     /* width: 90%;
@@ -57,6 +113,137 @@
     width: 90%;
   }
 
+  /*-------------
+    question content
+  ------------*/
+
+  .content_wrapper {
+    margin-top: 20px;
+  }
+
+  .page_stats {
+    margin-bottom: 10px;
+    border-bottom: 1px solid grey;
+  }
+
+  .page_stat {
+    display: inline-block;
+    margin-bottom: 10px;
+  }
+
+  .stat {
+    display: inline-block;
+    margin: 0 10px 10px 0;
+  }
+
+  .user_question_info {
+    margin-top: 20px;
+  }
+
+  .authored_by {
+    text-align: right;
+  }
+
+  /*------------
+
+    tags
+  ------------*/
+
+  .linked {
+    color: blue;
+  }
+
+  .tag {
+    padding: 2.5px 5px;
+  }
+
+  .inline_tags_author {
+    display: flex;
+    margin-top: 10px;
+    justify-content: space-between;
+  }
+
+  .question_title {
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+
+  .rating_box {
+    display: flex;
+    align-items: flex-start;
+    margin-top: 15px;
+  }
+
+  .vote {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    margin-right: 15px;
+  }
+
+  .vote > p {
+    /* background: red; */
+    text-align: center;
+  }
+
+  .vote_button {
+    width: 30px;
+    height: 20px;
+  }
+
+  .post_body_content {
+    display: inline-block;
+    line-height: 1.5;
+  }
+
+  .post_option {
+    display: inline-block;
+  }
+
+  .post_option:not(:first-child) {
+    margin-left: 5px;
+  }
+
+  .posted_score {
+    margin: 5px 0;
+  }
+
+  .tagging {
+    margin-top: 20px;
+  }
+
+  .option_list {
+    margin: 20px 0 0 0;
+    width: 65%;
+    list-style: none;
+    padding: 0;
+    font-size: 14px;
+  }
+
+  .post_user_info {
+    width: 35%;
+    text-align: right;
+  }
+
+  .post_body_content["id=*comment"] {
+    margin-left: 20px;
+  }
+
+  .option_list,
+  .post_user_info {
+    display: inline-block;
+    vertical-align: bottom;
+  }
+
+  .question_answers {
+    margin-top: 15px;
+  }
+
+  .total_answers {
+    margin: 10px 0;
+  }
 }
 
 
@@ -88,7 +275,7 @@
   }
 
   .query_button {
-    flex: 0;
+    flex: none;
     text-align: center;
     line-height: 2.5;
     padding: 1.25px 15px;

@@ -1,0 +1,23 @@
+{
+  "name": "django_stackoverflow",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BenLHedgepeth/django_stackoverflow.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BenLHedgepeth/django_stackoverflow/issues"
+  },
+  "homepage": "https://github.com/BenLHedgepeth/django_stackoverflow#readme",
+  "dependencies": {
+    "marked": "^4.0.12"
+  }
+}
