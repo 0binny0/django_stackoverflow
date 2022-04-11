@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from authors.models import Profile
 
-from ..models import Tag, Question
+from ..models import Tag, Question, Answer
 from ..forms import QuestionForm
 from ..views import QuestionListingPage, EditQuestionPage, Page, PostedQuestionPage
 
@@ -99,8 +99,8 @@ class TestGetEditQuestionPage(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        user = get_user_model().objects.create_user("The_User_000")
-        profile = Profile.objects.create(user=user)
+        cls.user = get_user_model().objects.create_user("The_User_000")
+        profile = Profile.objects.create(user=cls.user)
         tag = Tag.objects.create(name="TagABC")
         question = Question.objects.create(
             title="What is the difference between A & B?",
@@ -111,9 +111,10 @@ class TestGetEditQuestionPage(TestCase):
 
 
     def test_user_question_instance_populates_edit_form(self):
+        self.client.force_login(self.user)
         response = self.client.get(
             reverse("posts:edit", kwargs={
-                'id': 1
+                'question_id': 1
             })
         )
         self.assertEqual(response.status_code, 200)
@@ -149,13 +150,15 @@ class TestPostEditQuestionPage(TestCase):
     def test_posted_question_content_changed(self):
         self.client.force_login(self.user)
         response = self.client.post(
-            reverse("posts:edit", kwargs={"id": 1}),
+            reverse("posts:edit", kwargs={"question_id": 1}),
             data=self.data
         )
-        self.assertRedirects(response, reverse("posts:question", kwargs={"id": 1}), status_code=303)
+        self.assertRedirects(
+            response, reverse("posts:question", kwargs={"question_id": 1}),
+            status_code=303
+        )
 
 class TestGetPostedQuestionPage(TestCase):
-    '''See Notes #1'''
     @classmethod
     def setUpTestData(cls):
         tag = Tag.objects.create(name="Tag3")
@@ -174,7 +177,7 @@ class TestGetPostedQuestionPage(TestCase):
     def test_get_newly_asked_question_posted(self):
         self.client.force_login(self.user)
         response = self.client.get(
-            reverse("posts:question", kwargs={"id": 1})
+            reverse("posts:question", kwargs={"question_id": 1})
         )
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "posts/question.html")
@@ -184,7 +187,52 @@ class TestGetPostedQuestionPage(TestCase):
         self.assertContains(response, "MainUser_000")
 
 
-'''
-    NOTES:
-        1) TestGetPostedQuestionPage test fails; works in development mode
-'''
+class TestEditInstanceAnswerPage(TestCase):
+    '''Verify that a User who has posted an Answer to a given Question
+    has the ability to edit their answer.'''
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = get_user_model().objects.create_user("TestUser")
+        cls.profile = Profile.objects.create(user=cls.user)
+        cls.answer_user = get_user_model().objects.create_user("TheAnswer")
+        cls.answer_profile = Profile.objects.create(user=cls.answer_user)
+        cls.tag = Tag.objects.create(name="Tag1")
+        cls.question = Question.objects.create(
+            title="How do I get an answer to my post",
+            body="This is the content that elaborates on the title that the user provided",
+            profile=cls.profile
+        )
+        cls.question.tags.add(cls.tag)
+        cls.answer = Answer.objects.create(
+            body="This is answer in response to 'How do I get an answer to my post'",
+            question=cls.question,
+            profile=cls.answer_profile
+        )
+        cls.data = {
+            "body": "This is a not a very good question. Let me explain why."
+        }
+
+    def test_request_get_page_to_edit_answer(self):
+        self.client.force_login(self.answer_user)
+        response = self.client.get(
+            reverse("posts:answer_edit", kwargs={
+                "question_id": self.question.id, "answer_id": self.answer.id
+            })
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "posts/question.html")
+
+    def test_post_request_edited_answer(self):
+        self.client.force_login(self.answer_user)
+        response = self.client.post(
+            reverse("posts:answer_edit", kwargs={
+                "question_id": self.question.id,
+                "answer_id": self.answer.id
+            }), data=self.data
+        )
+        self.assertRedirects(
+            response, reverse("posts:question", kwargs={'question_id': 1}),
+            status_code=303
+        )

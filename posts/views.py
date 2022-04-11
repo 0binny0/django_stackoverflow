@@ -9,7 +9,7 @@ from django.urls import reverse
 
 from authors.models import Profile
 from .forms import SearchForm, QuestionForm, AnswerForm
-from .models import Question, Tag
+from .models import Question, Tag, Answer
 
 from django.http import HttpResponseRedirect
 from authors.http_status import SeeOtherHTTPRedirect
@@ -82,7 +82,9 @@ class AskQuestionPage(Page):
                 question.tags.add(*tags)
                 form.save_m2m()
                 return SeeOtherHTTPRedirect(
-                    reverse("posts:question", kwargs={"id": question.id})
+                    reverse("posts:question", kwargs={
+                        "question_id": question.id
+                    })
                 )
         return self.render_to_response(context)
 
@@ -94,8 +96,8 @@ class EditQuestionPage(AskQuestionPage):
         'title': "Edit your question"
     }
 
-    def get(self, request, id):
-        question = get_object_or_404(Question, id=id)
+    def get(self, request, question_id):
+        question = get_object_or_404(Question, id=question_id)
         context = self.get_context_data()
         context['form'] = context['form'](instance=question)
         return self.render_to_response(
@@ -104,8 +106,8 @@ class EditQuestionPage(AskQuestionPage):
             }
         )
 
-    def post(self, request, id):
-        question = get_object_or_404(Question, id=id)
+    def post(self, request, question_id):
+        question = get_object_or_404(Question, id=question_id)
         context = self.get_context_data()
         form = context['form'](request.POST, instance=question)
         if form.is_valid():
@@ -116,7 +118,7 @@ class EditQuestionPage(AskQuestionPage):
             question = form.save()
             question.tags.set(tags)
             return SeeOtherHTTPRedirect(reverse(
-                "posts:question", kwargs={"id": id}
+                "posts:question", kwargs={"question_id": question_id}
             ))
         return self.render_to_response(context)
 
@@ -130,8 +132,47 @@ class PostedQuestionPage(Page):
         context['answer_form'] = AnswerForm
         return context
 
-    def get(self, request, id):
+    def get(self, request, question_id):
         context = self.get_context_data()
-        question = get_object_or_404(Question, id=id)
+        question = get_object_or_404(Question, id=question_id)
         context['question'] = question
         return self.render_to_response(context)
+
+
+    def post(self, request, question_id):
+        question = get_object_or_404(Question, id=question_id)
+        context = super.get_context_data()
+        form = context['answer_form'](request.POST)
+        if form.is_valid():
+            form.cleaned_data.update({"profile": request.user.profile})
+            answer = Answer.objects.create(
+                **form.cleaned_data, question=question
+            )
+            return SeeOtherHTTPRedirect(
+                reverse("posts:question", kwargs={
+                    "question_id": answer.question.id
+                })
+            )
+
+
+class EditPostedAnswerPage(PostedQuestionPage):
+
+    def get(self, request, question_id, answer_id):
+        context = super().get(request, question_id).context_data
+        answer = get_object_or_404(Answer, pk=answer_id)
+        context.update({
+            "answer_form": context['answer_form'](instance=answer),
+            'answer': answer
+        })
+        return self.render_to_response(context)
+
+    def post(self, request, question_id, answer_id):
+        context = super().get_context_data()
+        question = get_object_or_404(Question, pk=question_id)
+        answer = get_object_or_404(Answer, pk=answer_id)
+        if context['answer_form'](request.POST, instance=answer).is_valid():
+            return SeeOtherHTTPRedirect(
+                reverse("posts:question", kwargs={
+                    'question_id': 1
+                })
+            )
