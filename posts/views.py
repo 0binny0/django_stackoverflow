@@ -176,4 +176,7 @@ class EditPostedAnswerPage(PostedQuestionPage):
                     'question_id': 1
                 })
             )
+<<<<<<< HEAD
         return self.render_to_response(context)
+=======
+>>>>>>> e164dce4f175d738bedeef8dd3164b14e016623f
