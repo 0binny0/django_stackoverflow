@@ -13,6 +13,17 @@ a {
 
 }
 
+.search_tip {
+  padding-left: 20px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.tip_style {
+  font-size: 13px;
+  color: grey;
+}
+
 blockquote {
   font-style: italic;
   /* text-decoration: underline; */

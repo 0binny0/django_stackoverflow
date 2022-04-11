@@ -48,7 +48,7 @@
   .query_button {
     flex: 1;
     text-align: center;
-    /* line-height: 2.5; */
+    line-height: 2.5;
     border: 1px solid lightgrey;
     transition: box-shadow 200ms linear;
     display: flex;

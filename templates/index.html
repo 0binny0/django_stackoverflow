@@ -15,7 +15,7 @@
       <div class="search_query_container">
         <!-- svg icon absolutely positioned to sit inline with form widget  -->
         <div class="icon_search_form">
-          <form class="search_form">
+          <form class="search_form" method="get" action="{% url 'posts:search' %}">
           {% for field in search_form %}
             {{ field }}
           {% endfor %}
@@ -25,9 +25,7 @@
           </svg> -->
         </div>
         <ul class="list hide query_help_tips">
-          <li>A</li>
-          <li>B</li>
-          <li>C</li>
+          <li class="search_tip">[ tag ] <span class="tip_style">search within a tag</span></li><li class="search_tip">user:0123<span class="tip_style"> search by user</span></li><li class="search_tip">title: 'words here' <span class="tip_style">search by title</span></li>
         </ul>
       </div><nav class="main_site_nav grey_bg">
       {% if user.is_authenticated %}
@@ -40,5 +38,6 @@
     <section class="content_box">
     {% block page_content %}{% endblock %}
     </section>
+    <script src="{% static 'js/navigate.js' %}"></script>
   </body>
 </html>

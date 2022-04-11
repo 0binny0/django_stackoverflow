@@ -138,10 +138,10 @@ class PostedQuestionPage(Page):
         context['question'] = question
         return self.render_to_response(context)
 
-
     def post(self, request, question_id):
+        # import pdb; pdb.set_trace()
         question = get_object_or_404(Question, id=question_id)
-        context = super.get_context_data()
+        context = self.get_context_data()
         form = context['answer_form'](request.POST)
         if form.is_valid():
             form.cleaned_data.update({"profile": request.user.profile})
@@ -176,7 +176,4 @@ class EditPostedAnswerPage(PostedQuestionPage):
                     'question_id': 1
                 })
             )
-<<<<<<< HEAD
         return self.render_to_response(context)
-=======
->>>>>>> e164dce4f175d738bedeef8dd3164b14e016623f

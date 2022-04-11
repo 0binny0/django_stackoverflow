@@ -10,7 +10,12 @@ window.addEventListener("load", function(event) {
 
 })
 
-search_widget.addEventListener("click", function(event) {
+search_widget.addEventListener("focus", function(event) {
+  const search_tips = document.querySelector(".query_help_tips");
+  search_tips.classList.toggle("hide");
+})
+
+search_widget.addEventListener("blur", function(event) {
   const search_tips = document.querySelector(".query_help_tips");
   search_tips.classList.toggle("hide");
 })
