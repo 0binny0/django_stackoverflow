@@ -6,7 +6,7 @@
       <p class="stat">{{ question.score }} vote{{ question.score|pluralize }}</p><p class="stat">{{ question.answers.count }} answer{{ question.answers.count|pluralize  }}</p><p class="stat">{{ question.views }} view{{ question.score|pluralize  }}</p>
     </div>
     <div class="question_content">
-      <h3><a class="linked" href="{% url 'posts:question' id=question.id %}">{{ question.title }}</a></h3>
+      <h3><a class="linked" href="{% url 'posts:question' question_id=question.id %}">{{ question.title }}</a></h3>
       <div class="inline_tags_author">
         <div class="linked_tags_list">
         {% for tag in question.tags.all %}

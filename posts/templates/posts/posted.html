@@ -1,3 +1,4 @@
+
 <div class="rating_box">
   <div class="vote">
     <svg id="upvote_{{ id }}" class="vote_button">
@@ -9,10 +10,12 @@
     </svg>
   </div>
   <p class="post_body_content">{{ post.body }}</p>
-  {% if request.user.is_authenticated %}
+  {% if request.user.is_authenticated and post.profile.user == request.user %}
     <ul class="option_list">
-      <li class="post_option"><a class="blk_link" href="{% url 'posts:edit' id=post.id %}">Edit</a></li>
+      <li class="post_option"><a class="blk_link" href="{{ url }}">Edit</a></li>
       <li id="delete_post{{ id }}" class="post_option"><a class="blk_link" href="#">Delete</a></li>
     </ul>
   {% endif %}
 </div>
+
+{% comment "{{ id }}" %}{% endcomment %}

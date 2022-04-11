@@ -25,8 +25,9 @@ from authors import endpoints as api
 posts_patterns = ([
     path("", pv.QuestionListingPage.as_view(), name="main"),
     path("questions/ask/", pv.AskQuestionPage.as_view(), name="ask"),
-    path("questions/edit/<id>/", pv.EditQuestionPage.as_view(), name="edit"),
-    path("questions/<id>/", pv.PostedQuestionPage.as_view(), name="question")
+    path("questions/<question_id>/edit/", pv.EditQuestionPage.as_view(), name="edit"),
+    path("questions/<question_id>/edit/answers/<answer_id>/", pv.EditPostedAnswerPage.as_view(), name="answer_edit"),
+    path("questions/<question_id>/", pv.PostedQuestionPage.as_view(), name="question")
 ], "posts")
 
 posts_api_patterns = []
