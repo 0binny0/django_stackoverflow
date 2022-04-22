@@ -6,13 +6,20 @@ from django.db.models import (
     Model, ManyToManyField, ForeignKey, CASCADE, SET_NULL, CharField,
      TextField, PositiveIntegerField, IntegerField, DateField,
      GenericIPAddressField, Manager, OuterRef, Subquery, Count, F,
-     UniqueConstraint
+     UniqueConstraint, QuerySet
 )
 
 from django.contrib.contenttypes.fields import (
     GenericForeignKey,  GenericRelation
 )
 from django.contrib.contenttypes.models import ContentType
+
+
+# class QuestionSearchQuerySet(Manager):
+#
+#     def get_queryset(self, regex):
+#         queryset = super().get_queryset()
+
 
 
 class QuestionSearchManager(Manager):

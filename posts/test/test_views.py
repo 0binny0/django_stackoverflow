@@ -5,6 +5,7 @@ from datetime import date
 
 from django.test import TestCase, SimpleTestCase, RequestFactory
 from django.urls import reverse
+from django.utils.http import urlencode
 from django.contrib.auth import get_user_model
 from authors.models import Profile
 
@@ -236,3 +237,25 @@ class TestEditInstanceAnswerPage(TestCase):
             response, reverse("posts:question", kwargs={'question_id': 1}),
             status_code=303
         )
+
+
+# class TestGetSearchQueryResults(SimpleTestCase):
+#     '''Verify that a User is directed to a search page of results
+#     when a seach query is provided.'''
+#
+#     def setUp(self):
+#         search_path = reverse("posts:search")
+#         query = urlencode({
+#             'q': "[Python][Django] title:non_field_errors"
+#         })
+#         self.url = f"{search_path}?{query}"
+#         return self.url
+#
+#     def test_get_search_results_query(self):
+#         response = self.client.get(self.url)
+#         self.assertEqual(response.status_code, 200)
+#         self.assertTemplateUsed(response, "posts/search.html")
+#         self.assertContains(response, "Search Results")
+#         self.assertContains(response, "Results for non_field_errors")
+#         self.assertContains(response, "Python")
+#         self.assertContains(response, "Django")

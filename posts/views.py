@@ -177,3 +177,14 @@ class EditPostedAnswerPage(PostedQuestionPage):
                 })
             )
         return self.render_to_response(context)
+
+
+class SearchResultsPage(Page):
+    pass
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context['questions'] = Question.posted.all()
+    #     return context
+    #
+    # def get(self, request):
+    #     pass

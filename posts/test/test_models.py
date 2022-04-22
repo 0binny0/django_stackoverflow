@@ -105,3 +105,44 @@ class TestQuestionScoreUpVote(TestCase):
             profile=self.profile, type="dislike", content_object=self.question
         )
         self.assertEqual(self.question.score, -1)
+
+
+# class TestQuestionSearchesManager(TestCase):
+#
+#     @classmethod
+#     def setUpTestData(cls):
+#         cls.user1 = get_user_model().objects.create_user("MeT00")
+#         cls.profile1 = Profile.objects.create(user=cls.user1)
+#         cls.user2 = get_user_model().objects.create_user("YouT00")
+#         cls.profile2 = Profile.objects.create(user=cls.user2)
+#         cls.tag1 = Tag.objects.create(name="Tag1")
+#         cls.tag2 = Tag.objects.create(name="Tag2")
+#         cls.tag3 = Tag.objects.create(name="Tag3")
+#         cls.question1 = Question.objects.create(
+#             title="This is a question about creating custom Django Managers",
+#             body="When creating managers, is it best to encapsulate methods based on their functionality?",
+#             profile=cls.profile2
+#         )
+#         cls.question1.tags.add(*[cls.tag2, cls.tag3])
+#         cls.question2 = Question.objects.create(
+#             title="How do I decided when to subclass a Django View?",
+#             body="When it comes to inheritence, what features of a view do you most likely find yourself wanting to extend?",
+#             profile=cls.profile2
+#         )
+#         cls.question2.tags.add(cls.tag2)
+#         cls.question3= Question.objects.create(
+#             title="What features do you not like about Django?",
+#             body="When it comes to using Django, are there any features that you can live without?",
+#             profile=cls.profile1
+#         )
+#         cls.question3.tags.add(cls.tag1)
+#
+#         cls.queryset = Question.searches.all(['tag3'])
+#
+#     def test_search_questions_by_regex_tags(self):
+#         self.assertEqual(self.queryset.count(), 1)
+#         self.assertQuerysetEqual(
+#             self.queryset, [
+#                 "Question(This is a question about creating custom Django Managers)"
+#             ], transform=repr
+#         )
