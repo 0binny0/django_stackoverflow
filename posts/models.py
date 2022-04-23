@@ -14,12 +14,22 @@ from django.contrib.contenttypes.fields import (
 )
 from django.contrib.contenttypes.models import ContentType
 
+from .utils import resolve_search_query
 
-# class QuestionSearchQuerySet(Manager):
-#
-#     def get_queryset(self, regex):
-#         queryset = super().get_queryset()
 
+class QueryStringSearchManager(Manager):
+
+    def lookup(self, query):
+        queryset = super().get_queryset()
+        query_data = resolve_search_query(query)
+        if 'tags' in query_data and query_data['tags']:
+            tags = Tag.objects.filter(name__in=query_data['tags'])
+            queryset = queryset.filter(tags__in=tags)
+        if 'title' in query_data and query_data['title']:
+            queryset = queryset.filter(title__contains=query_data['title'])
+        if 'user' in query_data and query_data['user']:
+            queryset = queryset.filter(profile_id=query_data['user'])
+        return queryset, query_data
 
 
 class QuestionSearchManager(Manager):
@@ -132,6 +142,7 @@ class Question(Post):
     views = IntegerField(default=0)
     objects = Manager()
     postings = QuestionSearchManager()
+    searches = QueryStringSearchManager()
 
 
     class Meta(Post.Meta):

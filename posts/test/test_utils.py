@@ -60,19 +60,19 @@ class TestQueryStringSearches(SimpleTestCase):
         self.query_strings = [
             "[s   python ] [ django models ]",
             "[]  [django-forms] title://django form inheritance [  python---]",
-            "user: 333         [Python]   [___________Django  ---- Models]",
+            "user:333         [Python]   [___________Django  ---- Models]",
             "[--i- Python-   _   - ------]",
             "title://django form inheritance user:228 [  oop---]",
-            "        [ JavaScript!- ((()))] title:    [django-rest-framework] user: 729"
+            "        [ JavaScript!- ((()))] title:    [django-rest-framework] user:729"
 
         ]
         self.query_data = [
             {"title": None, "tags": ["spython", "djangomodels"], "user": None},
             {"title": "django form inheritance", "tags": ["django-forms", "python"], "user": None},
-            {"title": None, "tags": ["python", "django-models"], "user": "user 333"},
+            {"title": None, "tags": ["python", "django-models"], "user": 333},
             {"title": None, "tags": ["i-python"], "user": None},
-            {"title": "django form inheritance", "tags": ["oop"], "user": "user 228"},
-            {"title": None, "tags": ['javascript', 'django-rest-framework'], "user": "user 729"}
+            {"title": "django form inheritance", "tags": ["oop"], "user": 228},
+            {"title": None, "tags": ['javascript', 'django-rest-framework'], "user": 729}
         ]
 
     def test_query_string_contains_tags(self):
@@ -87,9 +87,9 @@ class TestUserIdSearchQuery(SimpleTestCase):
 
     def setUp(self):
         self.mock_user_id_searches = [
-            "user:    5O3", "user: abc", "user: 1o55X|1", "user:      "
+            "user:5O3", "user abc", "user:1o55X|1", "user:      "
         ]
-        self.user_id_results = ["user 53", None, "user 1551", None]
+        self.user_id_results = [5, None, 1, None]
 
     def test_search_user_id_match(self):
         for i, user_search in enumerate(self.mock_user_id_searches):

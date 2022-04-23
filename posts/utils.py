@@ -27,18 +27,21 @@ def retrieve_query_tags(string):
         return None
     tag_content = list(map(
         lambda match: "-".join(
-            re.findall(r"([a-zA-Z]+)", match.lower())
-        ), contained_tags
+            re.findall(r"([a-zA-Z0-9]+)", match.lower())
+        ), filter(lambda tag: tag, contained_tags)
     ))[:2]
     return tag_content
 
 def retrieve_query_user_id(string):
-    user_id_search = re.compile(r"(?<=user:).*")
+    # import pdb; pdb.set_trace()
+    user_id_search = re.compile(r"(?<=user:)(\d+)")
     searching_by_user = user_id_search.search(string)
     if searching_by_user:
-        user_id = "".join(re.findall(r"(\d+)", string))
-        if user_id:
-            return f"user {user_id}"
+        # user_id = re.search(r"(\d+)", searching_by_user[0])
+        return int(searching_by_user[0])
+        # user_id = "".join(re.search(r"(\d+)", searching_by_user[0]))
+        # if user_id:
+        #     return int(user_id)
     return None
 
 def resolve_search_query(string):
