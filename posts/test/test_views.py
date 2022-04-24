@@ -11,7 +11,7 @@ from authors.models import Profile
 
 from ..models import Tag, Question, Answer
 from ..forms import QuestionForm
-from ..views import QuestionListingPage, EditQuestionPage, Page, PostedQuestionPage
+from ..views import QuestionListingPage, EditQuestionPage, Page, PostedQuestionPage, SearchResultsPage, PaginatedPage
 
 
 class TestQuestionListingPageTemplateContext(SimpleTestCase):
@@ -239,23 +239,70 @@ class TestEditInstanceAnswerPage(TestCase):
         )
 
 
-# class TestGetSearchQueryResults(SimpleTestCase):
-#     '''Verify that a User is directed to a search page of results
-#     when a seach query is provided.'''
+
+class TestSearchResultPage(SimpleTestCase):
+
+    def setUp(self):
+        self.view = SearchResultsPage()
+        self.template_context = self.view.get_context_data()
+
+    def test_search_page(self):
+        self.assertIsInstance(self.view, Page)
+        self.assertListEqual(
+            self.template_context['query_buttons'],
+            ["Newest", "Active", "Unaswered", "Score"]
+        )
+        self.assertEqual(
+            self.view.template_name, "posts/listing.html"
+        )
+
+
+class TestGetPaginatedPage(SimpleTestCase):
+
+    def setUp(self):
+        query = urlencode({'q': 'django views', 'pagesize': 10, 'page': ""})
+        request = RequestFactory().get(
+            f'reverse("posts:search")?{query}'
+        )
+        self.page = PaginatedPage.as_view()(request)
+        self.page_context = self.page.context_data
+
+    def test_get_search_page(self):
+        self.assertEqual(
+            self.page_context['paginator'].per_page, 10
+        )
+        self.assertEqual(
+            self.page_context['paginator'].object_list.count(), 0
+        )
+        self.assertEqual(
+            self.page_context['page'].number, 1
+        )
+
+
+# class TestGetSearchPageNoResults(TestCase):
 #
-#     def setUp(self):
-#         search_path = reverse("posts:search")
-#         query = urlencode({
-#             'q': "[Python][Django] title:non_field_errors"
-#         })
-#         self.url = f"{search_path}?{query}"
-#         return self.url
+#     @classmethod
+#     def setUpTestData(cls):
+#         url_path = reverse(f"{'posts:search'}")
+#         cls.url = f"{url_path}?{urlencode({'q': 'user:4  [ d  jango]'})}"
+#         cls.url2 = f"{url_path}?{urlencode({'q': 'title:hamburgerbun  '})}"
+#         # cls.url3 = reverse(
+#         #     f"{posts:search}?q={urlencode('[] [            ]')}"
+#         # )
+#         # cls.url4 = reverse(
+#         #     f"{posts:search}?q={urlencode('title:      ')}"
+#         # )
 #
-#     def test_get_search_results_query(self):
+#     def test_get_search_results_user_not_found(self):
 #         response = self.client.get(self.url)
 #         self.assertEqual(response.status_code, 200)
-#         self.assertTemplateUsed(response, "posts/search.html")
-#         self.assertContains(response, "Search Results")
-#         self.assertContains(response, "Results for non_field_errors")
-#         self.assertContains(response, "Python")
-#         self.assertContains(response, "Django")
+#         self.assertTemplateUsed(response, "posts/empty_results.html")
+#         self.assertContains(response, "We couldn't find anything tagged")
+#         self.assertContains(response, "not deleted, user 4")
+#
+#     def test_get_search_results_bad_title_entered(self):
+#         response = self.client.get(self.url)
+#         self.assertEqual(response.status_code, 200)
+#         self.assertTemplateUsed(response, "posts/empty_results.html")
+#         self.assertContains(response, "We couldn't find anything for your search")
+#         self.assertContains(response, "title hamburgerbun, questions only, not deleted")

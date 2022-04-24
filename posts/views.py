@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
+from django.core.paginator import Paginator
 
 from authors.models import Profile
 from .forms import SearchForm, QuestionForm, AnswerForm
@@ -179,12 +180,53 @@ class EditPostedAnswerPage(PostedQuestionPage):
         return self.render_to_response(context)
 
 
+class PaginatedPage(Page):
+
+    template_name = "posts/main.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        r = self.request
+        page_sizes = {
+            '10': 10,
+            '20': 20,
+            '40': 40
+        }
+        page_number, page_size = [
+            r.GET.get('page', None), r.GET.get('pagesize', None)
+        ]
+        page_size = page_sizes.get(r.GET.get('pagesize'), 10)
+        paginator = Paginator(Question.objects.none(), page_size)
+        page = paginator.get_page(page_number)
+        context.update({
+            'paginator': paginator,
+            'page': page
+        })
+        return context
+
+
 class SearchResultsPage(Page):
-    pass
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context['questions'] = Question.posted.all()
-    #     return context
-    #
-    # def get(self, request):
-    #     pass
+
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['query_buttons'] = ["Newest", "Active", "Unaswered", "Score"]
+        return context
+
+    def get(self, request):
+        response = super().get()
+
+
+    def get(self, request):
+        context = super().get_context_data()
+        query = request.GET.get('q')
+        queryset, query_data = Question.searches.lookup(query)
+        if not query_data['title'] and not query_data['user']:
+            pass
+            # url = reverse("posts:tagged")
+            # return HttpResponseRedirect(f"{url}?{urlencode(request.GET)}")
+        else:
+            context['title'] = "Search Results"
+        context.update({"questions": queryset, 'query_data': query_data})
+        return self.render_to_response(context)
