@@ -195,7 +195,7 @@ class PaginatedPage(Page):
         page_number, page_size = [
             r.GET.get('page', None), r.GET.get('pagesize', None)
         ]
-        page_size = page_sizes.get(r.GET.get('pagesize'), 10)
+        page_size = page_sizes.get(page_size, 10)
         paginator = Paginator(Question.objects.none(), page_size)
         page = paginator.get_page(page_number)
         context.update({
@@ -206,7 +206,6 @@ class PaginatedPage(Page):
 
 
 class SearchResultsPage(Page):
-
 
 
     def get_context_data(self, **kwargs):
