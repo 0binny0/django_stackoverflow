@@ -1,9 +1,10 @@
 
 from django.test import SimpleTestCase
+from unittest.mock import PropertyMock, patch
 
 from ..utils import (
     resolve_search_query, retrieve_query_title, retrieve_query_tags,
-    retrieve_query_user_id
+    retrieve_query_user_id, get_page_links
 )
 
 class TestSearchQueryTitle(SimpleTestCase):
@@ -98,4 +99,30 @@ class TestUserIdSearchQuery(SimpleTestCase):
                 self.assertEqual(
                     user_id_result,
                     self.user_id_results[i]
+                )
+
+
+class TestCustomDynamicPageSelector(SimpleTestCase):
+
+    def setUp(self):
+        self.current_page = [13, 8, 10, 4, 1, 14, 2]
+
+        self.returned_page_links = [
+            [10, 11, 12, 13, 14], [6, 7, 8, 9, 10], [8, 9, 10, 11, 12], [2, 3, 4, 5, 6],
+            [1, 2, 3, 4, 5], [10, 11, 12, 13, 14], [1, 2, 3, 4, 5]
+        ]
+
+    @patch('django.core.paginator.Page')
+    @patch('django.core.paginator.Paginator')
+    def test_selected_page_links(self, mock_paginator, mock_page):
+        mock_paginator.page_range = range(1, 15)
+        mock_paginator.num_pages = 10
+        for i, page in enumerate(self.current_page):
+            with self.subTest(i=i):
+                mock_page.number = self.current_page[i]
+                mock_page.paginator = mock_paginator
+                page_links_returned = get_page_links(mock_page)
+                self.assertListEqual(
+                    page_links_returned,
+                    self.returned_page_links[i]
                 )
