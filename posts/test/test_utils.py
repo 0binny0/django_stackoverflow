@@ -1,10 +1,12 @@
 
-from django.test import SimpleTestCase
+from django.test import SimpleTestCase, RequestFactory
+from django.utils.http import urlencode
 from unittest.mock import PropertyMock, patch
+from django.urls import reverse
 
 from ..utils import (
     resolve_search_query, retrieve_query_title, retrieve_query_tags,
-    retrieve_query_user_id, get_page_links
+    retrieve_query_user_id, get_page_links,
 )
 
 class TestSearchQueryTitle(SimpleTestCase):

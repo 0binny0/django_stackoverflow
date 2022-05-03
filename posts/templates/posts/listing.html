@@ -1,5 +1,5 @@
 {% load static %}
-<div class="content_wrapper">
+{% load identifiers %}
 {% for question in questions %}
   <div class="user_question_info">
     <div class="question_stats">
@@ -20,7 +20,14 @@
 {% if request.resolver_match.url_name == "main" %}
   <h3 class="page_footer">Looking for more? Browse the complete list of questions. Help us answer <a href="#">unanswered questions</a>.</h3>
 {% else %}
-
+  <div class="page_through_wrapper">
+  {% for page_number in page_links %}
+    {% if page_number == questions.number %}
+      <a class="active_page_num" href="{% set_page_number_url page %}">{{ page.number }}</a>
+    {% else %}
+      <a class="inactive_page_num" href="{% set_page_number_url page %}">{{ page.number }}</a>
+    {% endif %}
+  {% endfor %}
+  </div>
 {% endif %}
   <script type="module" src="{% static 'posts/js/listing.js' %}"></script>
-</div>

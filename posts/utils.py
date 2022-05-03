@@ -55,13 +55,14 @@ def resolve_search_query(string):
     }
 
 def get_page_links(page):
-    page_links = list(page.paginator.page_range)
-    total_pages = page.paginator.num_pages
+    paginator = page.paginator
+    page_links = list(paginator.page_range)
+    total_pages = paginator.num_pages
     if total_pages >= 5:
         if page.number == page_links[-1] or page.number == page_links[-2]:
-            return page_links[-5:]
+            return [n for n in page_links[-5:]]
         elif page.number < 3:
-            return page_links[:5]
+            return [n for n in page_links[:5]]
         page_index = page_links.index(page.number)
-        return page_links[page_index - 2:page_index + 3]
-    return range(1, total_pages + 1)
+        return [n for n in page_links[page_index - 2:page_index + 3]]
+    return [n for n in range(1, total_pages + 1)]

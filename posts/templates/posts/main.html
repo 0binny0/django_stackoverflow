@@ -12,7 +12,17 @@
     {% endfor %}
     </ul>
   </div>
-  {% include './listing.html' %}
+  <div class="content_wrapper">
+    {% with view_name=request.resolver_match.url_name %}
+      {% if view_name == "search" or view_name == "tagged" and not questions %}
+        <div class="empty_listing">
+          {% include './empty_results.html'  %}
+        </div>
+      {% else %}
+        {% include './listing.html' %}
+      {% endif %}
+    {% endwith %}
+  </div>
 {% endblock %}
 
 

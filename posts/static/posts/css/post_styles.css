@@ -113,6 +113,12 @@
     width: 90%;
   }
 
+  .empty_listing {
+    margin-top: 50px;
+    text-align: center;
+    line-height: 1.5;
+  }
+
   /*-------------
     question content
   ------------*/

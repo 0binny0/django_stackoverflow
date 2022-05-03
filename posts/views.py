@@ -15,6 +15,8 @@ from .models import Question, Tag, Answer
 from django.http import HttpResponseRedirect
 from authors.http_status import SeeOtherHTTPRedirect
 
+from .utils import get_page_links
+
 
 class Page(TemplateView):
 
@@ -192,33 +194,19 @@ class PaginatedPage(Page):
             '20': 20,
             '40': 40
         }
-        page_number, page_size = [
-            r.GET.get('page', None), r.GET.get('pagesize', None)
-        ]
+        page_size = r.GET.get('pagesize', None)
         page_size = page_sizes.get(page_size, 10)
         paginator = Paginator(Question.objects.none(), page_size)
-        page = paginator.get_page(page_number)
         context.update({
             'paginator': paginator,
-            'page': page
+            'query_buttons': ["Newest", "Active", "Unanswered", "Score"]
         })
         return context
 
 
-class SearchResultsPage(Page):
-
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['query_buttons'] = ["Newest", "Active", "Unaswered", "Score"]
-        return context
+class SearchResultsPage(PaginatedPage):
 
     def get(self, request):
-        response = super().get()
-
-
-    def get(self, request):
-        context = super().get_context_data()
         query = request.GET.get('q')
         queryset, query_data = Question.searches.lookup(query)
         if not query_data['title'] and not query_data['user']:
@@ -226,6 +214,26 @@ class SearchResultsPage(Page):
             # url = reverse("posts:tagged")
             # return HttpResponseRedirect(f"{url}?{urlencode(request.GET)}")
         else:
-            context['title'] = "Search Results"
-        context.update({"questions": queryset, 'query_data': query_data})
+            context = super().get_context_data()
+            search_value = "".join(list(reduce(
+                lambda main_string, dict_item: (
+                    main_string + f" {dict_item[0]}:{dict_item[1]} "
+                    if not isinstance(dict_item[1], list) else
+                    main_string + "".join([f"[{value}] " for value in dict_item[1] if value]).strip()
+                ), list(filter(lambda value: value[1] is not None, query_data.items())), ""
+            ))).strip()
+            context['search_form'].fields['q'].widget.attrs.update(
+                {"value": search_value}
+            )
+            context['paginator'].object_list = queryset
+            page = context['paginator'].get_page(
+                request.GET.get("page", None)
+            )
+            context.update({
+                'title': "Search Results",
+                'query_data': query_data,
+                'questions': page,
+                'page_links': get_page_links(page)
+            })
+        # context = self.get_context_data()
         return self.render_to_response(context)

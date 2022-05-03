@@ -9,8 +9,16 @@
 a {
   text-decoration: none;
   display: block;
-  /* width: 100%; */
+}
 
+.block_anchor {
+  text-decoration: none;
+  display: block;
+}
+
+.inline_anchor {
+  text-decoration: none;
+  display: inline-block;
 }
 
 .search_tip {

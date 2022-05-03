@@ -36,6 +36,7 @@ class TestRequestQuestionListPage(TestCase):
 
     def test_get_main_question_page(self):
         response = self.client.get(reverse("posts:main"))
+        print(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.resolver_match.view_name, "posts:main")
         self.assertTemplateUsed(response, "posts/main.html")
@@ -240,27 +241,10 @@ class TestEditInstanceAnswerPage(TestCase):
 
 
 
-class TestSearchResultPage(SimpleTestCase):
-
-    def setUp(self):
-        self.view = SearchResultsPage()
-        self.template_context = self.view.get_context_data()
-
-    def test_search_page(self):
-        self.assertIsInstance(self.view, Page)
-        self.assertListEqual(
-            self.template_context['query_buttons'],
-            ["Newest", "Active", "Unaswered", "Score"]
-        )
-        self.assertEqual(
-            self.view.template_name, "posts/listing.html"
-        )
-
-
 class TestGetPaginatedPage(SimpleTestCase):
 
     def setUp(self):
-        query = urlencode({'q': 'django views', 'pagesize': 10, 'page': ""})
+        query = urlencode({'q': 'title:django views', 'pagesize': 10, 'page': ""})
         request = RequestFactory().get(
             f'reverse("posts:search")?{query}'
         )
@@ -274,35 +258,26 @@ class TestGetPaginatedPage(SimpleTestCase):
         self.assertEqual(
             self.page_context['paginator'].object_list.count(), 0
         )
-        self.assertEqual(
-            self.page_context['page'].number, 1
-        )
 
 
-# class TestGetSearchPageNoResults(TestCase):
-#
-#     @classmethod
-#     def setUpTestData(cls):
-#         url_path = reverse(f"{'posts:search'}")
-#         cls.url = f"{url_path}?{urlencode({'q': 'user:4  [ d  jango]'})}"
-#         cls.url2 = f"{url_path}?{urlencode({'q': 'title:hamburgerbun  '})}"
-#         # cls.url3 = reverse(
-#         #     f"{posts:search}?q={urlencode('[] [            ]')}"
-#         # )
-#         # cls.url4 = reverse(
-#         #     f"{posts:search}?q={urlencode('title:      ')}"
-#         # )
-#
-#     def test_get_search_results_user_not_found(self):
-#         response = self.client.get(self.url)
-#         self.assertEqual(response.status_code, 200)
-#         self.assertTemplateUsed(response, "posts/empty_results.html")
-#         self.assertContains(response, "We couldn't find anything tagged")
-#         self.assertContains(response, "not deleted, user 4")
-#
-#     def test_get_search_results_bad_title_entered(self):
-#         response = self.client.get(self.url)
-#         self.assertEqual(response.status_code, 200)
-#         self.assertTemplateUsed(response, "posts/empty_results.html")
-#         self.assertContains(response, "We couldn't find anything for your search")
-#         self.assertContains(response, "title hamburgerbun, questions only, not deleted")
+class TestGetSearchPageNoResults(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        url_path = reverse(f"{'posts:search'}")
+        cls.url = f"{url_path}?{urlencode({'q': 'user:4  [ d  jango]'})}"
+        cls.url2 = f"{url_path}?{urlencode({'q': 'title:hamburgerbun  '})}"
+
+    def test_get_search_results_user_not_found(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "posts/empty_results.html")
+        self.assertContains(response, "We couldn't find anything tagged")
+        self.assertContains(response, "not deleted, user 4")
+
+    def test_get_search_results_bad_title_entered(self):
+        response = self.client.get(self.url2)
+        print(response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "posts/empty_results.html")
+        self.assertContains(response, "title: hamburgerbun, questions only, not deleted")

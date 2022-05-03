@@ -1,0 +1,36 @@
+
+{% with view_name=request.resolver_match.url_name %}
+  {% if view_name == "tagged" %}
+    {% if query_data.tags|length > 1 %}
+      <p>There are no questions with the following tags:{% for tag in query_data.tags %} <a href="#" class="inline_anchor">Hello</a> {% endfor %}</p>
+    {% else %}
+      <p>There are no questions tagged <a href="#">{{ query_data.tags.0 }}</a></p>
+    {% endif %}
+  {% elif view_name == "search" %}
+    {% if query_data.tags and query_data.user and query_data.title %}
+
+    {% elif query_data.tags and not query_data.user and not query_data.title %}
+      <p>We couldn't find anything tagged {% for tag in query_data.tags %} <a href="#">{{ tag }}</a> {% endfor %}</p>
+    {% elif query_data.tags and query_data.user and not query_data.title %}
+      <p>We couldn't find anything tagged {% for tag in query_data.tags %} <a href="#">{{ tag }}</a> {% endfor %}</p>
+      <p><b>Search options:</b> not deleted, user {{ query_data.user }}</p>
+      <p>Try different or less specific keywords</p>
+    {% elif query_data.tags and not query_data.user and query_data.title %}
+      <p>We couldn't find anything tagged {% for tag in query_data.tags %} <a href="#">{{ tag }}</a> {% endfor %}</p>
+      <p><b>Search options:</b> title: {{ query_data.title }} questions only, not deleted</p>
+      <p>Try different or less specific keywords</p>
+    {% elif not query_data.tags and query_data.user and not query_data.title %}
+      <p>We couldn't find anything for your search</p>
+      <p><b>Search options:</b> questions only, not deleted, user {{ query_data.user }}</p>
+      <p>Try different of less specific keywords</p>
+    {% elif not query_data.tags and query_data.user and query_data.title %}
+      <p>We couldn't find anything for your search</p>
+      <p><b>Search options:</b> title {{ query_data.title }}, questions only, not deleted, user {{ query_data.user }}</p>
+      <p>Try different of less specific keywords</p>
+    {% else %}
+      <p>We couldn't find anything for your search</p>
+      <p><b>Search options:</b> title: {{ query_data.title }}, questions only, not deleted</p>
+      <p>Try different or less specific keywords</p>
+    {% endif %}
+  {% endif %}
+{% endwith %}
