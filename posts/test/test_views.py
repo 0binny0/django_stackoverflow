@@ -277,7 +277,22 @@ class TestGetSearchPageNoResults(TestCase):
 
     def test_get_search_results_bad_title_entered(self):
         response = self.client.get(self.url2)
-        print(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "posts/empty_results.html")
         self.assertContains(response, "title: hamburgerbun, questions only, not deleted")
+
+
+class TestRedirectTaggedPaginatedPage(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        url_path = reverse("posts:search")
+        query_string = urlencode({"q":"[django-rest-framework] [restful-api]"})
+        cls.url = f"{url_path}?{query_string}"
+
+    def test_get_search_tags_page(self):
+        response = self.client.get(self.url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "posts/main.html")
+        self.assertContains(response, "All Questions")
+        self.assertContains(response, "Tagged with")
