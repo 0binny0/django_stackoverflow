@@ -206,6 +206,7 @@ class PaginatedPage(Page):
 class SearchResultsPage(PaginatedPage):
 
     def get(self, request):
+        import pdb; pdb.set_trace()
         query = request.GET.get('q')
         queryset, query_data = Question.searches.lookup(query)
         if not query_data['title'] and not query_data['user']:
