@@ -5,6 +5,11 @@
   <div class="page_title_context">
     <div class="title_container">
       <h2 class="title">{{ title }}</h2>{% if request.user.is_authenticated %}<a class="btn ask_btn" href="{% url 'posts:ask' %}">Ask Question</a>{% endif %}
+      {% if request.resolver_match.url_name == "tagged" %}
+        {% if tags|length > 1 %}
+          <p>Tagged with {% for tag in tags %}<a href="#">{{ tag }}</a>{% endfor %}</p>
+        {% endif %}
+      {% endif %}
     </div>
     <ul class="list query_buttons">
     {% for button in query_buttons %}

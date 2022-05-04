@@ -142,7 +142,6 @@ class PostedQuestionPage(Page):
         return self.render_to_response(context)
 
     def post(self, request, question_id):
-        # import pdb; pdb.set_trace()
         question = get_object_or_404(Question, id=question_id)
         context = self.get_context_data()
         form = context['answer_form'](request.POST)
@@ -210,9 +209,11 @@ class SearchResultsPage(PaginatedPage):
         query = request.GET.get('q')
         queryset, query_data = Question.searches.lookup(query)
         if not query_data['title'] and not query_data['user']:
-            pass
-            # url = reverse("posts:tagged")
-            # return HttpResponseRedirect(f"{url}?{urlencode(request.GET)}")
+            tags = "".join([
+                f"{tag}+" if i != len(query_data["tags"]) - 1 else f"{tag}"
+                for i, tag in enumerate(query_data["tags"])
+            ])
+            return HttpResponseRedirect(reverse("posts:tagged", kwargs={'tags': tags}))
         else:
             context = super().get_context_data()
             search_value = "".join(list(reduce(
@@ -235,5 +236,25 @@ class SearchResultsPage(PaginatedPage):
                 'questions': page,
                 'page_links': get_page_links(page)
             })
-        # context = self.get_context_data()
+        return self.render_to_response(context)
+
+
+class TaggedSearchResultsPage(PaginatedPage):
+
+    def get(self, request, tags):
+        context = super().get_context_data()
+        query = "".join(f"[{tag}]" for tag in tags.split("+"))
+        context['search_form'].fields['q'].widget.attrs.update({"value": query})
+        queryset, query_data = Question.searches.lookup(query)
+        context['paginator'].object_list = queryset
+        page = context['paginator'].get_page(
+            request.GET.get("page", None)
+        )
+        tags = query_data['tags']
+        context.update({
+            "title": "All Questions" if len(tags) > 1 else f"Questions tagged {tags[0]}",
+            'questions': page,
+            'page_links': get_page_links(page),
+            'tags': tags
+        })
         return self.render_to_response(context)

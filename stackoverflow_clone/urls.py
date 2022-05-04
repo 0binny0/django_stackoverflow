@@ -28,7 +28,8 @@ posts_patterns = ([
     path("questions/<question_id>/edit/", pv.EditQuestionPage.as_view(), name="edit"),
     path("questions/<question_id>/edit/answers/<answer_id>/", pv.EditPostedAnswerPage.as_view(), name="answer_edit"),
     path("questions/<question_id>/", pv.PostedQuestionPage.as_view(), name="question"),
-    path("search", pv.SearchResultsPage.as_view(), name="search")
+    path("search", pv.SearchResultsPage.as_view(), name="search"),
+    path("tagged/<tags>/", pv.TaggedSearchResultsPage.as_view(), name="tagged")
 ], "posts")
 
 posts_api_patterns = []
