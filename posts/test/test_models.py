@@ -174,3 +174,21 @@ class TestQuestionQuerySearchManager(TestCase):
                 "Question(title=What features do you not like about Django?)",
             ], transform=repr
         )
+
+
+class TestNonQueryStringDatabaseQueries(TestCase):
+
+    fixtures = ['paginated_db_set.json',]
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.queryset = Question.postings.active()
+
+    def test_queryset_listing_by_active_postings(self):
+        self.assertEqual(self.queryset.count(), 3)
+        self.assertQuerysetEqual(
+            self.queryset, [
+                "Question(Test_Question_D)", "Question(Test_Question_A)",
+                "Question(Test_Question_C)"
+            ], transform=repr
+        )
