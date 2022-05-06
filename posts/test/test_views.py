@@ -36,7 +36,6 @@ class TestRequestQuestionListPage(TestCase):
 
     def test_get_main_question_page(self):
         response = self.client.get(reverse("posts:main"))
-        print(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.resolver_match.view_name, "posts:main")
         self.assertTemplateUsed(response, "posts/main.html")

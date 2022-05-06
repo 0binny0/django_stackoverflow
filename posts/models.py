@@ -19,8 +19,8 @@ from .utils import resolve_search_query
 
 class QueryStringSearchManager(Manager):
 
-    def lookup(self, query):
-        queryset = super().get_queryset()
+    def lookup(self, query, tab="newest"):
+        queryset = super().get_queryset().order_by("-date", "views", "-score")
         query_data = resolve_search_query(query)
         if 'tags' in query_data and query_data['tags']:
             tags = Tag.objects.filter(name__in=query_data['tags'])
@@ -29,7 +29,28 @@ class QueryStringSearchManager(Manager):
             queryset = queryset.filter(title__contains=query_data['title'])
         if 'user' in query_data and query_data['user']:
             queryset = queryset.filter(profile_id=query_data['user'])
+        qs_options = {
+            f"{self._unanswered.__name__}": self._unanswered,
+            f"{self._active.__name__}": self._active,
+            f"{self._newest.__name__}": self._newest,
+            f"{self._scores.__name__}": self._scores
+        }
+        queryset = qs_options.get(tab, 'newest')(queryset)
         return queryset, query_data
+
+    def _unanswered(self, qs):
+        return qs.filter(answer__isnull=True)
+
+    def _active(self, qs):
+        return qs.annotate(
+            total_answers=Count("answer")
+        ).filter(total_answers__gt=0)
+
+    def _newest(self, qs):
+        return qs
+
+    def _scores(self, qs):
+        return qs.filter(score__gt=0)
 
 
 class QuestionSearchManager(Manager):
@@ -42,6 +63,16 @@ class QuestionSearchManager(Manager):
         return queryset.annotate(
             answer_tally=Count('answer')
         ).order_by("-date", "views", "-score")
+
+    def lookup(self, query, page):
+        queryset, query_data = super().lookup(query)
+        filtered_querysets = {
+            'unanswered': self.unanswered,
+            'scored': self.scored,
+            'active': self.active,
+            'newest': newest
+        }
+        return queryset.filtered_querysets[page]()
 
 
     def interesting(self, profile):
@@ -83,10 +114,6 @@ class QuestionSearchManager(Manager):
                 "tags__name", flat=True
             )
         ).distinct()
-
-    def unanswered(self):
-        return self.get_queryset().filter(answer__isnull=True)
-
 
 
 class Tag(Model):

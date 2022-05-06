@@ -206,8 +206,8 @@ class PaginatedPage(Page):
 class SearchResultsPage(PaginatedPage):
 
     def get(self, request):
-        query = request.GET.get('q')
-        queryset, query_data = Question.searches.lookup(query)
+        query, tab_index = request.GET.get('q'), request.GET.get('tab', 'newest')
+        queryset, query_data = Question.searches.lookup(query, tab_index)
         if not query_data['title'] and not query_data['user']:
             tags = "".join([
                 f"{tag}+" if i != len(query_data["tags"]) - 1 else f"{tag}"
@@ -245,7 +245,7 @@ class TaggedSearchResultsPage(PaginatedPage):
         context = super().get_context_data()
         query = "".join(f"[{tag}]" for tag in tags.split("+"))
         context['search_form'].fields['q'].widget.attrs.update({"value": query})
-        queryset, query_data = Question.searches.lookup(query)
+        queryset, query_data = Question.searches.lookup(query, tab_index)
         context['paginator'].object_list = queryset
         page = context['paginator'].get_page(
             request.GET.get("page", None)
