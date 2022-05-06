@@ -242,8 +242,10 @@ class SearchResultsPage(PaginatedPage):
 class TaggedSearchResultsPage(PaginatedPage):
 
     def get(self, request, tags):
+        import pdb; pdb.set_trace()
         context = super().get_context_data()
         query = "".join(f"[{tag}]" for tag in tags.split("+"))
+        tab_index = request.GET.get('tab', "newest")
         context['search_form'].fields['q'].widget.attrs.update({"value": query})
         queryset, query_data = Question.searches.lookup(query, tab_index)
         context['paginator'].object_list = queryset

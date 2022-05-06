@@ -35,7 +35,7 @@ class QueryStringSearchManager(Manager):
             f"{self._newest.__name__}": self._newest,
             f"{self._scores.__name__}": self._scores
         }
-        queryset = qs_options.get(tab, 'newest')(queryset)
+        queryset = qs_options.get(tab, self._newest)(queryset)
         return queryset, query_data
 
     def _unanswered(self, qs):
