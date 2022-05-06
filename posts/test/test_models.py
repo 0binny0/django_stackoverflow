@@ -67,7 +67,7 @@ class TestQuestionManager(TestCase):
         self.assertEqual(last_question.date, date(2021, 1, 13))
 
     def test_all_unanswered_questions_by_user_tags(self):
-        questions = Question.postings.unanswered()
+        questions = Question.searches.lookup("", "unanswered")[0]
         self.assertEqual(questions.count(), 3)
         self.assertQuerysetEqual(
             questions, [
@@ -182,13 +182,47 @@ class TestNonQueryStringDatabaseQueries(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.queryset = Question.postings.active()
+        posts = Question.objects.all()
+        cls.queryset_active_posts = Question.searches.lookup(
+            "", "active"
+        )
+        cls.queryset_newest_posts = Question.searches.lookup(
+            "", "newest"
+        )
+        cls.queryset_posts_with_scores = Question.searches.lookup(
+            "", "scores"
+        )
 
     def test_queryset_listing_by_active_postings(self):
-        self.assertEqual(self.queryset.count(), 3)
+        self.assertEqual(self.queryset_active_posts[0].count(), 3)
         self.assertQuerysetEqual(
-            self.queryset, [
-                "Question(Test_Question_D)", "Question(Test_Question_A)",
-                "Question(Test_Question_C)"
+            self.queryset_active_posts[0], [
+                "Question(title=Test_Question_C)", "Question(title=Test_Question_A)",
+                "Question(title=Test_Question_D)"
+            ], transform=repr
+        )
+
+    def test_queryset_listing_by_newest_posts(self):
+        self.assertEqual(
+            self.queryset_newest_posts[0].count(), 5
+        )
+        self.assertQuerysetEqual(
+            self.queryset_newest_posts[0], [
+                "Question(title=Test_Question_C)",
+                "Question(title=Test_Question_E)",
+                "Question(title=Test_Question_A)",
+                "Question(title=Test_Question_B)",
+                "Question(title=Test_Question_D)"
+            ], transform=repr
+        )
+
+    def test_queryset_listing_by_scored_posts(self):
+        self.assertEqual(
+            self.queryset_posts_with_scores[0].count(), 2
+        )
+        self.assertQuerysetEqual(
+            self.queryset_posts_with_scores[0], [
+                "Question(title=Test_Question_C)",
+                "Question(title=Test_Question_B)",
             ], transform=repr
         )

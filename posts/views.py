@@ -206,8 +206,8 @@ class PaginatedPage(Page):
 class SearchResultsPage(PaginatedPage):
 
     def get(self, request):
-        query = request.GET.get('q')
-        queryset, query_data = Question.searches.lookup(query)
+        query, tab_index = request.GET.get('q'), request.GET.get('tab', 'newest')
+        queryset, query_data = Question.searches.lookup(query, tab_index)
         if not query_data['title'] and not query_data['user']:
             tags = "".join([
                 f"{tag}+" if i != len(query_data["tags"]) - 1 else f"{tag}"
