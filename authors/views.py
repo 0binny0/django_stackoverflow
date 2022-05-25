@@ -33,7 +33,7 @@ class RegisterNewUserPage(Page):
         form = context['form'](self.request.POST or None)
         if form.is_valid():
             user = form.save()
-            Profile.objects.create(user=user)
+            profile = Profile.objects.create(user=user)
             login(request, user)
             return SeeOtherHTTPRedirect(reverse("posts:main"))
         return self.render_to_response(context)

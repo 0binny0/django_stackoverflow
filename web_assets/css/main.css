@@ -8,7 +8,6 @@
 
 a {
   text-decoration: none;
-  display: block;
 }
 
 .block_anchor {
@@ -17,7 +16,6 @@ a {
 }
 
 .inline_anchor {
-  text-decoration: none;
   display: inline-block;
 }
 
@@ -98,6 +96,12 @@ p {
 
 .blk_link {
   color: black;
+}
+
+.answered_post {
+  color: green;
+  padding: 2.5px;
+  border: 1px solid;
 }
 
 
@@ -197,6 +201,7 @@ p {
   }
 
   .inline_linked {
+    margin-top: 10px;
     display: inline-block;
   }
 
@@ -240,9 +245,17 @@ p {
     margin: auto;
   }
 
+  .search_tag {
+    background: lightblue;
+    color: blue;
+    display: inline-block;
+    padding: 2.5px 5px;
+    margin: 0 2.5px;
+  }
+
 }
 
-@media screen and (min-width: 650px) {
+@media screen and (min-width: 675px) {
 
   /*---------------
     searchbar
@@ -253,17 +266,24 @@ p {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: fixed;
+    background: white;
+    width: 100%;
+    top: 0;
+    box-shadow: 0px 0px 2px 1px silver;
+    z-index: 2;
   }
 
   .search_query_container {
     width: 375px;
     margin-left: 45px;
+    position: static;
     /* margin: auto; */
   }
 
+
   .search_query_widget {
-    margin-top: 5px;
-    height: 45px;
+    height: 35px;
   }
 
 
@@ -271,11 +291,21 @@ p {
     position: static;
     display: inline-block;
     width: initial;
+    /* margin-left: 40px; */
+  }
+
+  .nav_btn:first-child {
+    margin-left: 5px;
   }
 
   .nav_btn {
-    width: 50px;
-    padding: 5px 5px;
+    width: 70px;
+    padding: 5px 0px;
+    /* margin: auto 10px; */
+    margin-right: 5px;
+    line-height: 1.25;
+    background: ghostwhite;
+    border: 1px solid silver;
   }
 
   /*--------------
@@ -283,8 +313,8 @@ p {
   ---------------*/
 
   .content_box {
-    max-width: 595px;
-    margin: auto;
+    max-width: 490px;
+    margin: 100px auto;
   }
 
 }

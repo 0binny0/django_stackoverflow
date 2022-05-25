@@ -27,7 +27,7 @@
         <ul class="list hide query_help_tips">
           <li class="search_tip">[ tag ] <span class="tip_style">search within a tag</span></li><li class="search_tip">user:0123<span class="tip_style"> search by user</span></li><li class="search_tip">title: 'words here' <span class="tip_style">search by title</span></li>
         </ul>
-      </div><nav class="main_site_nav grey_bg">
+      </div><nav class="main_site_nav">
       {% if user.is_authenticated %}
         <a href="{% url 'posts:main' %}" class="btn nav_btn">Home</a><a href="#" class="btn nav_btn">Profile</a><a href="{% url 'authors:logout' %}" class="btn nav_btn">Logout</a>
       {% else %}
@@ -38,6 +38,6 @@
     <section class="content_box">
     {% block page_content %}{% endblock %}
     </section>
-    <script src="{% static 'js/navigate.js' %}"></script>
+    <!-- <script src="{% static 'js/navigate.js' %}"></script> -->
   </body>
 </html>

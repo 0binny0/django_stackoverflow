@@ -14,13 +14,13 @@
       {% endif %}
       <h2 class="question_title">{{ question.title }}</h2>
       <div class="page_stats">
-        <p class="page_stat">asked {{ question.date }}  </p>{% if request.resolver_match.url_name == "question" %}<p class="page_stat">  - viewed {{ question.views.all }} times</p>{% endif %}
+        <p class="page_stat">asked {{ question.date }} </p>{% if request.resolver_match.url_name == "question" %}<p class="page_stat">  - viewed {{ question.views.all }} times</p>{% endif %}
       </div>
       {% voting_booth question question=question.id %}
       {% if request.resolver_match.url_name == "question" %}
         <ul class="list tagging">
         {% for tag in question.tags.all %}
-          <li class="inline_linked tag bg-blue"><a href="">{{ tag }}</a></li>
+          <li class="inline_linked tag bg-blue"><a class="inline_anchor" href='{% url "posts:tagged" tags=tag|lower %}'>{{ tag }}</a></li>
         {% endfor %}
         </ul>
         {% if request.user.is_authenticated %}
@@ -47,7 +47,8 @@
             {% endif %} -->
           {% endfor %}
       {% endif %}
-      <div class="posted answer_form">
+      {% if request.user.is_authenticated %}
+      <div class="posted_answer_form">
         {% include "./markdown_help.html" %}
         <div class="post_draft" id="post_preview_answer"></div>
         {% if form.errors %}
@@ -74,6 +75,9 @@
           {% endif %}
         </form>
       </div>
+      {% else %}
+        <p class="user_login_message">Register a new account or login into an existing to contribute to the community.</p>
+      {% endif %}
   </div>
-  <!-- <script type="module" src="{% static 'posts/js/create_post.js' %}"></script> -->
+  <script type="module" src="{% static 'posts/js/create_post.js' %}"></script>
 {% endblock %}

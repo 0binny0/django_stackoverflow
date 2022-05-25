@@ -13,13 +13,31 @@ class TestRouteTemplateTag(SimpleTestCase):
     current page URL'''
 
     def setUp(self):
-        self.request = RequestFactory().get(
+        self.request1 = RequestFactory().get(
             f"{reverse('posts:main')}?tab=monthly"
         )
 
-    def test_directed_to_link_url(self):
-        url = identifiers.route(self.request)
-        self.assertEqual(url, "/")
+        self.request2 = RequestFactory().get(
+            f"{reverse('posts:tagged', kwargs={'tags': 'python'})}?tab=active"
+        )
+
+        self.request3 = RequestFactory().get(
+            f"{reverse('posts:search')}?page=2&pagesize=10"
+        )
+
+    # def test_directed_to_link_url(self):
+    #     url = identifiers.route({'request': self.request1}, )
+    #     self.assertEqual(url, "/")
+
+    def test_directed_url_with_single_query_string_arg(self):
+        url = identifiers.route({'request': self.request1}, button="Unanswered")
+        self.assertIn(
+            "?tab=unanswered", url
+        )
+
+    def test_directed_url_with_multiple_query_string_args(self):
+        url = identifiers.route({'request': self.request3}, button="Active")
+        self.assertIn("?page=2&pagesize=10" ,url)
 
 
 class TestPaginatedPageLink(SimpleTestCase):
@@ -40,7 +58,11 @@ class TestPaginatedPageLink(SimpleTestCase):
         mockPage.object_list, mockPage.number, mockPage.paginator = [
             [], 4, mockPaginator
         ]
-        numbered_page_url = identifiers.set_page_number_url(self.context, mockPage)
+        numbered_page_url = identifiers.set_page_number_url(self.context, limit=25)
         self.assertEqual(
-            numbered_page_url, "/search?pagesize=20&page=4&tab=week&q=python+mocks"
+            numbered_page_url, "/questions/search?pagesize=25&page=1&tab=week&q=python+mocks"
         )
+
+
+class TestPreviousPageLink(SimpleTestCase):
+    pass

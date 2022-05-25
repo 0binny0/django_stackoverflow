@@ -1,33 +1,53 @@
 {% load static %}
 {% load identifiers %}
+<h3>{{ count }} questions</h3>
 {% for question in questions %}
   <div class="user_question_info">
     <div class="question_stats">
-      <p class="stat">{{ question.score }} vote{{ question.score|pluralize }}</p><p class="stat">{{ question.answers.count }} answer{{ question.answers.count|pluralize  }}</p><p class="stat">{{ question.views }} view{{ question.score|pluralize  }}</p>
+      <p class="stat">{{ question.score }} vote{{ question.score|pluralize }}</p>{% if question.answers.count %}<p class="stat answered_post">{{ question.answers.count }} answer{{ question.answers.count|pluralize  }}</p>{% else %}<p class="stat">{{ question.answers.count }} answer{{ question.answers.count|pluralize  }}</p>{% endif %}<p class="stat">{{ question.views }} view{{ question.score|pluralize  }}</p>
     </div>
     <div class="question_content">
       <h3><a class="linked" href="{% url 'posts:question' question_id=question.id %}">{{ question.title }}</a></h3>
+      {% if request.resolver_match.url_name != "main" %}
+        <p>{{ question.body }}</p>
+      {% endif %}
       <div class="inline_tags_author">
         <div class="linked_tags_list">
         {% for tag in question.tags.all %}
-          <a class="linked tag bg-blue" href="{{ tag.get_absolute_url }}">{{ tag }}</a>
+          <a class="linked tag bg-blue" href="{% url 'posts:tagged' tags=tag|lower %}">{{ tag }}</a>
         {% endfor %}
         </div>
-        <p class="authored_by">{{ question.profile.user }} {% if question.answers.count %}answered{% else %}asked{% endif %}</p>
+        <p class="authored_by">{{ question.profile.user }} {% if question.answers.count %}answered{% else %}asked{% endif %} {{ question.date|timesince }} ago</p>
+      </div>
     </div>
   </div>
 {% endfor %}
 {% if request.resolver_match.url_name == "main" %}
-  <h3 class="page_footer">Looking for more? Browse the complete list of questions. Help us answer <a href="#">unanswered questions</a>.</h3>
+  <h3 class="page_footer">Looking for more? Browse the complete list of questions. Help us answer <a href="{% url 'posts:main_paginated' %}">unanswered questions</a>.</h3>
 {% else %}
-  <div class="page_through_wrapper">
-  {% for page_number in page_links %}
-    {% if page_number == questions.number %}
-      <a class="active_page_num" href="{% set_page_number_url page %}">{{ page.number }}</a>
-    {% else %}
-      <a class="inactive_page_num" href="{% set_page_number_url page %}">{{ page.number }}</a>
+  <div class="main_pagination">
+    <div class="page_through_wrapper">
+    {% if questions.has_previous %}
+      <a class="inactive_page" href="{% set_previous_page_url page=questions %}">Prev</a>
     {% endif %}
-  {% endfor %}
+    {% for page in page_links %}
+      {% if page.number == questions.number %}
+        <a class="active_page page_num" href="{% set_page_number_url page=page %}">{{ page.number }}</a>
+      {% else %}
+        <a class="inactive_page page_num" href="{% set_page_number_url page=page %}">{{ page.number }}</a>
+      {% endif %}
+    {% endfor %}
+    </div>
+    <div class="page_range_options_wrapper">
+      {% for limit in page_listing_limits %}
+        {% if limit == request.GET.pagesize %}
+          <a class="active_page page_num" href="{% set_page_number_url limit=limit %}">{{ limit }}</a>
+        {% else %}
+          <a class="inactive_page page_num" href="{% set_page_number_url limit=limit %}">{{ limit }}</a>
+        {% endif %}
+      {% endfor %}
+      per page
+    </div>
   </div>
 {% endif %}
-  <script type="module" src="{% static 'posts/js/listing.js' %}"></script>
+<script src="{% static 'posts/js/listing.js' %}"></script>

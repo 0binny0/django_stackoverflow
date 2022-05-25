@@ -5,6 +5,7 @@ from django.urls import reverse
 
 from ..views import RegisterNewUserPage, LoginUserPage
 from ..forms import RegisterUserForm, LoginUserForm
+from ..models import Profile
 
 from posts.views import Page
 
@@ -65,10 +66,11 @@ class TestUserLoginSuccess(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        get_user_model().objects.create_user(
+        user = get_user_model().objects.create_user(
             username="TheBest101",
             password="some$ecret"
         )
+        Profile.objects.create(user=user)
 
     def test_post_login_user_redirect(self):
         response = self.client.post(

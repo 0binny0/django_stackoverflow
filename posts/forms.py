@@ -96,6 +96,7 @@ class QuestionForm(PostingForm):
 
 
 class SearchForm(Form):
+    
     q = CharField(widget=TextInput(
         attrs={
             "placeholder": "Search...", "class": "search_query_widget grey-outline",
