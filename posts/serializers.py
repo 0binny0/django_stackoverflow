@@ -33,7 +33,9 @@ class VoteSerializer(ModelSerializer):
             models[voted_model_type]
         )
         try:
-            post = model_content_type.get_object_for_this_type(id=id)
+            post = model_content_type.get_object_for_this_type(
+                id=id, vote__profile=self.context['request'].user.profile
+            )
         except model_content_type.model_class().DoesNotExist:
             return value
         else:
