@@ -16,17 +16,21 @@ class UserVoteEndpoint(APIView):
     parser_classes = [JSONParser]
     renderer_classes = [JSONRenderer]
 
-    def post(self, request, id):
-        if isinstance(request.user, AnonymousUser):
-            return Response(status=HTTP_400_BAD_REQUEST)
+    def retrieve_user_post(self, id, model):
         models = {
             'question': Question,
             'answer': Answer
         }
         model_content_type = ContentType.objects.get_for_model(
-            models[request.data.pop("post")]
+            models[model]
         )
         post = model_content_type.get_object_for_this_type(id=id)
+        return post
+
+    def post(self, request, id):
+        if isinstance(request.user, AnonymousUser):
+            return Response(status=HTTP_400_BAD_REQUEST)
+        post = self.retrieve_user_post(id, request.data.pop("post"))
         try:
             post.vote.get(profile=request.user.profile)
         except Vote.DoesNotExist:
@@ -46,3 +50,8 @@ class UserVoteEndpoint(APIView):
             if serializer.is_valid(raise_exception=True):
                 serializer.save(profile=request.user.profile)
                 return Response(status=HTTP_204_NO_CONTENT)
+
+    def delete(self, request, id):
+        post = self.retrieve_user_post(id, request.data.pop("post"))
+        post.delete()
+        return Response(status=HTTP_204_NO_CONTENT)
