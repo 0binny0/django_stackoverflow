@@ -110,3 +110,14 @@ class TestUserVoteEndpointVoteOnOwnPost(APIStateTestCase):
             data={"type": "down", "post": "question"}
         )
         self.assertEqual(response.status_code, 400)
+
+
+class TestUserVoteEndpointUserDeletesPost(APIStateTestCase):
+
+    def test_user_question_deleted(self):
+        self.client.login(username="MainUser", password="mypassword")
+        response = self.client.delete(
+            reverse("api_posts:posts", kwargs={'id': 1}),
+            data={'post': 'question'}
+        )
+        self.assertEqual(response.status_code, 204)
