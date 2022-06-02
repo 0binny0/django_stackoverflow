@@ -17,9 +17,9 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 
 from posts import views as pv
-from posts import endpoints as api
+from posts import endpoints as posts_api
 from authors import views as av
-from authors import endpoints as api
+from authors import endpoints as authors_api
 
 
 posts_patterns = ([
@@ -33,7 +33,9 @@ posts_patterns = ([
     path("questions/tagged/<tags>", pv.TaggedSearchResultsPage.as_view(), name="tagged")
 ], "posts")
 
-posts_api_patterns = []
+posts_api_patterns = ([
+    path("<int:id>/", posts_api.UserVoteEndpoint.as_view(), name="posts")
+], "posts")
 
 authors_patterns =  ([
     path("signup/", av.RegisterNewUserPage.as_view(), name="register"),
@@ -42,13 +44,13 @@ authors_patterns =  ([
 ], "authors")
 
 authors_api_patterns = ([
-    path("", api.AccountsEndpoint.as_view(), name="main")
+    path("", authors_api.AccountsEndpoint.as_view(), name="main")
 ], "api_authors")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("users/", include(authors_patterns, namespace="authors")),
     path("", include(posts_patterns, namespace="posts")),
-    path("api/v1/users", include(authors_api_patterns), name="authors_api"),
-    path("api/v1/questions", include(posts_api_patterns), name="posts_api"),
+    path("api/v1/users/", include(authors_api_patterns), name="authors_api"),
+    path("api/v1/posts/", include(posts_api_patterns, namespace="api_posts")),
 ]
