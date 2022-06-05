@@ -10,6 +10,7 @@ from rest_framework.exceptions import ValidationError
 class VoteSerializer(ModelSerializer):
 
     def validate_type(self, value):
+        import pdb; pdb.set_trace()
         user_vote = self.instance.vote.get(
             profile=self.context['request'].user.profile
         )
@@ -18,12 +19,12 @@ class VoteSerializer(ModelSerializer):
         return value
 
     def validate_profile(self, value):
-        if self.instance.profile.id == value.id:
+        if self.context['post'].profile.id == value.id:
             raise ValidationError("You cannot vote on your post")
         return value
 
     def create(self, validated_data):
-        return self.Meta.model.objects.crate(**validated_data)
+        return self.Meta.model.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
         instance.type = validated_data['type']
