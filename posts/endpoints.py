@@ -31,7 +31,6 @@ class UserVoteEndpoint(APIView):
         return post
 
     def post(self, request, id):
-        import pdb; pdb.set_trace()
         if isinstance(request.user, AnonymousUser):
             return Response(status=HTTP_400_BAD_REQUEST)
         post = self.retrieve_user_post(id, request.data.pop("post"))
@@ -56,7 +55,6 @@ class UserVoteEndpoint(APIView):
             return Response(status=HTTP_204_NO_CONTENT)
 
     def delete(self, request, id):
-        import pdb; pdb.set_trace()
         post = self.retrieve_user_post(id, request.data.pop("post"))
         post.vote.get(profile=request.user.profile).delete()
         return Response(status=HTTP_204_NO_CONTENT)

@@ -254,7 +254,7 @@ class QuestionPageHit(Model):
 
 
 class Bookmark(Model):
-    question = ForeignKey("Question", on_delete=CASCADE)
+    question = ForeignKey("Question", on_delete=CASCADE, related_name="bookmarks")
     profile = ForeignKey(
         "authors.Profile", on_delete=CASCADE, related_name="bookmarks"
     )
