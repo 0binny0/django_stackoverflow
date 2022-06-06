@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from rest_framework.test import APITestCase, APIClient
 
-from ..models import Question, Tag, Vote
+from ..models import Question, Tag, Vote, Bookmark
 from authors.models import Profile
 
 class LoggedInAPIClient(APIClient):
@@ -130,3 +130,30 @@ class TestUserVoteEndpointUserDeletesPost(APIStateTestCase):
             data={'post': 'question'}
         )
         self.assertEqual(response.status_code, 204)
+
+
+class TestUserVoteEndpointGetExistingVotes(APIStateTestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        Vote.objects.create(
+            profile=cls.profile2,
+            type="up",
+            content_object=cls.question
+        )
+        Bookmark.objects.create(profile=cls.profile2, question=cls.question)
+
+    def test_get_vote_state_upon_viewing_post(self):
+        self.client.login(username="adummy101", password="nuclearsecrets")
+        response = self.client.get(
+            f"{reverse('api_posts:posts', kwargs={'id': 1})}?post=question"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers['Content-Type'], "application/json")
+        self.assertEqual(
+            response.data, {
+                'question_id': 1, 'vote': "up", "bookmark": True,
+                "answers": None
+            }
+        )

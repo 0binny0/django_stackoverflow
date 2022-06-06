@@ -11,7 +11,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
 
 from .models import Question, Answer, Vote
-from .serializers import VoteSerializer
+from .serializers import VoteSerializer, CurrentPostStateSerializer
 
 
 class UserVoteEndpoint(APIView):
@@ -29,6 +29,13 @@ class UserVoteEndpoint(APIView):
         )
         post = model_content_type.get_object_for_this_type(id=id)
         return post
+
+    def get(self, request, id):
+        question = Question.objects.get(id=id)
+        serializer = CurrentPostStateSerializer(
+            question, context={'request': request}
+        )
+        return Response(data=serializer.data)
 
     def post(self, request, id):
         if isinstance(request.user, AnonymousUser):

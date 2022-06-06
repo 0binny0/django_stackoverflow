@@ -7,38 +7,23 @@ from django.urls import resolve, reverse
 from django.utils.http import urlencode
 from django.utils.html import escape
 
+from ..models import Question, Answer
+
 register = template.Library()
 
 @register.inclusion_tag("posts/posted.html")
-def voting_booth(post, *args, **kwargs):
-    context = {
-        'question': kwargs.get("question"),
-        'answer': kwargs.get("answer"),
-        'comment': kwargs.get("comment"),
-    }
-    if all(context[key] for key in context):
-        id = "".join(
-            f"{key}{value}_" if i < 2 else f"{key}{value}"
-            for i, (key, value) in enumerate(context.items())
-        )
-        return {
-            'post': post,
-            'id': id
-        }
-    valid_keys = list(filter(lambda x: context[x], context.keys()))
-    id = "".join(
-        (f"{key}{context[key]}_"
-        if context[key] and i < (len(valid_keys) - 1)
-        else f"{key}{context[key]}")
-        for i, key in enumerate(valid_keys)
-    )
-    if context['question'] and context['answer']:
+def voting_booth(post):
+    if isinstance(post, Question):
+        id = f"question_{post.id}"
+    else:
+        id = f"answer_{post.id}"
+    if isinstance(post, Answer):
         url = reverse("posts:answer_edit", kwargs={
-            "question_id": context['question'],
-            "answer_id": context['answer']
+            "question_id": post.question.id,
+            "answer_id": post.id
         })
     else:
-        url = reverse("posts:edit", kwargs={"question_id": context['question']})
+        url = reverse("posts:edit", kwargs={"question_id": post.id})
     return {'post': post, "id": id, "url": url}
 
 @register.simple_tag(takes_context=True)
@@ -128,3 +113,9 @@ def set_next_page_url(context, page):
         page_pattern, current_url
     ).get("page_num"))
     return re.sub(page_pattern, f"{current_page + 1}", current_url)
+
+@register.simple_tag
+def set_post_id(post):
+    if isinstance(post, Question):
+        return f"question/{post.id}/"
+    return f"answer/{post.id}/"
