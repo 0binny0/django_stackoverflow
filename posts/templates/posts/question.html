@@ -16,7 +16,7 @@
       <div class="page_stats">
         <p class="page_stat">asked {{ question.date }} </p>{% if request.resolver_match.url_name == "question" %}<p class="page_stat">  - viewed {{ question.views.all }} times</p>{% endif %}
       </div>
-      {% voting_booth question question=question.id %}
+      {% voting_booth question %}
       {% if request.resolver_match.url_name == "question" %}
         <ul class="list tagging">
         {% for tag in question.tags.all %}
@@ -38,7 +38,7 @@
       {% if request.resolver_match.url_name == "question" %}
         <h3 class="total_answers">{{ question.answers.count }} answers</h3>
           {% for answer in question.answers.all %}
-            {% voting_booth answer question=question.id answer=answer.id %}  {% comment "" %}{% endcomment %}
+            {% voting_booth answer %}  {% comment "" %}{% endcomment %}
             <!-- {% if request.user.is_authenticated and answer.profile.user == request.user %}
               <ul class="option_list">
                 <li class="post_option"><a class="blk_link" href="#">Edit</a></li>

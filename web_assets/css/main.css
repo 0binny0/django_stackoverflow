@@ -125,6 +125,14 @@ p {
   font-size: 12px;
 }
 
+.not_voted {
+  fill: silver;
+}
+
+.voted {
+  fill: darkorange;
+}
+
 
 @media screen and (min-width: 400px) {
 
