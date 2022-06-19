@@ -225,15 +225,15 @@ class Vote(Model):
     object_id = PositiveIntegerField()
     content_object = GenericForeignKey()
 
-    def save(self, *args, **kwargs):
-        post = self.content_object
-        if self.type == "like":
-            post.score = F("score") + 1
-        else:
-            post.score = F("score") - 1
-        post.save(update_fields=['score'])
-        post.refresh_from_db()
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     post = self.content_object
+    #     if self.type == "like":
+    #         post.score = F("score") + 1
+    #     else:
+    #         post.score = F("score") - 1
+    #     post.save(update_fields=['score'])
+    #     post.refresh_from_db()
+    #     super().save(*args, **kwargs)
 
 
     class Meta:

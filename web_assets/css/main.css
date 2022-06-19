@@ -133,6 +133,11 @@ p {
   fill: darkorange;
 }
 
+.form_field_errors {
+  /* list-style: none; */
+  /* padding: 0; */
+  margin: 10px auto 0;
+}
 
 @media screen and (min-width: 400px) {
 

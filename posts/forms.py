@@ -67,13 +67,16 @@ class QuestionForm(PostingForm):
         self.fields['body'].help_text = "Clarify your question with as much detail as possible"
         self.fields['body'].error_messages={
                 'required': "Elaborate on your question",
-                'min_length': "Add more info to your question"
+                'min_length': "Add more info to your question body"
             }
 
     title = CharField(
         min_length=20, max_length=80,
         widget=TextInput({"class": "question_input_shade fill_block_width"}),
-        error_messages={"max_length": "The title of your question is too long"},
+        error_messages={
+            "min_length": "Elaborate on your question title",
+            "max_length": "The title of your question is too long"
+        },
         help_text="Concisely describe the issue"
     )
 
@@ -96,7 +99,7 @@ class QuestionForm(PostingForm):
 
 
 class SearchForm(Form):
-    
+
     q = CharField(widget=TextInput(
         attrs={
             "placeholder": "Search...", "class": "search_query_widget grey-outline",

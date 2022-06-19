@@ -234,6 +234,8 @@
 
   .post_body_content {
     display: flex;
+    flex-direction: column;
+    width: 100%;
     line-height: 1.5;
     min-height: 100px;
   }

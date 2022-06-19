@@ -2,7 +2,6 @@
 const renderer = new marked.Renderer();
 
 renderer.code = function(code, infostring) {
-  console.log(infostring);
   return `<br/><pre><code class="block_code_snippet fill_block_width">${code}</code></pre><br/>`
 }
 

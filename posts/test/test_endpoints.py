@@ -2,7 +2,7 @@
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 
-from rest_framework.test import APITestCase, APIClient
+from rest_framework.test import APISimpleTestCase, APITestCase, APIClient
 
 from ..models import Question, Tag, Vote, Bookmark
 from authors.models import Profile
@@ -157,3 +157,12 @@ class TestUserVoteEndpointGetExistingVotes(APIStateTestCase):
                 "answers": None
             }
         )
+
+
+class TestAnonymousUserVoteAttempt(APISimpleTestCase):
+
+    def test_warn_user_to_login_to_vote(self):
+        response = self.client.post(reverse(
+            "api_posts:posts", kwargs={"id": 1}
+        ), data={"type": "dislike", "post": "question"})
+        self.assertEqual(response.status_code, 400)

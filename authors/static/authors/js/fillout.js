@@ -9,7 +9,7 @@ function create_api_request() {
   }
   const form = new FormData(this.form);
   for (const key of form.keys()) {
-    if (key === "csrfmiddlwaretoken" || !form.get(key)) {
+    if (key === "csrfmiddlewaretoken" || !form.get(key)) {
       form.delete(key);
     } else if (key === "password1") {
       const password_value = form.get(key);

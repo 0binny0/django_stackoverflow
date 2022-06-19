@@ -3,14 +3,23 @@
 {% block page_content %}
   <div class="question_posting_form">
     <h2>{{ title }}</h2>
-    {% if form.non_field_errors %}
-    <ul class="non_field_errors">
+    <!-- {% if form.non_field_errors %}
+    <ul class="submitted_erroclass="non_field_errors">
     {% for error in form.non_field_errors %}
       <li>{{ error }}</li>
     {% endfor %}
     </ul>
+    {% endif %} -->
+    {% if form.errors %}
+    <ul class="form_field_errors">
+    {% for field in form %}
+      {% for error in field.errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+    {% endfor %}
+    </ul>
     {% endif %}
-    <form id="id_{{ form }}" method="post" action="{{ request.path }}">
+    <form id="postform" method="post" action="{{ request.path }}">
       {% csrf_token %}
       {% for field in form %}
         {% if field.html_name == "body" %}
@@ -42,9 +51,9 @@
         {% endif %}
       {% endfor %}
       {% if request.resolver_match.url_name == "edit" %}
-        <button id="submit_question" type="submit">Edit Question</button>
+        <button id="submit_question" type="submit" formnovalidate>Edit Question</button>
       {% else %}
-        <button id="submit_question" type="submit">Ask Question</button>
+        <button id="submit_question" type="submit" formnovalidate>Ask Question</button>
       {% endif %}
     </form>
   </div>

@@ -12,7 +12,7 @@
         {% endfor %}
         </ul>
       {% endif %}
-      <h2 class="question_title">{{ question.title }}</h2>
+      <h2 class="question_title" id="question_{{ question.id }}">{{ question.title }}</h2>
       <div class="page_stats">
         <p class="page_stat">asked {{ question.date }} </p>{% if request.resolver_match.url_name == "question" %}<p class="page_stat">  - viewed {{ question.views.all }} times</p>{% endif %}
       </div>
@@ -59,7 +59,7 @@
           </ul>
         {% endif %}
         {% if request.resolver_match.url_name == "question" %}
-          <form action="{% url 'posts:question' question_id=question.id %}" method="post">
+          <form action="{% url 'posts:question' question_id=question.id %}" method="post" id="postform">
         {% else %}
           <form action="{% url 'posts:answer_edit' question_id=question.id answer_id=answer.id %}" method="post">
         {% endif %}
@@ -79,5 +79,8 @@
         <p class="user_login_message">Register a new account or login into an existing to contribute to the community.</p>
       {% endif %}
   </div>
-  <script type="module" src="{% static 'posts/js/create_post.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script type="module" src="{% static 'posts/js/render_posts.js' %}"></script>
+  <script type="module" src="{% static 'posts/js/create_answer.js' %}"></script>
+  <script type="module" src="{% static 'posts/js/votings.js' %}"></script>
 {% endblock %}

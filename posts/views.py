@@ -73,7 +73,6 @@ class AskQuestionPage(Page):
         context['form'] = QuestionForm
         return context
 
-
     def post(self, request):
         context = self.get_context_data()
         form = context['form'](request.POST)
@@ -96,6 +95,7 @@ class AskQuestionPage(Page):
                         "question_id": question.id
                     })
                 )
+        context['form'] = form
         return self.render_to_response(context)
 
 

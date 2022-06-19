@@ -1,6 +1,7 @@
 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import AnonymousUser
+from django.db.models import F
 
 from rest_framework.views import APIView
 from rest_framework.status import (
@@ -18,6 +19,7 @@ class UserVoteEndpoint(APIView):
 
     parser_classes = [JSONParser]
     renderer_classes = [JSONRenderer]
+    throttle_classes = []
 
     def retrieve_user_post(self, id, model):
         models = {
@@ -40,28 +42,33 @@ class UserVoteEndpoint(APIView):
     def post(self, request, id):
         if isinstance(request.user, AnonymousUser):
             return Response(status=HTTP_400_BAD_REQUEST)
-        post = self.retrieve_user_post(id, request.data.pop("post"))
+        post = self.retrieve_user_post(id, request.data['post'])
         serializer = VoteSerializer(data={'profile': request.user.profile.id},
-            context={'request': request, 'post': post}, partial=True
+            context={'post': post, 'vote_type': request.data['type']} , partial=True
         )
         if serializer.is_valid(raise_exception=True):
-            x = serializer.save(
-                profile=request.user.profile, type=request.data["type"],
-                content_object=post
-            )
+            serializer.save(type=request.data["type"], content_object=post)
             return Response(status=HTTP_201_CREATED)
 
     def put(self, request, id):
         post = self.retrieve_user_post(id, request.data.pop("post"))
+        vote = post.vote.get(profile=request.user.profile)
         serializer = VoteSerializer(
-            instance=post, data=request.data,
-            context={'request': request}, partial=True
+            instance=vote, data=request.data,
+            context={'request': request, "post": post}, partial=True
         )
         if serializer.is_valid(raise_exception=True):
-            serializer.save()
+            updated_vote = serializer.save()
             return Response(status=HTTP_204_NO_CONTENT)
 
     def delete(self, request, id):
         post = self.retrieve_user_post(id, request.data.pop("post"))
-        post.vote.get(profile=request.user.profile).delete()
+        vote = post.vote.get(profile=request.user.profile)
+        if vote.type == "dislike":
+            post.score = F("score") + 1
+        else:
+            post.score = F("score") - 1
+        post.save()
+        post.refresh_from_db()
+        vote.delete()
         return Response(status=HTTP_204_NO_CONTENT)
