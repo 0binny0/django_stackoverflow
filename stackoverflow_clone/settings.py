@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'guardian',
     'authors',
     'posts',
     'django.contrib.humanize'
@@ -124,6 +125,11 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+# AUTHENTICATION_BACKENDS = (
+#     'django.contrib.auth.backends.ModelBackend',
+#     'guardian.backends.ObjectPermissionBackend'
+# )
 
 
 # Static files (CSS, JavaScript, Images)

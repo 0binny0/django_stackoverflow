@@ -7,6 +7,7 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 
 from ..models import Tag, Question, Vote
+from ..serializers import VoteSerializer
 from authors.models import Profile
 
 from django.db.models import F
@@ -85,26 +86,60 @@ class TestQuestionScoreUpVote(TestCase):
     @classmethod
     def setUpTestData(cls):
         tag1 = Tag.objects.create(name="Tag1")
-        user = get_user_model().objects.create_user("TestUser")
-        cls.profile = Profile.objects.create(user=user)
+        user1 = get_user_model().objects.create_user("TestUser")
+        user2 = get_user_model().objects.create_user("ItsMe")
+        cls.profile2 = Profile.objects.create(user=user2)
+        cls.profile1 = Profile.objects.create(user=user1)
         cls.question = Question.objects.create(
             title="Question__001",
             body="Content of Question 001",
-            profile=cls.profile
+            profile=cls.profile1
         )
         cls.question.tags.add(tag1)
+        serializer = VoteSerializer(
+            data={'profile': cls.profile2.id}, context={
+                "post": cls.question, 'vote_type': "like"
+            }
+        )
+        import pdb; pdb.set_trace()
+        serializer.is_valid()
+        serializer.save(profile=cls.profile2, type="like", content_object=cls.question)
+        cls.score = Question.objects.get(title="Question__001").score
 
     def test_new_user_like_vote_on_question(self):
-        user_vote = Vote.objects.create(
-            profile=self.profile, type="like", content_object=self.question
+        self.assertEqual(self.score, 1)
+
+
+class TestQuestionScoreUpVote(TestCase):
+    '''Verify that a Question's score changes by one point
+    dependent upon whether a user likes or dislikes a question'''
+
+    @classmethod
+    def setUpTestData(cls):
+        tag1 = Tag.objects.create(name="Tag1")
+        user1 = get_user_model().objects.create_user("TestUser")
+        user2 = get_user_model().objects.create_user("ItsMe")
+        cls.profile2 = Profile.objects.create(user=user2)
+        cls.profile1 = Profile.objects.create(user=user1)
+        cls.question = Question.objects.create(
+            title="Question__001",
+            body="Content of Question 001",
+            profile=cls.profile1
         )
-        self.assertEqual(self.question.score, 1)
+        cls.question.tags.add(tag1)
+        serializer = VoteSerializer(
+            data={'profile': cls.profile2.id}, context={
+                "post": cls.question, 'vote_type': "dislike"
+            }
+        )
+        serializer.is_valid()
+        serializer.save(profile=cls.profile2, type="dislike", content_object=cls.question)
+        cls.score = Question.objects.get(title="Question__001").score
+
 
     def test_new_user_dislike_vote_on_question(self):
-        user_vote = Vote.objects.create(
-            profile=self.profile, type="dislike", content_object=self.question
-        )
-        self.assertEqual(self.question.score, -1)
+        self.assertEqual(self.score, -1)
+
 
 
 class TestQuestionQuerySearchManager(TestCase):

@@ -27,10 +27,11 @@ class VoteSerializer(ModelSerializer):
         return self.Meta.model.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        instance.type = validated_data['type']
+        vote = self.context['type']
+        instance.type = vote
         instance.save()
         post = self.context['post']
-        if validated_data['type'] == "dislike":
+        if vote == "dislike":
             post.score = F("score") - 2
         else:
             post.score = F("score") + 2
@@ -41,7 +42,7 @@ class VoteSerializer(ModelSerializer):
 
     class Meta:
         model = Vote
-        fields = ['type', 'profile']
+        fields = ['profile']
 
 
 class CurrentPostStateSerializer(BaseSerializer):

@@ -55,7 +55,7 @@ class UserVoteEndpoint(APIView):
         vote = post.vote.get(profile=request.user.profile)
         serializer = VoteSerializer(
             instance=vote, data=request.data,
-            context={'request': request, "post": post}, partial=True
+            context={"post": post, "type": request.data['type']}, partial=True
         )
         if serializer.is_valid(raise_exception=True):
             updated_vote = serializer.save()

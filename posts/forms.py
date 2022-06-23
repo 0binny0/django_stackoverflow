@@ -67,7 +67,7 @@ class QuestionForm(PostingForm):
         self.fields['body'].help_text = "Clarify your question with as much detail as possible"
         self.fields['body'].error_messages={
                 'required': "Elaborate on your question",
-                'min_length': "Add more info to your question body"
+                'min_length': "Add more info to your question"
             }
 
     title = CharField(

@@ -11,34 +11,34 @@ from authors.models import Profile
 
 
 
-class TestDuplicateUserVoteNotAllowed(APITestCase):
-
-    @classmethod
-    def setUpTestData(cls):
-        cls.voter = get_user_model().objects.create_user(username="main")
-        voter_profile = Profile.objects.create(user=cls.voter)
-        poster = get_user_model().objects.create_user(username="author")
-        poster_profile = Profile.objects.create(user=poster)
-        cls.question = Question.objects.create(
-            title="This is a question about Django APITestCases",
-            body="This is content that elaborates on the title provided to this question",
-            profile=poster_profile
-        )
-        cls.user_vote = Vote.objects.create(
-            profile=voter_profile, type="down", content_object=cls.question
-        )
-        cls.question.vote.add(cls.user_vote)
-
-
-    def test_duplicate_user_vote_disallowed(self):
-        data = {
-            'type': "down",
-            'resource': 'questions/1/'
-        }
-        request = Mock()
-        request.configure_mock(**{'user': self.voter})
-        serializer = VoteSerializer(instance=self.question, data=data, context={'request': request})
-        self.assertFalse(serializer.is_valid())
+# class TestDuplicateUserVoteNotAllowed(APITestCase):
+#
+#     @classmethod
+#     def setUpTestData(cls):
+#         cls.voter = get_user_model().objects.create_user(username="main")
+#         voter_profile = Profile.objects.create(user=cls.voter)
+#         poster = get_user_model().objects.create_user(username="author")
+#         poster_profile = Profile.objects.create(user=poster)
+#         cls.question = Question.objects.create(
+#             title="This is a question about Django APITestCases",
+#             body="This is content that elaborates on the title provided to this question",
+#             profile=poster_profile
+#         )
+#         cls.user_vote = Vote.objects.create(
+#             profile=voter_profile, type="down", content_object=cls.question
+#         )
+#         cls.question.vote.add(cls.user_vote)
+#
+#
+#     def test_duplicate_user_vote_disallowed(self):
+#         data = {
+#             'type': "down",
+#             'resource': 'questions/1/'
+#         }
+#         request = Mock()
+#         request.configure_mock(**{'user': self.voter})
+#         serializer = VoteSerializer(instance=self.question, data=data, context={'request': request})
+#         self.assertFalse(serializer.is_valid())
 
 class TestChangedUserVote(APITestCase):
 
