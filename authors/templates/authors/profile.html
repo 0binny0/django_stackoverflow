@@ -1,0 +1,45 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block user_page_content %}
+  <div class="user_data_wrapper">
+    <section class="posting_data">
+      <h2>{{ user }}</h2>
+      {% block user_data %}
+        <div class="user_data">
+          <ul class="page_options">
+          {% for page in page_options %}
+            <li><a href="{% url 'authors:profile' id=user.id%}?tab={{ page|lower }}">{{ page }}</a></li>
+          {% endfor %}
+          </ul>
+          <h3>{{ title }}</h3>
+          {% if request.resolver_match.url_name != "summary" %}
+            <ul class="user_data_query_options">
+            {% for page_query_button in query_buttons %}
+              <li><a href="{% url 'authors:user_data' %}?sort={{ page_query_button }}">page_query_button</a></li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+          <div class="posts_listing">
+            <div class="mobile_page_options_wrapper">
+              <p>View all activity pages</p>
+              <form action="{% url 'authors:profile' id=user.id %}" class="mobile_page_options" method="get">
+                {% for field in form %}
+                  {{ field }}
+                {% endfor %}
+              </form>
+            </div>
+          {% if query_page_filter == "summary" %}
+            {% include './summary.html' %}
+          {% elif query_page_filter == "questions" %}
+            {% include './questions.html' %}
+          {% elif query_page_filter == "answers" %}
+            {% include './answers.html' %}
+          {% elif query_page_filter == "bookmarks" %}
+            {% include './bookmarks.html' %}
+          {% endif %}
+          </div>
+        </div>
+      {% endblock %}
+    </section>
+  </div>
+{% endblock %}
