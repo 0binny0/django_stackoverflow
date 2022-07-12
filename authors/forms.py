@@ -4,7 +4,7 @@ from django.contrib.auth.forms import (
     UserCreationForm, AuthenticationForm,
 )
 
-from django.forms import CharField, TextInput, PasswordInput
+from django.forms import CharField, TextInput, PasswordInput, ChoiceField, Form
 
 class RegisterUserForm(UserCreationForm):
 
@@ -55,3 +55,14 @@ class LoginUserForm(AuthenticationForm):
 
     def __str__(self):
         return f"{self.__class__.__name__}"
+
+
+class ProfileSearchQueryForm(Form):
+    tab = ChoiceField(choices=[
+        ('question', "Questions"), ('answer', 'Answers'), ('tag', 'Tags'),
+        ('bookmark', "Bookmarks")
+    ])
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['tab'].widget.attrs.update({"class": "profile_sort_menu"})
