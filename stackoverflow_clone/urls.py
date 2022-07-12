@@ -40,7 +40,8 @@ posts_api_patterns = ([
 authors_patterns =  ([
     path("signup/", av.RegisterNewUserPage.as_view(), name="register"),
     path("login/", av.LoginUserPage.as_view(), name="login"),
-    path("logout/", av.LogoutUser.as_view(), name="logout")
+    path("logout/", av.LogoutUser.as_view(), name="logout"),
+    path("<id>", av.UserProfilePage.as_view(), name="profile")
 ], "authors")
 
 authors_api_patterns = ([
