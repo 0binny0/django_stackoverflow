@@ -180,6 +180,9 @@ class Question(Post):
     postings = QuestionSearchManager()
     searches = QueryStringSearchManager()
 
+    def __str__(self):
+        return self.title
+
 
     class Meta(Post.Meta):
         db_table = "question"
