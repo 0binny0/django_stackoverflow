@@ -30,7 +30,7 @@
               <li id="delete_post" class="post_option"><a class="blk_link" href="#">Delete</a></li>
             </ul>{% endif %}<div class="post_user_info">
                 <p class="post_date">asked {{ question.date }}</p>
-                <p class="post_author">{{ question.profile.user.username }}</p>
+                <p class="post_author"><a href="{% url 'authors:profile' id=request.user.id %}">{{ question.profile.user.username }}</a></p>
               </div>
         {% endif %}
       {% endif %}

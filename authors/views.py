@@ -2,12 +2,15 @@ from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import login, logout, get_user_model
+from django.views.generic.detail import SingleObjectMixin
 from django.contrib import messages
 from django.views import View
+from django.http import HttpResponse
+from django.core.paginator import Paginator
 
 from posts.views import Page
-from .forms import RegisterUserForm, LoginUserForm
-from .models import Profile
+from .forms import RegisterUserForm, LoginUserForm, ProfileSearchQueryForm
+from .models import Profile, User
 
 from .http_status import SeeOtherHTTPRedirect
 
@@ -68,3 +71,55 @@ class LogoutUser(View):
     def get(self, request):
         logout(request)
         return HttpResponseRedirect(reverse("posts:main"))
+
+
+class UserProfilePage(Page, SingleObjectMixin):
+
+    template_name = "authors/profile.html"
+    model = get_user_model()
+    pk_url_kwarg = "id"
+
+    def get_context_data(self, **kwargs):
+        self.object = self.get_object()
+        context = super().get_context_data(object=self.object)
+        return context
+
+    def get(self, request, id):
+        context = self.get_context_data()
+        context |= {
+            'form': ProfileSearchQueryForm,
+            'page_options': ['Questions', 'Answers', 'Tags', 'Bookmarks']
+        }
+        query_page_filter = request.GET.get("tab", "summary").lower()
+        if (
+            query_page_filter not in ['summary', 'bookmarks', 'questions', 'answers', 'tags']
+            or query_page_filter == "summary"):
+                context |= context['object'].profile.collect_profile_data()
+                context |= {'query_page_filter': "summary"}
+        else:
+            order_by = request.GET.get("sort")
+            if query_page_filter == "tags":
+                query_tabs = ['name', 'score']
+                query = context['object'].profile.get_tag_posts
+            elif query_page_filter == "votes":
+                query_tabs = ['all', 'upvote', 'downvote']
+                query = context['object'].profile.get_posts_voted_on
+            else:
+                query_tabs = ['newest', 'score', 'activity']
+                if query_page_filter == "questions":
+                    query = context['object'].profile.get_question_posts
+                elif query_page_filter == "answers":
+                    query = context['object'].profile.get_answer_posts
+                else:
+                    query = context['object'].profile.get_bookmarked_posts
+            if not order_by or order_by not in query_tabs:
+                order_by = query_tabs[0]
+            paginator = Paginator(query(order_by)['records'], 10)
+            page = paginator.get_page(request.GET.get('page', 1))
+            query_string = QueryDict({'tab': query_page_filter, 'page': page, 'sort': order_by})
+            context |= {
+                'page': page,
+                'page_query_filter': query_page_filter,
+                'requested_url': f"{request.path}?{query_string}"
+            }
+        return self.render_to_response(context)

@@ -1,0 +1,13 @@
+
+<div id='question_id_{{ question.id }}' class="posting">
+  <div class='question_stats_wrapper'>
+    <p>{{ question.score }} votes</p><p>{{ question.answers.count }} answers</p><p>{{ question.views }} views</p>
+  </div>
+  <h3>{{ question }}</h3>
+  <div class="question_tag_wrapper">
+    <div>
+      <ul>{% for tag in question.tags.all %}<li>{{ tag }}</li>{% endfor %}</ul>
+      <p>asked {{ question.date }}</p>
+    </div>
+  </div>
+</div>

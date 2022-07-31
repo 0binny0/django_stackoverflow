@@ -31,6 +31,7 @@ class TestProfilePostedManager(TestCase):
         question1 = Question.objects.create(
             title="This is a title about question1",
             body="This is the post content about question1",
+            score=17,
             profile=profile
         )
         question1.tags.add(tag3)
@@ -38,6 +39,7 @@ class TestProfilePostedManager(TestCase):
         question2 = Question.objects.create(
             title="This is a title about question2",
             body="This is the post content about question2",
+            score=12,
             profile=profile
         )
         question2.tags.add(*[tag1, tag3])
@@ -49,10 +51,10 @@ class TestProfilePostedManager(TestCase):
         )
         question3.tags.add(tag2)
 
-        cls.queryset = profile.get_tag_posts()
+        cls.records, cls.title = profile.get_tag_posts().values()
 
     def test_user_posted_tag_queryset(self):
-        self.assertEqual(self.queryset.count(), 3)
+        self.assertEqual(self.title, "3 Tags")
         self.assertQuerysetEqual(
-            self.queryset, ["TagA", "TagB", "TagZ"], transform=str
+            self.records, ["TagA", "TagB", "TagZ"], transform=str
         )

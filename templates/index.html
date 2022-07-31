@@ -30,15 +30,23 @@
         </ul>
       </div><nav class="main_site_nav">
       {% if user.is_authenticated %}
-        <a href="{% url 'posts:main' %}" class="btn nav_btn">Home</a><a href="#" class="btn nav_btn">Profile</a><a href="{% url 'authors:logout' %}" class="btn nav_btn">Logout</a>
+        <a href="{% url 'posts:main' %}" class="btn nav_btn">Home</a><a href="{% url 'authors:profile' id=request.user.id %}" class="btn nav_btn">Profile</a><a href="{% url 'authors:logout' %}" class="btn nav_btn">Logout</a>
       {% else %}
         <a href="{% url 'posts:main' %}" class="btn nav_btn">Home</a><a href="{% url 'authors:register' %}" class="btn nav_btn">Register</a><a href="{% url 'authors:login' %}" class="btn nav_btn">Login</a>
       {% endif %}
       </nav>
     </header>
-    <section class="content_box">
-    {% block page_content %}{% endblock %}
-    </section>
+    {% if request.resolver_match.url_name == "profile" %}
+      <section>
+      {% block user_page_content %}{% endblock %}
+      <section>
+    {% else %}
+      <section class="content_box">
+      {% block page_content %}{% endblock %}
+      </section>
+    {% endif %}
+
+
     <!-- <script src="{% static 'js/navigate.js' %}"></script> -->
   </body>
 </html>

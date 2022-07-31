@@ -1,5 +1,6 @@
 {% extends 'index.html' %}
 {% load static %}
+{% load listings %}
 {% block user_page_content %}
   <div class="user_data_wrapper">
     <section class="posting_data">
@@ -30,12 +31,38 @@
             </div>
           {% if query_page_filter == "summary" %}
             {% include './summary.html' %}
-          {% elif query_page_filter == "questions" %}
-            {% include './questions.html' %}
-          {% elif query_page_filter == "answers" %}
-            {% include './answers.html' %}
-          {% elif query_page_filter == "bookmarks" %}
-            {% include './bookmarks.html' %}
+          {% else %}
+            {% for post in posts %}
+              {% if query_page_filter == "questions" %}
+                {% include './questions.html' with question=post only %}
+              {% elif query_page_filter == "answers" %}
+                {% include './answers.html' with answer=post only %}
+              {% elif query_page_filter == "bookmarks" %}
+                {% include './bookmarks.html' with bookmark=post only %}
+              {% endif %}
+            {% endfor %}
+            <div class="page_nav_buttons">
+              {% if posts.has_previous %}
+                <div class="nav_button">
+                  {% with previous_page_url=previous_page_url %}
+                    <a href="{{ previous_page_url }}"><svg width="25" height="25">
+                      <polygon points="0,12.5 25,25 25,0" fill="orange"></polygon>
+                    </svg></a>
+                  {% endwith %}
+                  <p>Previous Page</p>
+                </div>
+              {% endif %}
+              {% if page.has_next %}
+                <div class="nav_button">
+                  <p>Next Page</p>
+                  {% with next_page_url=next_page_url %}
+                    <a href="{{ next_page_url }}"<svg width="25" height="25">
+                      <polygon points="0,0 0,25 25,12.5" fill="orange"></polygon>
+                    </svg></a>
+                  {% endwith %}
+                </div>
+              {% endif %}
+            </div>
           {% endif %}
           </div>
         </div>
