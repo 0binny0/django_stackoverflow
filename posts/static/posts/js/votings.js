@@ -9,16 +9,14 @@ function json_response(response) {
 }
 
 window.addEventListener("DOMContentLoaded", (e) => {
-  debugger;
   var question_target = document.querySelector("h2[id*=question]");
   const id = question_target.id.split("_")[1];
-  const request = fetch(`http://localhost:8000/api/v1/posts/${id}/`, {
+  const request = fetch(`http://localhost:8000/api/v1/votes/${id}`, {
     'method': "GET"
   });
   request.then(json_response).then((json) => {
     console.log(`The response is ${json}`);
     const question_voted_on = document.querySelector(`svg > polygon[id=${json.vote}_question_${id}]`);
-    debugger;
     if (question_voted_on) {
       question_voted_on.classList.add("voted");
     }

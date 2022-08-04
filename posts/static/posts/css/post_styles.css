@@ -13,6 +13,10 @@
   padding: 5px;
 }
 
+.undelete {
+  color: red;
+}
+
 .post_draft {
   margin-top: 10px;
 }
@@ -65,6 +69,10 @@
   /*---------------
     page_content
   ---------------*/
+
+  .main_content_wrapper {
+    position: relative;
+  }
 
   .content_posting,
   .form_fieldset_widget:nth-of-type(3) {
@@ -134,6 +142,21 @@
     background: white;
     color: black;
     border: 1px solid lightgrey;
+  }
+
+  .temp_removed {
+    position: absolute;
+    width: 450px;
+    top: 0;
+    bottom: 0;
+    background: lightpink;
+    margin-top: 170px;
+    opacity: 0.5;
+    z-index: 1;
+  }
+
+  .delete_message {
+    margin-bottom: 10px;
   }
 
   .main_pagination {
@@ -246,6 +269,12 @@
 
   .post_option:not(:first-child) {
     margin-left: 5px;
+    position: relative;
+    z-index: 3;
+  }
+
+  .post_option:not(:first-child):hover {
+    cursor: pointer;
   }
 
   .posted_score {
@@ -340,4 +369,12 @@
     border-right: none;
   }
 
+}
+
+
+@media screen and (min-width: 675px) {
+  .temp_removed {
+    margin-top: 200px;
+    width: 490px;
+  }
 }

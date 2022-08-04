@@ -13,7 +13,7 @@ from authors.models import Profile
 from .forms import SearchForm, QuestionForm, AnswerForm
 from .models import Question, Tag, Answer
 
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from authors.http_status import SeeOtherHTTPRedirect
 
 from .utils import get_page_links
@@ -145,6 +145,8 @@ class PostedQuestionPage(Page):
     def get(self, request, question_id):
         context = self.get_context_data()
         question = get_object_or_404(Question, id=question_id)
+        if question.profile.user != request.user and not question.visible:
+            raise Http404
         context['question'] = question
         return self.render_to_response(context)
 

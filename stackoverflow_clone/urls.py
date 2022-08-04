@@ -33,8 +33,12 @@ posts_patterns = ([
     path("questions/tagged/<tags>", pv.TaggedSearchResultsPage.as_view(), name="tagged")
 ], "posts")
 
-posts_api_patterns = ([
-    path("<int:id>/", posts_api.UserVoteEndpoint.as_view(), name="posts")
+votes_api_patterns = ([
+    path("<int:id>/", posts_api.UserVoteEndpoint.as_view(), name="vote")
+], "posts")
+
+post_api_patterns = ([
+    path("<int:id>", posts_api.PageStatusEndpoint.as_view(), name="post")
 ], "posts")
 
 authors_patterns =  ([
@@ -53,5 +57,7 @@ urlpatterns = [
     path("users/", include(authors_patterns, namespace="authors")),
     path("", include(posts_patterns, namespace="posts")),
     path("api/v1/users/", include(authors_api_patterns), name="authors_api"),
-    path("api/v1/posts/", include(posts_api_patterns, namespace="api_posts")),
+    # path("api/v1/posts/", include(posts_api_patterns, namespace="api_posts"),
+    path("api/v1/votes/", include(votes_api_patterns, namespace="api_votes")),
+    path("api/v1/posts/", include(post_api_patterns, namespace="api_posts"))
 ]
