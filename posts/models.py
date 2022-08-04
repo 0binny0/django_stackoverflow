@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import (
     Model, ManyToManyField, ForeignKey, CASCADE, SET_NULL, CharField,
-     TextField, PositiveIntegerField, IntegerField, DateField,
+     TextField, PositiveIntegerField, IntegerField, DateField, BooleanField,
      GenericIPAddressField, Manager, OuterRef, Subquery, Count, F,
      UniqueConstraint, QuerySet, Q
 )
@@ -176,6 +176,7 @@ class Question(Post):
         'Tag', related_name="questions", related_query_name="question"
     )
     views = IntegerField(default=0)
+    visible = BooleanField(default=True)
     objects = Manager()
     postings = QuestionSearchManager()
     searches = QueryStringSearchManager()

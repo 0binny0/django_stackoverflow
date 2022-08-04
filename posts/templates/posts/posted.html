@@ -15,7 +15,7 @@
   {% if request.user.is_authenticated and post.profile.user == request.user %}
     <ul class="option_list">
       <li class="post_option"><a class="blk_link" href="{{ url }}">Edit</a></li>
-      <li id="delete_post{{ id }}" class="post_option"><a class="blk_link" href="#">Delete</a></li>
+      <li id="delete_{{ id }}" class="post_option blk_link">Delete</li>
     </ul>
   {% endif %}
 </div>

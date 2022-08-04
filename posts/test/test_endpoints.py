@@ -166,3 +166,26 @@ class TestAnonymousUserVoteAttempt(APISimpleTestCase):
             "api_posts:posts", kwargs={"id": 1}
         ), data={"type": "dislike", "post": "question"})
         self.assertEqual(response.status_code, 400)
+
+
+class TestUserPostDeleted(APITestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        user = get_user_model().objects.create_user(
+            username="ItsMe", password="secretclearance"
+        )
+        profile = Profile.objects.create(user=user)
+        tag = Tag.objects.create(name="Tag1")
+        question = Question.objects.create(
+            title="This is a title about the subject post",
+            body="This is content that elaborates upon the the subject title",
+            profile=profile
+        )
+        question.tags.add(tag)
+        cls.url = f"{reverse('api_posts:post', kwargs={'id': 1})}?post=question"
+
+    def test_deleted_post_response(self):
+        self.client.login(username="ItsMe", password="secretclearance")
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, 204)
