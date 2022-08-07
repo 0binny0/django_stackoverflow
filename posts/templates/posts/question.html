@@ -28,11 +28,15 @@
             {% if question.profile.user == request.user %}
               <ul class="option_list">
                 <li class="post_option"><a class="blk_link" href="{% url 'posts:edit' question_id=question.id %}">Edit</a></li>
+<<<<<<< HEAD
                 {% if question.visible %}
                   <li id="delete_question_{{ question.id }}" class="post_option blk_link">Delete</li>
                 {% else %}
                   <li id="delete_question_{{ question.id }}" class="post_option blk_link undelete">Undelete</li>
                 {% endif %}
+=======
+                <li id="delete_question_{{ question.id }}" class="post_option blk_link">Delete</li>
+>>>>>>> 6c3c4eddfc1ceacffc47e22b2335be64507aafe6
               </ul>{% endif %}<div class="post_user_info">
                   <p class="post_date">asked {{ question.date }}</p>
                   <p class="post_author"><a href="{% url 'authors:profile' id=request.user.id %}">{{ question.profile.user.username }}</a></p>

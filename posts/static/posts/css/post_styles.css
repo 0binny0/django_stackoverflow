@@ -146,19 +146,29 @@
 
   .temp_removed {
     position: absolute;
+<<<<<<< HEAD
     width: 450px;
     top: 0;
     bottom: 0;
     background: lightpink;
     margin-top: 170px;
+=======
+    top: 0;
+    bottom: 0;
+    background: lightpink;
+    margin-top: 200px;
+>>>>>>> 6c3c4eddfc1ceacffc47e22b2335be64507aafe6
     opacity: 0.5;
     z-index: 1;
   }
 
+<<<<<<< HEAD
   .delete_message {
     margin-bottom: 10px;
   }
 
+=======
+>>>>>>> 6c3c4eddfc1ceacffc47e22b2335be64507aafe6
   .main_pagination {
     display: flex;
     margin-top: 50px;
