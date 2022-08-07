@@ -151,9 +151,13 @@
     bottom: 0;
     background: lightpink;
     margin-top: 170px;
+    top: 0;
+    bottom: 0;
+    background: lightpink;
     opacity: 0.5;
     z-index: 1;
   }
+
 
   .delete_message {
     margin-bottom: 10px;

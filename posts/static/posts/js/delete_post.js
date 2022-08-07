@@ -71,7 +71,7 @@ posted_question.addEventListener("click", function(event) {
       if (this.textContent === "Delete") {
         const main_page_content = document.querySelector(".main_topic");
         const main_page_content_dims = [
-          main_page_content.clientHeight + 2000, main_page_content.clientWidth
+          main_page_content.clientHeight, main_page_content.clientWidth
         ];
         const blocked_post = document.createElement("div");
         // blocked_post.style.height = ;
@@ -81,14 +81,11 @@ posted_question.addEventListener("click", function(event) {
         let deleted_warning = document.createElement("p");
         deleted_warning.textContent = "This post is temporaily deleted. Click \"Undelete\" to display post."
         blocked_post.appendChild(deleted_warning);
-        main_page_content.parentElement.appendChild(blocked_post)
+        blocked_post.style.cssText = `min-height: ${main_page_content_dims[0]}px; width: ${main_page_content_dims[1]}px;`;
+        main_page_content.insertAdjacentElement('afterend', blocked_post)
         this.textContent = "Undelete";
         this.classList.add("undelete");
         console.log(main_page_content.clientHeight);
-        blocked_post.style.cssText = `{
-          height: ${main_page_content_dims[0] + 500}px;
-          width: ${main_page_content_dims[1]}px;
-        }`;
       } else {
         const blocked_post = document.getElementById("post_temp_blocked");
         blocked_post.parentElement.removeChild(blocked_post);
