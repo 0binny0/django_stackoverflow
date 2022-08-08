@@ -147,7 +147,11 @@ class PostedQuestionPage(Page):
         question = get_object_or_404(Question, id=question_id)
         if question.profile.user != request.user and not question.visible:
             raise Http404
-        context['question'] = question
+        context |= {
+            'question': question,
+            'answer_count': question.answers.count()
+        }
+
         return self.render_to_response(context)
 
     def post(self, request, question_id):
@@ -184,7 +188,7 @@ class EditPostedAnswerPage(PostedQuestionPage):
         if context['answer_form'](request.POST, instance=answer).is_valid():
             return SeeOtherHTTPRedirect(
                 reverse("posts:question", kwargs={
-                    'question_id': 1
+                    'question_id': question.id
                 })
             )
         return self.render_to_response(context)

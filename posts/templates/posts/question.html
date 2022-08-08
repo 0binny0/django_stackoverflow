@@ -24,33 +24,22 @@
             <li class="inline_linked tag bg-blue"><a class="inline_anchor" href='{% url "posts:tagged" tags=tag|lower %}'>{{ tag }}</a></li>
           {% endfor %}
           </ul>
-          {% if request.user.is_authenticated %}
-            {% if question.profile.user == request.user %}
-              <ul class="option_list">
-                <li class="post_option"><a class="blk_link" href="{% url 'posts:edit' question_id=question.id %}">Edit</a></li>
-                {% if question.visible %}
-                  <li id="delete_question_{{ question.id }}" class="post_option blk_link">Delete</li>
-                {% else %}
-                  <li id="delete_question_{{ question.id }}" class="post_option blk_link undelete">Undelete</li>
-                {% endif %}
-              </ul>{% endif %}<div class="post_user_info">
-                  <p class="post_date">asked {{ question.date }}</p>
-                  <p class="post_author"><a href="{% url 'authors:profile' id=request.user.id %}">{{ question.profile.user.username }}</a></p>
-                </div>
-          {% endif %}
+
         {% endif %}
         <div class="question_answers">
         {% if request.resolver_match.url_name == "question" %}
-          <h3 class="total_answers">{{ question.answers.count }} answers</h3>
-            {% for answer in question.answers.all %}
-              {% voting_booth answer %}  {% comment "" %}{% endcomment %}
-              <!-- {% if request.user.is_authenticated and answer.profile.user == request.user %}
-                <ul class="option_list">
-                  <li class="post_option"><a class="blk_link" href="#">Edit</a></li>
-                  <li id="delete_post" class="post_option"><a class="blk_link" href="#">Delete</a></li>
-                </ul>
-              {% endif %} -->
-            {% endfor %}
+          <h3 class="total_answers"><span id="question_answer_count">{{ answer_count }}</span> answers</h3>
+            {% if answer_count >= 1 %}
+              {% for answer in question.answers.all %}
+                {% voting_booth answer %}
+                <!-- {% if request.user.is_authenticated and answer.profile.user == request.user %}
+                  <ul class="option_list">
+                    <li class="post_option"><a class="blk_link" href="{% url 'posts:answer_edit' question_id=question.id answer_id=answer.id %}">Edit</a></li>
+                    <li id="delete_answer_{{ answer.id }}" class="post_option blk_link">Delete</li>
+                  </ul>
+                {% endif %} -->
+              {% endfor %}
+            {% endif %}
         {% endif %}
         {% if request.user.is_authenticated %}
         <div class="posted_answer_form">
@@ -92,7 +81,11 @@
   {% endif %}
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script type="module" src="{% static 'posts/js/render_posts.js' %}"></script>
-  <script type="module" src="{% static 'posts/js/create_answer.js' %}"></script>
+  {% if request.resolver_match.url_name == 'ask' %}
+    <script type="module" src="{% static 'posts/js/create_answer.js' %}"></script>
+  {% endif %}
   <script type="module" src="{% static 'posts/js/votings.js' %}"></script>
-  <script type="module" src="{% static 'posts/js/delete_post.js' %}"></script>
+  {% if request.resolver_match.url_name == "question" %}
+    <script type="module" src="{% static 'posts/js/delete_post.js' %}"></script>
+  {% endif %}
 {% endblock %}

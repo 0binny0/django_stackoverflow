@@ -1,10 +1,11 @@
 
 const csrf_token = Cookies.get('csrftoken');
 const posted_question = document.querySelector("li[id*=delete_question]");
+const user_posted_answers = document.querySelectorAll("li[id*=delete_answer]");
+console.log(user_posted_answers);
 
 function set_api_request(id) {
   const [method, post, post_id] = id.split("_");
-  debugger;
   const request = new Request(
     `http://localhost:8000/api/v1/posts/${post_id}?post=${post}`, {
       'method': 'PUT',
@@ -34,6 +35,30 @@ function show_deleted_post_message() {
   blocked_post.appendChild(deleted_warning);
   return [main_page_content, blocked_post]
 }
+
+
+user_posted_answers.forEach((answer) => {
+  answer.addEventListener("click", function(event) {
+    const request = set_api_request(this.id);
+    fetch(request).then((response) => {
+      if (response.ok) {
+        const [post_type, id] = this.id.split("_").slice(1);
+        const post = document.querySelector(`#posted_${post_type}_${id}`);
+        const post_answer_tally = document.getElementById("question_answer_count");
+        const answers = document.querySelector(".total_answers");
+        const new_answer_post_count = parseInt(post_answer_tally.textContent) - 1;
+        if (new_answer_post_count === 1) {
+          answers.textContent = `${new_answer_post_count} answer`;
+        } else {
+          answers.textContent = `${new_answer_post_count} answers`;
+        }
+
+        post.remove();
+      }
+    })
+  })
+})
+
 
 window.addEventListener("DOMContentLoaded", function(event) {
   const page_url = window.location;

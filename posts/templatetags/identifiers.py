@@ -11,8 +11,8 @@ from ..models import Question, Answer
 
 register = template.Library()
 
-@register.inclusion_tag("posts/posted.html")
-def voting_booth(post):
+@register.inclusion_tag("posts/posted.html", takes_context=True)
+def voting_booth(context, post):
     if isinstance(post, Question):
         id = f"question_{post.id}"
     else:
@@ -24,7 +24,7 @@ def voting_booth(post):
         })
     else:
         url = reverse("posts:edit", kwargs={"question_id": post.id})
-    return {'post': post, "id": id, "url": url}
+    return {'post': post, "id": id, "url": url, 'request': context['request']}
 
 @register.simple_tag(takes_context=True)
 def route(context, button=None):
