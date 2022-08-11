@@ -39,14 +39,24 @@
     {% endfor %}
     </div>
     <div class="page_range_options_wrapper">
-      {% for limit in page_listing_limits %}
-        {% if limit == request.GET.pagesize %}
-          <a class="active_page page_num" href="{% set_page_number_url limit=limit %}">{{ limit }}</a>
-        {% else %}
-          <a class="inactive_page page_num" href="{% set_page_number_url limit=limit %}">{{ limit }}</a>
-        {% endif %}
-      {% endfor %}
-      per page
+      {% if request.GET.pagesize not in page_listing_limits %}
+        {% for limit in page_listing_limits %}
+          {% if forloop.counter0 == 0 %}
+            <a class="active_page page_num" href="{% set_page_number_url limit=limit %}">{{ limit }}</a>
+          {% else %}
+            <a class="inactive_page page_num" href="{% set_page_number_url limit=limit %}">{{ limit }}</a>
+          {% endif %}
+        {% endfor %}
+      {% else %}
+        {% for limit in page_listing_limits %}
+          {% if limit == request.GET.pagesize %}
+            <a class="active_page page_num" href="{% set_page_number_url limit=limit %}">{{ limit }}</a>
+          {% else %}
+            <a class="inactive_page page_num" href="{% set_page_number_url limit=limit %}">{{ limit }}</a>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+      <span>per page</span>
     </div>
   </div>
 {% endif %}
