@@ -40,7 +40,7 @@ class QuestionListingPage(Page):
         context = super().get_context_data(**kwargs)
         tab_index = self.request.GET.get("tab", "interesting").lower()
         questions = Question.postings.lookup(
-            tab_index, self.request.user
+            self.request.user, tab_index
         )[:21]
         context.update({"questions": questions, "count": questions.count()})
         return context
@@ -221,7 +221,7 @@ class AllQuestionsPage(PaginatedPage):
 
     def get(self, request):
         context = super().get_context_data()
-        tab_index = request.GET.get('tab', "interesting").lower()
+        tab_index = request.GET.get('tab', "interesting")
         context['paginator'].object_list = Question.postings.lookup(
             tab_index, request.user
         )
@@ -242,7 +242,7 @@ class SearchResultsPage(PaginatedPage):
 
     def get(self, request):
         query, tab_index = request.GET.get('q'), request.GET.get('tab', 'newest')
-        queryset, query_data = Question.searches.lookup(query, tab_index)
+        queryset, query_data = Question.searches.lookup(tab_index, query=query)
         if query_data['tags'] and not query_data['title'] and not query_data['user']:
             tags = "".join([
                 f"{tag}+" if i != len(query_data["tags"]) - 1 else f"{tag}"
@@ -285,7 +285,7 @@ class TaggedSearchResultsPage(PaginatedPage):
         query = "".join(f" [{tag}] " for tag in tags.split("+"))
         tab_index = request.GET.get('tab', "newest")
         context['search_form'].fields['q'].widget.attrs.update({"value": query})
-        queryset, query_data = Question.searches.lookup(query, tab_index)
+        queryset, query_data = Question.searches.lookup(tab_index, query=query)
         context['paginator'].object_list = queryset
         page = context['paginator'].get_page(
             request.GET.get("page", None)

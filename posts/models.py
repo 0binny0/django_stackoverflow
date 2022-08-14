@@ -10,6 +10,7 @@ from django.db.models import (
      GenericIPAddressField, Manager, OuterRef, Subquery, Count, F,
      UniqueConstraint, QuerySet, Q
 )
+from django.urls import resolve
 
 from django.contrib.contenttypes.fields import (
     GenericForeignKey,  GenericRelation
@@ -21,44 +22,49 @@ from .utils import resolve_search_query
 
 class QueryStringSearchManager(Manager):
 
-    def lookup(self, query, tab="newest"):
+    def lookup(self, tab, query=None):
         qs_options = {
-            f"{self._unanswered.__name__}": self._unanswered,
-            f"{self._active.__name__}": self._active,
-            f"{self._newest.__name__}": self._newest,
-            f"{self._score.__name__}": self._score
+            f"{self.unanswered.__name__}": self.unanswered,
+            f"{self.active.__name__}": self.active,
+            f"{self.newest.__name__}": self.newest,
+            f"{self.score.__name__}": self.score
         }
+        current_tab = tab.lower()
+        if current_tab not in ['unanswered', 'active', 'newest', 'score']:
+            current_tab = "newest"
         queryset = super().get_queryset().order_by("-date", "views", "-score")
-        query_data = resolve_search_query(query)
-        if 'tags' in query_data and query_data['tags']:
-            q_objects = map(
-                lambda tag: Q(name__iexact=tag), query_data['tags']
-            )
-            query = reduce(lambda q1, q2: q1 & q2, q_objects)
-            tags = Tag.objects.filter(query)
-            queryset = queryset.filter(tags__in=tags).distinct()
-        if 'title' in query_data and query_data['title']:
-            queryset = queryset.filter(title__contains=f"{query_data['title']}")
-        if 'user' in query_data and query_data['user']:
-            queryset = queryset.filter(profile_id=query_data['user'])
-        queryset = qs_options.get(f"_{tab}", "_newest")(queryset)
-        return queryset, query_data
+        if query:
+            query_data = resolve_search_query(query)
+            if 'tags' in query_data and query_data['tags']:
+                q_objects = map(
+                    lambda tag: Q(name__iexact=tag), query_data['tags']
+                )
+                query = reduce(lambda q1, q2: q1 & q2, q_objects)
+                tags = Tag.objects.filter(query)
+                queryset = queryset.filter(tags__in=tags).distinct()
+            if 'title' in query_data and query_data['title']:
+                queryset = queryset.filter(title__contains=f"{query_data['title']}")
+            if 'user' in query_data and query_data['user']:
+                queryset = queryset.filter(profile_id=query_data['user'])
+            queryset = qs_options.get(f"{tab}", "_newest")(queryset)
+            return queryset, query_data
+        queryset = qs_options.get(current_tab, "newest")(queryset)
+        return queryset, None
 
-    def _unanswered(self, qs):
+    def unanswered(self, qs):
         return qs.annotate(
             total_answers=Count('answer')
         ).filter(total_answers__exact=0)
 
-    def _active(self, qs):
+    def active(self, qs):
         return qs.annotate(
             total_answers=Count("answer")
         ).filter(total_answers__gt=0)
 
-    def _newest(self, qs):
+    def newest(self, qs):
         return qs
 
-    def _score(self, qs):
-        import pdb; pdb.set_trace()
+    def score(self, qs):
         return qs.filter(score__gte=0)
 
 
@@ -75,23 +81,26 @@ class QuestionSearchManager(Manager):
 
     def lookup(self, user, tab="interesting"):
         qs_options = {
-            f"{self._interesting.__name__}": self._interesting,
-            f"{self._hot.__name__}": self._hot,
-            f"{self._week.__name__}": self._week,
-            f"{self._month.__name__}": self._month,
+            f"{self.interesting.__name__}": self.interesting,
+            f"{self.hot.__name__}": self.hot,
+            f"{self.week.__name__}": self.week,
+            f"{self.month.__name__}": self.month,
         }
         if not isinstance(user, get_user_model()):
             return Question.objects.all()
-        return qs_options.get(f"_{tab}", "_interesting")(user.profile)
+        selected_tab = tab.lower()
+        if selected_tab not in ['interesting', 'hot', 'week', 'month']:
+            selected_tab = "interesting"
+        return qs_options.get(selected_tab, "interesting")(user.profile)
 
-    def _interesting(self, profile):
+    def interesting(self, profile):
         return self.get_queryset().filter(
             tags__name__in=profile.questions.values_list(
                 "tags__name", flat=True
             )
         )
 
-    def _hot(self, profile):
+    def hot(self, profile):
         today = date.today()
         days_ago = today - timedelta(days=3)
         return self.get_queryset().filter(
@@ -102,7 +111,7 @@ class QuestionSearchManager(Manager):
             ).values_list("tags__name", flat=True)
         ).distinct()
 
-    def _week(self, profile):
+    def week(self, profile):
         today = date.today()
         weekago = today - timedelta(days=7)
         return self.get_queryset().filter(
@@ -113,7 +122,7 @@ class QuestionSearchManager(Manager):
             )
         ).distinct()
 
-    def _month(self, profile):
+    def month(self, profile):
         today = date.today()
         monthago = today - timedelta(days=31)
         return self.get_queryset().filter(

@@ -77,7 +77,9 @@ class PageStatusEndpoint(APIView):
 
     def get(self, request, id):
         question = Question.objects.get(id=id)
-        return Response({'visible': question.visible}, status=HTTP_200_OK)
+        return Response({
+            'posted': question.profile.user == request.user, 'visible': question.visible
+        }, status=HTTP_200_OK)
 
     def put(self, request, id):
         post = retrieve_user_post(id, request.query_params['post'])

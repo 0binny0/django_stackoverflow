@@ -1,6 +1,5 @@
 
 const csrf_token = Cookies.get('csrftoken');
-const posted_question = document.querySelector("li[id*=delete_question]");
 const user_posted_answers = document.querySelectorAll("li[id*=delete_answer]");
 console.log(user_posted_answers);
 
@@ -64,7 +63,7 @@ window.addEventListener("DOMContentLoaded", function(event) {
   const page_url = window.location;
 
   const request = new Request(
-    "http://localhost:8000/api/v1/posts/62", {
+    "http://localhost:8000/api/v1/posts/59", {
       'method': "GET",
       'Content-Type': "application/json",
       "Accept": "application/json",
@@ -74,48 +73,50 @@ window.addEventListener("DOMContentLoaded", function(event) {
   fetch(request).then(
     (response) => response.json()
   ).then((json) => {
-    const active_post = json['visible'];
-    if (!active_post) {
-      const deleted_message = document.querySelector("#post_temp_blocked");
-      const delete_status = document.querySelector("li[id*=delete_question]");
-      delete_status.textContent = "Undelete";
-      delete_status.classList.add("undelete");
+    if (json['posted']) {
+      var posted_question = document.querySelector("li[id*=delete_question]");
+      posted_question.addEventListener("click", function(event) {
+        const request = set_api_request(this.id);
+        fetch(request).then((response) => {
+          if (response.status === 204) {
+            if (this.textContent === "Delete") {
+              const main_page_content = document.querySelector(".main_topic");
+              const main_page_content_dims = [
+                main_page_content.clientHeight, main_page_content.clientWidth
+              ];
+              const blocked_post = document.createElement("div");
+              blocked_post.setAttribute("id", "post_temp_blocked")
+              blocked_post.classList.add("temp_removed")
+              let deleted_warning = document.createElement("p");
+              deleted_warning.textContent = "This post is temporaily deleted. Click \"Undelete\" to display post."
+              blocked_post.appendChild(deleted_warning);
+              blocked_post.style.cssText = `min-height: ${main_page_content_dims[0]}px; width: ${main_page_content_dims[1]}px;`;
+              main_page_content.insertAdjacentElement('afterend', blocked_post)
+              this.textContent = "Undelete";
+              this.classList.add("undelete");
+              console.log(main_page_content.clientHeight);
+            } else {
+              const blocked_post = document.getElementById("post_temp_blocked");
+              blocked_post.parentElement.removeChild(blocked_post);
+              this.classList.remove("undelete");
+              this.textContent = "Delete";
+            }
+          }
+        })
+      })
 
-      // const content_width = deleted_message.previousElementSibling.clientWidth;
-      const content_height = deleted_message.previousElementSibling.clientHeight;
-      console.log(content_height);
-      deleted_message.style.cssText = `height: ${content_height}px;`;
-    }
-  })
-})
 
-posted_question.addEventListener("click", function(event) {
-  const request = set_api_request(this.id);
-  fetch(request).then((response) => {
-    if (response.status === 204) {
-      if (this.textContent === "Delete") {
-        const main_page_content = document.querySelector(".main_topic");
-        const main_page_content_dims = [
-          main_page_content.clientHeight, main_page_content.clientWidth
-        ];
-        const blocked_post = document.createElement("div");
-        // blocked_post.style.height = ;
-        // blocked_post.style.width = main_page_content_dims[1];
-        blocked_post.setAttribute("id", "post_temp_blocked")
-        blocked_post.classList.add("temp_removed")
-        let deleted_warning = document.createElement("p");
-        deleted_warning.textContent = "This post is temporaily deleted. Click \"Undelete\" to display post."
-        blocked_post.appendChild(deleted_warning);
-        blocked_post.style.cssText = `min-height: ${main_page_content_dims[0]}px; width: ${main_page_content_dims[1]}px;`;
-        main_page_content.insertAdjacentElement('afterend', blocked_post)
-        this.textContent = "Undelete";
-        this.classList.add("undelete");
-        console.log(main_page_content.clientHeight);
-      } else {
-        const blocked_post = document.getElementById("post_temp_blocked");
-        blocked_post.parentElement.removeChild(blocked_post);
-        this.classList.remove("undelete");
-        this.textContent = "Delete";
+      const active_post = json['visible'];
+      if (!active_post) {
+        const deleted_message = document.querySelector("#post_temp_blocked");
+        const delete_status = document.querySelector("li[id*=delete_question]");
+        delete_status.textContent = "Undelete";
+        delete_status.classList.add("undelete");
+
+        // const content_width = deleted_message.previousElementSibling.clientWidth;
+        const content_height = deleted_message.previousElementSibling.clientHeight;
+        console.log(content_height);
+        deleted_message.style.cssText = `height: ${content_height}px;`;
       }
     }
   })

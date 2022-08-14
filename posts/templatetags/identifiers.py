@@ -39,6 +39,8 @@ def route(context, button=None):
     elif url_name == "tagged":
         tags = "+".join(tag for tag in context['tags'])
         return f"{reverse('posts:tagged', kwargs={'tags': tags})}?tab={button}"
+    _query_data = query_data.copy()
+    del _query_data['tab']
     query_string = "&".join(map(
         lambda query: (
             f"{query[0]}={quote(query[1])}"
@@ -48,7 +50,7 @@ def route(context, button=None):
                 f"{quote('+'.join(f'[{tag}]' for tag in query[1]))}"
             )
         )
-        , filter(lambda q: q[1], query_data.items())
+        , filter(lambda q: q[1], _query_data.items())
     ))
     return f"{reverse('posts:search')}?{query_string}&tab={button}"
 
@@ -89,10 +91,10 @@ def set_page_number_url(context, page=None, limit=None):
 def set_previous_page_url(context, page):
     if page.has_previous():
         current_url = set_page_number_url(context, page)
-        page_pattern = r"(?<=page:)(?P<page_num>\d+)"
+        page_pattern = r"(?<=page=)(?P<page_num>\d+)"
         current_page = int(re.search(
             page_pattern, current_url
-        ).get("page_num"))
+        ).groupdict().get("page_num"))
         return re.sub(page_pattern, f"{current_page - 1}", current_url)
     return
 
@@ -108,10 +110,10 @@ def set_previous_page_url(context, page):
 @register.simple_tag(takes_context=True)
 def set_next_page_url(context, page):
     current_url = set_page_number_url(context, page)
-    page_pattern = r"(?<=page:)(?P<page_num>\d+)"
+    page_pattern = r"(?<=page=)(?P<page_num>\d+)"
     current_page = int(re.search(
         page_pattern, current_url
-    ).get("page_num"))
+    ).groupdict().get("page_num"))
     return re.sub(page_pattern, f"{current_page + 1}", current_url)
 
 @register.simple_tag

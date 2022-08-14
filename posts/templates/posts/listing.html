@@ -37,6 +37,9 @@
         <a class="inactive_page page_num" href="{% set_page_number_url page=page %}">{{ page.number }}</a>
       {% endif %}
     {% endfor %}
+    {% if questions.has_next %}
+      <a class="inactive_page" href="{% set_next_page_url page=questions %}">Next</a>
+    {% endif %}
     </div>
     <div class="page_range_options_wrapper">
       {% if request.GET.pagesize not in page_listing_limits %}

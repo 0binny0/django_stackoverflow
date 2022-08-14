@@ -10,7 +10,7 @@
         <p class="empty_post_data">No question posts</p>
       {% else %}
       <ul>
-      {% for question in questions.posted %}
+      {% for question in question.records %}
         <li class="preview_post"><span class="post_data score_box">{{ question.score }}</span><a href="{% url 'posts:question' question_id=question.id %}">{{ question.title|truncatechars:40 }}</a><span class="post_data dated_span">{{ question.date|date:"n/j/y" }}</span></li>
       {% endfor %}
       </ul>
