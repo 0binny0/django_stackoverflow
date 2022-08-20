@@ -116,10 +116,12 @@ class UserProfilePage(Page, SingleObjectMixin):
                 order_by = query_tabs[0]
             paginator = Paginator(query(order_by)['records'], 10)
             page = paginator.get_page(request.GET.get('page', 1))
-            query_string = QueryDict({'tab': query_page_filter, 'page': page, 'sort': order_by})
+            query_string = QueryDict(
+                f"tab={query_page_filter}&page={page}&sort={order_by}"
+            )
             context |= {
                 'page': page,
                 'page_query_filter': query_page_filter,
-                'requested_url': f"{request.path}?{query_string}"
+                'requested_url': f"{request.path}?{query_string.urlencode()}"
             }
         return self.render_to_response(context)
