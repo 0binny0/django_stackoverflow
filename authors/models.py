@@ -72,15 +72,19 @@ class Profile(Model):
             'answers': Answer.objects.filter(vote__profile=self).count()
         }
 
-    def get_bookmarked_posts(self):
-        pass
+    def get_bookmarked_posts(self, sort=None):
+        questions = Question.objects.filter(bookmarks__profile=self)
+        return {
+            'records': questions,
+            'title': f"{questions.count()} bookmarks"
+        }
 
     def collect_profile_data(self):
         profile_posts = {
             "question": self.get_question_posts(),
             "answer": self.get_answer_posts(),
             "tag": self.get_tag_posts(),
-            # "bookmark": self.get_bookmarked_posts(),
+            "bookmark": self.get_bookmarked_posts(),
         }
         for post_type, data in profile_posts.items():
             _queryset = data['records'][:5]
