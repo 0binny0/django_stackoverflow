@@ -29,7 +29,7 @@ def voting_booth(context, post):
 @register.simple_tag(takes_context=True)
 def route(context, button=None):
     request = context['request']
-    query_data = request.GET
+    query_string = request.GET.urlencode()
     button = button.lower()
     url_name = resolve(request.path).url_name
     if url_name == "main":
@@ -39,20 +39,12 @@ def route(context, button=None):
     elif url_name == "tagged":
         tags = "+".join(tag for tag in context['tags'])
         return f"{reverse('posts:tagged', kwargs={'tags': tags})}?tab={button}"
-    _query_data = query_data.copy()
-    del _query_data['tab']
-    query_string = "&".join(map(
-        lambda query: (
-            f"{query[0]}={quote(query[1])}"
-            if query[0] == 'title' else (
-                f"{query[0]}={query[1]}"
-                if query[0] != "tags" else
-                f"{quote('+'.join(f'[{tag}]' for tag in query[1]))}"
-            )
-        )
-        , filter(lambda q: q[1], _query_data.items())
-    ))
-    return f"{reverse('posts:search')}?{query_string}&tab={button}"
+    re_button_pattern = re.compile(r"(?<=tab=)\w+")
+    search_query_filter = re_button_pattern.search(query_string)
+    if not search_query_filter:
+        return f"{reverse('posts:search')}?{query_string}&tab={button}"
+    query_string = re_button_pattern.sub(button, query_string)
+    return f"{reverse('posts:search')}?{query_string}"
 
 @register.simple_tag(takes_context=True)
 def set_page_number_url(context, page=None, limit=None):
