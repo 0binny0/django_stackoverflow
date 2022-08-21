@@ -39,9 +39,14 @@ class QueryStringSearchManager(Manager):
                 q_objects = map(
                     lambda tag: Q(name__iexact=tag), query_data['tags']
                 )
-                query = reduce(lambda q1, q2: q1 & q2, q_objects)
-                tags = Tag.objects.filter(query)
-                queryset = queryset.filter(tags__in=tags).distinct()
+                tab_query = reduce(lambda q1, q2: q1 | q2, q_objects)
+                tags = Tag.objects.filter(tab_query)
+                if tags.count() != len(tab_query):
+                    return [], query_data
+                else:
+                    for tag in tags:
+                        _queryset = queryset.filter(tags__name=str(tag)).distinct()
+                        queryset = _queryset
             if 'title' in query_data and query_data['title']:
                 queryset = queryset.filter(title__contains=f"{query_data['title']}")
             if 'user' in query_data and query_data['user']:
