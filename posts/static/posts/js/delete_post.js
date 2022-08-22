@@ -60,10 +60,12 @@ user_posted_answers.forEach((answer) => {
 
 
 window.addEventListener("DOMContentLoaded", function(event) {
-  const page_url = window.location;
-
+  const page_url = window.location.href;
+  const page_num_pattern = /(?<=questions\/)\d+/;
+  debugger;
+  const page_id = page_url.match(page_num_pattern)[0];
   const request = new Request(
-    "http://localhost:8000/api/v1/posts/59", {
+    `http://localhost:8000/api/v1/posts/${page_id}`, {
       'method': "GET",
       'Content-Type': "application/json",
       "Accept": "application/json",
@@ -85,16 +87,16 @@ window.addEventListener("DOMContentLoaded", function(event) {
                 main_page_content.clientHeight, main_page_content.clientWidth
               ];
               const blocked_post = document.createElement("div");
-              blocked_post.setAttribute("id", "post_temp_blocked")
-              blocked_post.classList.add("temp_removed")
-              let deleted_warning = document.createElement("p");
-              deleted_warning.textContent = "This post is temporaily deleted. Click \"Undelete\" to display post."
-              blocked_post.appendChild(deleted_warning);
+              blocked_post.setAttribute("id", "post_temp_blocked");
+              blocked_post.classList.add("temp_removed");
               blocked_post.style.cssText = `min-height: ${main_page_content_dims[0]}px; width: ${main_page_content_dims[1]}px;`;
-              main_page_content.insertAdjacentElement('afterend', blocked_post)
+              main_page_content.insertAdjacentElement('afterend', blocked_post);
               this.textContent = "Undelete";
               this.classList.add("undelete");
-              console.log(main_page_content.clientHeight);
+              let deleted_warning = document.createElement("p");
+              deleted_warning.textContent = "This post is temporaily deleted. Click \"Undelete\" to display post."
+              // deleted_warning.classList.add("temp_removed");
+              blocked_post.appendChild(deleted_warning);
             } else {
               const blocked_post = document.getElementById("post_temp_blocked");
               blocked_post.parentElement.removeChild(blocked_post);

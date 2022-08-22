@@ -150,7 +150,7 @@
     top: 0;
     bottom: 0;
     background: lightpink;
-    margin-top: 170px;
+    margin-top: 140px;
     top: 0;
     bottom: 0;
     background: lightpink;
@@ -223,6 +223,8 @@
 
   .tag {
     padding: 2.5px 5px;
+    font-size: 12px;
+    /* font-weight: bold; */
   }
 
   .inline_tags_author {
@@ -380,7 +382,7 @@
 
 @media screen and (min-width: 675px) {
   .temp_removed {
-    margin-top: 200px;
+    margin-top: 170px;
     width: 490px;
   }
 }
