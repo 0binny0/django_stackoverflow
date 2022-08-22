@@ -15,7 +15,7 @@
     </div>
   </div>
   <div class="post_profile_author">
-    <p>posted by <a href="{% url 'authors:profile' id=request.user.id %}">{{ post.profile.user }}</a>   on: {{ post.date }}</p>
+    <p>posted by <a href="{% url 'authors:profile' id=post.profile.id %}">{{ post.profile.user }}</a>   on: {{ post.date|date:"n/t/Y"  }}</p>
   </div>
   {% if post.profile.user == request.user %}
     <ul class="option_list">

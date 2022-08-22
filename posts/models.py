@@ -6,12 +6,12 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import (
     Model, ManyToManyField, ForeignKey, CASCADE, SET_NULL, CharField,
-     TextField, PositiveIntegerField, IntegerField, DateField, BooleanField,
+     TextField, PositiveIntegerField, IntegerField, DateTimeField, BooleanField,
      GenericIPAddressField, Manager, OuterRef, Subquery, Count, F,
      UniqueConstraint, QuerySet, Q
 )
 from django.urls import resolve
-
+from django.utils import timezone
 from django.contrib.contenttypes.fields import (
     GenericForeignKey,  GenericRelation
 )
@@ -30,7 +30,7 @@ class QueryStringSearchManager(Manager):
             f"{self.score.__name__}": self.score
         }
         current_tab = tab.lower()
-        if current_tab not in ['unanswered', 'active', 'newest', 'score']:
+        if current_tab not in qs_options.keys():
             current_tab = "newest"
         queryset = super().get_queryset().order_by("-date", "views", "-score")
         if query:
@@ -94,8 +94,8 @@ class QuestionSearchManager(Manager):
         if not isinstance(user, get_user_model()):
             return Question.objects.all()
         selected_tab = tab.lower()
-        if selected_tab not in ['interesting', 'hot', 'week', 'month']:
-            selected_tab = "interesting"
+        if selected_tab not in qs_options.keys():
+            selected_tab = qs_options.keys()[0]
         return qs_options.get(selected_tab, "interesting")(user.profile)
 
     def interesting(self, profile):
@@ -159,7 +159,7 @@ class Tag(Model):
 class Post(Model):
 
     body = TextField()
-    date = DateField(default=date.today)
+    date = DateTimeField(default=timezone.now)
     comment = ForeignKey('Comment', on_delete=CASCADE, null=True)
     profile = ForeignKey(
         'authors.Profile', on_delete=SET_NULL, null=True,
