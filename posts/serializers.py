@@ -12,11 +12,16 @@ from rest_framework.exceptions import ValidationError
 class VoteSerializer(ModelSerializer):
 
     def validate_profile(self, value):
+        try:
+            get_user_model().objects.get(id=value.id)
+        except get_user_model().DoesNotExist:
+            raise ValidationError("Please login to vote")
         if self.context['post'].profile.id == value.id:
             raise ValidationError("You cannot vote on your post")
         return value
 
     def create(self, validated_data):
+        import pdb; pdb.set_trace()
         post = self.context['post']
         if self.context['vote_type'] == "dislike":
             post.score = F("score") - 1
@@ -27,6 +32,7 @@ class VoteSerializer(ModelSerializer):
         return self.Meta.model.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
+        import pdb; pdb.set_trace()
         vote = self.context['type']
         instance.type = vote
         instance.save()
@@ -48,16 +54,19 @@ class VoteSerializer(ModelSerializer):
 class CurrentPostStateSerializer(BaseSerializer):
 
     def to_representation(self, instance):
-        if isinstance(self.context['request'].user, get_user_model()):
-            user_profile = self.context['request'].user.profile
+        '''Returns a dictionary that represents a question resource.
+        It includes a property which indicates whether the aforementioned
+        resource and its associated answers have been voted on.'''
+        user = self.context['request'].user
+        if isinstance(user, get_user_model()):
             question_voted_on = instance.vote.filter(
-                profile=user_profile
+                profile=user.profile
             ).exists()
             answers_voted_on = instance.answers.exclude(
-                profile=user_profile
-            ).filter(vote__profile=user_profile)
+                profile=user.profile
+            ).filter(vote__profile=user.profile)
             is_bookmarked = instance.bookmarks.filter(
-                profile=user_profile
+                profile=user.profile
             ).exists()
             data = {
                 "question_id": instance.id,
@@ -65,15 +74,16 @@ class CurrentPostStateSerializer(BaseSerializer):
                 "bookmark": is_bookmarked,
                 "answers": [
                     {"id": answer.id, "vote": answer.vote.get(
-                        profile=user_profile
+                        profile=user.profile
                     ).type}
                     for answer in answers_voted_on
                 ] if answers_voted_on else None
             }
-            if user_profile == instance.profile:
+            if user.profile == instance.profile:
                 data.update({"vote": False})
             elif question_voted_on:
                 data.update({
-                    "vote": instance.vote.get(profile=user_profile).type
+                    "vote": instance.vote.get(profile=user.profile).type
                 })
             return data
+        return {'question_id': instance.id, 'vote': False}

@@ -32,21 +32,26 @@ class UserVoteEndpoint(APIView):
     throttle_classes = []
 
     def get(self, request, id):
+        ''' Returns a Question resource
+        (see serializers.CurrentPostStateSerializer - to_representation) '''
         question = Question.objects.get(id=id)
         serializer = CurrentPostStateSerializer(
-            question, context={'request': request}
+            instance=question, context={'request': request}
         )
+
         return Response(data=serializer.data)
 
     def post(self, request, id):
-        if isinstance(request.user, AnonymousUser):
-            return Response(status=HTTP_400_BAD_REQUEST)
+        '''In the event that an anonymous user attempts to vote on a post'''
+
         post = retrieve_user_post(id, request.data['post'])
         serializer = VoteSerializer(data={'profile': request.user.profile.id},
             context={'post': post, 'vote_type': request.data['type']} , partial=True
         )
         if serializer.is_valid(raise_exception=True):
-            serializer.save(type=request.data["type"], content_object=post)
+            valid_vote = request.cookies.get("allowedhhhhh")
+            if valid_vote:
+                serializer.save(type=request.data["type"], content_object=post)
             return Response(status=HTTP_201_CREATED)
 
     def put(self, request, id):
@@ -76,12 +81,17 @@ class UserVoteEndpoint(APIView):
 class PageStatusEndpoint(APIView):
 
     def get(self, request, id):
+        '''Determines if the requested resource was created by the current user
+        accessing this endpoint and whether it can be viewed by other users'''
+
         question = Question.objects.get(id=id)
         return Response({
             'posted': question.profile.user == request.user, 'visible': question.visible
         }, status=HTTP_200_OK)
 
     def put(self, request, id):
+        '''Toggles the visibility of a given Question resource'''
+
         post = retrieve_user_post(id, request.query_params['post'])
         if isinstance(post, Question):
             if not post.visible:
