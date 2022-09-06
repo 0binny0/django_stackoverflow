@@ -62,7 +62,6 @@ user_posted_answers.forEach((answer) => {
 window.addEventListener("DOMContentLoaded", function(event) {
   const page_url = window.location.href;
   const page_num_pattern = /(?<=questions\/)\d+/;
-  debugger;
   const page_id = page_url.match(page_num_pattern)[0];
   const request = new Request(
     `http://localhost:8000/api/v1/posts/${page_id}`, {
