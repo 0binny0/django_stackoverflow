@@ -54,7 +54,12 @@ def set_page_number_url(context, page=None, limit=None):
     query_tab, search_query = [
         query_string.get("tab", "newest"), query_string.get("q")
     ]
-    if page:
+    if page is not None:
+        '''
+            a Page object is Falsey in a boolean context
+                * page ---> False
+                * page is Not None --- True
+        '''
         page_data = {
             "pagesize": page.paginator.per_page,
             "page": page.number,
