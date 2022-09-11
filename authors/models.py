@@ -23,18 +23,20 @@ class Profile(Model):
 
     def get_tag_posts(self, order_by=None):
         if not order_by:
-            order_by = "-question__date"
+            order_by = "-question__score"
         elif order_by == "name":
             pass
         else:
-            order_by = "-score"
+            order_by = "-question__score"
         questions_with_tag = Subquery(self.questions.filter(
             tags__name=OuterRef("name")).only('id'))
         tags = Tag.objects.filter(
             question__profile=self
-        ).distinct().order_by(order_by)
+        )
         return {
-            'records': tags.annotate(times_posted=Count(questions_with_tag)),
+            'records': tags.annotate(
+                times_posted=Count(questions_with_tag)
+            ).order_by("-times_posted"),
             'title': f"{tags.count()} Tags"
         }
 
