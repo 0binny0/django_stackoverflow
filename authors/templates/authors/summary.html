@@ -2,7 +2,7 @@
     <div class="post_type_title">
       <h3>Questions</h3>
       {% if questions.count > 5 %}
-        <p><a href="#">View all {{ questions.count }} questions </a></p>
+        <p><a href="#">View all {{ question.count }} questions </a></p>
       {% endif %}
     </div>
     <div class="linked_posts">
@@ -27,7 +27,7 @@
       {% else %}
       <ul>
       {% for answer in answer.records %}
-        <li class="preview_post"><span class="post_data score_box">{{ answer.score }}</span>{{ answer.question.title }}</li>
+        <li class="preview_post"><span class="post_data score_box">{{ answer.score }}</span><a href="{% url 'posts:question' question_id=answer.question.id %}">{{ answer.question }}</a></li>
       {% endfor %}
       </ul>
       {% endif %}
