@@ -9,7 +9,7 @@
     <div class="question_content">
       <h3><a class="linked" href="{% url 'posts:question' question_id=question.id %}">{{ question.title }}</a></h3>
       {% if request.resolver_match.url_name != "main" %}
-        <p>{{ question.body }}</p>
+        <p>{{ question.body|truncatewords:25 }}</p>
       {% endif %}
       <div class="inline_tags_author">
         <div class="linked_tags_list">
