@@ -206,8 +206,10 @@ class PaginatedPage(Page):
             '15': 15,
             '25': 25
         }
-        page_size = r.GET.get('pagesize', None)
-        page_size = page_sizes.get(page_size, 10)
+        size = r.GET.get('page')
+        if not size or size not in page_sizes.values():
+            size = '10'
+        page_size = page_sizes.get(size)
         paginator = Paginator(Question.objects.none(), page_size)
         context.update({
             'paginator': paginator,
@@ -221,17 +223,14 @@ class AllQuestionsPage(PaginatedPage):
 
     def get(self, request):
         context = super().get_context_data()
-        tab_index = request.GET.get('tab', "interesting")
-        context['paginator'].object_list = Question.postings.lookup(
-            tab_index, request.user
-        )
+        tab_index = request.GET.get('tab', "newest")
+        context['paginator'].object_list = Question.searches.lookup(tab_index)[0]
         page = context['paginator'].get_page(
-            request.GET.get("page", None)
+            request.GET.get("page", 1)
         )
         context.update({
             'title': "All Questions",
             "questions": page,
-            'query_buttons': ["Interesting", "Hot", "Week", "Month"],
             "page_links": get_page_links(page),
             "count": page.paginator.count
         })
