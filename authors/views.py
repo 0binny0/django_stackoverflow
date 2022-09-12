@@ -101,17 +101,15 @@ class UserProfilePage(Page, SingleObjectMixin):
             if query_page_filter == "tags":
                 query_tabs = ['name', 'score']
                 query = context['object'].profile.get_tag_posts
-            elif query_page_filter == "votes":
-                query_tabs = ['all', 'upvote', 'downvote']
-                query = context['object'].profile.get_posts_voted_on
+            elif query_page_filter == "bookmarks":
+                query_tabs = ['newest', 'score', 'added']
+                query = context['object'].profile.get_bookmarked_posts
             else:
                 query_tabs = ['newest', 'score', 'activity']
                 if query_page_filter == "questions":
                     query = context['object'].profile.get_question_posts
-                elif query_page_filter == "answers":
-                    query = context['object'].profile.get_answer_posts
                 else:
-                    query = context['object'].profile.get_bookmarked_posts
+                    query = context['object'].profile.get_answer_posts
             if not order_by or order_by not in query_tabs:
                 order_by = query_tabs[0]
             paginator = Paginator(query(order_by)['records'], 10)

@@ -1,8 +1,8 @@
   <div id="user_questions" class="postings">
     <div class="post_type_title">
       <h3>Questions</h3>
-      {% if questions.count > 5 %}
-        <p><a href="#">View all {{ question.count }} questions </a></p>
+      {% if question.records.count >= 5 %}
+        <p><a href="{% url 'authors:profile' id=request.user.id %}?tab=questions&sort=newest">View all {{ question.title }}</a></p>
       {% endif %}
     </div>
     <div class="linked_posts">
@@ -18,8 +18,8 @@
     </div>
   </div><div id="user_answers" class="postings">
     <h3>Answers</h3>
-    {% if answer_post_count > 5 %}
-      <p><a href="#">View all {{ answer_post_count }} answers</a></p>
+    {% if answer.records.count > 5 %}
+      <p><a href="{% url 'authors:profile' id=request.user.id %}?tab=answers&sort=newest">View all {{ answer.title }} answers</a></p>
     {% endif %}
     <div class="linked_posts">
       {% if not answer.records %}
@@ -34,8 +34,8 @@
     </div>
   </div><div id="user_tags" class="postings">
     <h3>Tags</h3>
-    {% if tags.count > 5 %}
-      <p><a href="#">View all {{ tags.count }} tags</a></p>
+    {% if tag.records.count > 5 %}
+      <p><a href="{% url 'authors:profile' id=request.user.id %}?tab=tags&sort=name">View all {{ tag.title }}</a></p>
     {% endif %}
     <div class="linked_posts">
       {% if not tag.records %}
@@ -45,6 +45,22 @@
           <div class="tag_data">
             <a class="linked indent tag bg-blue" href="{% url 'posts:tagged' tags=tag %}">{{ tag }}</a>
             <p class="tag_count">{{ tag.times_posted }} posts</p>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div><div id="user_bookmarks" class="postings">
+    <h3>Bookmarks</h3>
+    {% if bookmark.records.count > 5 %}
+      <p><a href="{% url 'authors:profile' id=request.user.id %}?tab=bookmarks&sort=newest">View all {% if bookmarks.count > 5 %}{{ tags.count }}{% endif %} bookmarks</a></p>
+    {% endif %}
+    <div class="linked_posts">
+      {% if not bookmark.records %}
+        <p class="empty_post_data">No bookmarked posts</p>
+      {% else %}
+        {% for bookmark in bookmark.records %}
+          <div class="bookmark_data">
+            <p class="bookmark_score">{{ bookmark.question.score }} {{ bookmark.question|truncatechars:40 }} {{ bookmark.question.date }}</p>
           </div>
         {% endfor %}
       {% endif %}

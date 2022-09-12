@@ -206,7 +206,7 @@ class PaginatedPage(Page):
             '15': 15,
             '25': 25
         }
-        size = r.GET.get('page')
+        size = r.GET.get('pagesize')
         if not size or size not in page_sizes.values():
             size = '10'
         page_size = page_sizes.get(size)
