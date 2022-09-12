@@ -1,7 +1,7 @@
   <div id="user_questions" class="postings">
     <div class="post_type_title">
       <h3>Questions</h3>
-      {% if question.records.count >= 5 %}
+      {% if question.records.count == 5 %}
         <p><a href="{% url 'authors:profile' id=request.user.id %}?tab=questions&sort=newest">View all {{ question.title }}</a></p>
       {% endif %}
     </div>
@@ -11,14 +11,14 @@
       {% else %}
       <ul>
       {% for question in question.records %}
-        <li class="preview_post"><span class="post_data score_box">{{ question.score }}</span><a href="{% url 'posts:question' question_id=question.id %}">{{ question.title|truncatechars:40 }}</a><span class="post_data dated_span">{{ question.date|date:"n/j/y" }}</span></li>
+        <li class="preview_post"><span class="post_data score_box">{{ question.score }}</span><a href="{% url 'posts:question' question_id=question.id %}">{{ question|truncatechars:35 }}</a><span class="post_data dated_span">{{ question.date|date:"n/j/y" }}</span></li>
       {% endfor %}
       </ul>
       {% endif %}
     </div>
   </div><div id="user_answers" class="postings">
     <h3>Answers</h3>
-    {% if answer.records.count > 5 %}
+    {% if answer.records.count == 5 %}
       <p><a href="{% url 'authors:profile' id=request.user.id %}?tab=answers&sort=newest">View all {{ answer.title }} answers</a></p>
     {% endif %}
     <div class="linked_posts">
@@ -34,8 +34,8 @@
     </div>
   </div><div id="user_tags" class="postings">
     <h3>Tags</h3>
-    {% if tag.records.count > 5 %}
-      <p><a href="{% url 'authors:profile' id=request.user.id %}?tab=tags&sort=name">View all {{ tag.title }}</a></p>
+    {% if tag.records.count == 5 %}
+      <p><a href="{% url 'authors:profile' id=request.user.id %}?tab=tags&sort=name">View all {{ tag.title }} tags</a></p>
     {% endif %}
     <div class="linked_posts">
       {% if not tag.records %}
@@ -51,7 +51,7 @@
     </div>
   </div><div id="user_bookmarks" class="postings">
     <h3>Bookmarks</h3>
-    {% if bookmark.records.count > 5 %}
+    {% if bookmark.records.count == 5 %}
       <p><a href="{% url 'authors:profile' id=request.user.id %}?tab=bookmarks&sort=newest">View all {% if bookmarks.count > 5 %}{{ tags.count }}{% endif %} bookmarks</a></p>
     {% endif %}
     <div class="linked_posts">

@@ -32,7 +32,7 @@ class Profile(Model):
             tags__name=OuterRef("name")).only('id'))
         tags = Tag.objects.filter(
             question__profile=self
-        )
+        ).distinct()
         return {
             'records': tags.annotate(
                 times_posted=Count(questions_with_tag)
