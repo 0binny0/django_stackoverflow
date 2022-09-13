@@ -162,6 +162,17 @@
     z-index: 1;
   }
 
+  .question_option_wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 15px;
+  }
+
+  .bookmark {
+    margin-top: 10px;
+  }
+
 
   .delete_message {
     margin-bottom: 10px;
@@ -263,7 +274,6 @@
     align-items: center;
     justify-content: center;
     width: 30px;
-    margin-right: 15px;
   }
 
   .vote > p {

@@ -1,13 +1,18 @@
 
 <div id="posted_{{ id }}">
   <div class="rating_box">
-    <div class="vote">
-      <svg class="vote_button">
-        <polygon id="like_{{ id }}" points="0,20 15,0 30,20" class="not_voted"/>
-      </svg>
-      <p id="{{ id }}_score"class="posted_score">{{ post.score }}</p>
-      <svg class="vote_button">
-        <polygon id="dislike_{{ id }}" points="0,0 15,20 30,0" class="not_voted" />
+    <div class="question_option_wrapper">
+      <div class="vote">
+        <svg class="vote_button">
+          <polygon id="like_{{ id }}" points="0,20 15,0 30,20" class="not_voted"/>
+        </svg>
+        <p id="{{ id }}_score"class="posted_score">{{ post.score }}</p>
+        <svg class="vote_button">
+          <polygon id="dislike_{{ id }}" points="0,0 15,20 30,0" class="not_voted" />
+        </svg>
+      </div>
+      <svg width="15" height="20" class="bookmark">
+        <polygon  id="bookmark_{{ id }}" points="0,0 0,20 7.5,15 15,20 15,0" stroke="grey" fill="white"/>
       </svg>
     </div>
     <div id="{{ id }}" class="post_body_content">
