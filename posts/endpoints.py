@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
 
-from .models import Question, Answer, Vote
+from .models import Question, Answer, Vote, Bookmark
 from .serializers import VoteSerializer, CurrentPostStateSerializer
 
 def retrieve_user_post(id, model):
@@ -105,4 +105,20 @@ class PageStatusEndpoint(APIView):
     def delete(self, request, id):
         post = retrieve_user_post(id, request.query_params['post'])
         post.delete()
+        return Response(status=HTTP_204_NO_CONTENT)
+
+
+class BookmarkedPostEndpoint(APIView):
+
+    def post(self, request, id):
+        question = Question.objects.get(id=id)
+        bookmark = Bookmark.objects.create(
+            question=question, profile=request.user.profile
+        )
+        return Response(status=HTTP_201_CREATED)
+
+    def delete(self, request, id):
+        question = Question.objects.get(id=id)
+        bookmark = question.bookmarks.get(profile=request.user.profile)
+        bookmark.delete()
         return Response(status=HTTP_204_NO_CONTENT)

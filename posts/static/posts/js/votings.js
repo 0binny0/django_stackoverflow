@@ -1,5 +1,5 @@
 
-var post_voting_buttons = Array.from(document.querySelectorAll("polygon"));
+var post_voting_buttons = Array.from(document.querySelectorAll("polygon[id*=like]"));
 
 function json_response(response) {
   const content_type = response.headers.get("content-type");
@@ -51,9 +51,7 @@ window.addEventListener("DOMContentLoaded", (e) => {
   const request = fetch(`http://localhost:8000/api/v1/votes/${id}`, {
     'method': "GET"
   });
-  debugger;
   request.then(json_response).then((json) => {
-    console.log(json);
     const question_voted_on = document.querySelector(`svg > polygon[id=${json.vote}_question_${id}]`);
     if (question_voted_on) {
       question_voted_on.classList.add("voted");
@@ -67,6 +65,11 @@ window.addEventListener("DOMContentLoaded", (e) => {
         }
       }
     }
+    // const question_bookmarked = json.bookmark;
+    // if (question_bookmarked) {
+    //   const bookmark = document.querySelector("polygon[id*=bookmark]");
+    //   bookmark.setAttribute("fill", "gold");
+    // }
   })
 })
 

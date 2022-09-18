@@ -1,4 +1,5 @@
-
+{% load static %}
+{% load identifiers %}
 <div id="posted_{{ id }}">
   <div class="rating_box">
     <div class="question_option_wrapper">
@@ -11,9 +12,20 @@
           <polygon id="dislike_{{ id }}" points="0,0 15,20 30,0" class="not_voted" />
         </svg>
       </div>
-      <svg width="15" height="20" class="bookmark">
-        <polygon  id="bookmark_{{ id }}" points="0,0 0,20 7.5,15 15,20 15,0" stroke="grey" fill="white"/>
-      </svg>
+      {% if_main_topic post as topic %}
+      {% with question=topic.0 bookmark=topic.1 %}
+        {% if question %}
+          {% if bookmark %}
+            <svg width="15" height="20" class="bookmark">
+                <polygon id="bookmark_{{ post.id }}" points="0,0 0,20 7.5,15 15,20 15,0" stroke="grey" fill="gold"/>
+            </svg>
+          {% else %}
+            <svg width="15" height="20" class="bookmark">
+                <polygon id="bookmark_{{ post.id }}" points="0,0 0,20 7.5,15 15,20 15,0" stroke="grey" fill="white"/>
+            </svg>
+          {% endif %}
+        {% endif %}
+      {% endwith %}
     </div>
     <div id="{{ id }}" class="post_body_content">
       <p class="_post_body_content post_content">{{ post.body }}</p>

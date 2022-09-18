@@ -7,7 +7,7 @@ from django.urls import resolve, reverse
 from django.utils.http import urlencode
 from django.utils.html import escape
 
-from ..models import Question, Answer
+from ..models import Question, Answer, Bookmark
 
 register = template.Library()
 
@@ -95,15 +95,6 @@ def set_previous_page_url(context, page):
         return re.sub(page_pattern, f"{current_page - 1}", current_url)
     return
 
-# @register.simple_tag(takes_context=True)
-# def set_previous_page_url(context, page):
-#     current_url = set_page_number_url(context, page)
-#     page_pattern = r"(?<=page:)(?P<page_num>\d+)"
-#     current_page = int(re.search(
-#         page_pattern, current_url
-#     ).get("page_num"))
-#     return re.sub(page_pattern, f"{current_page - 1}", current_url)
-
 @register.simple_tag(takes_context=True)
 def set_next_page_url(context, page):
     current_url = set_page_number_url(context, page)
@@ -118,3 +109,12 @@ def set_post_id(post):
     if isinstance(post, Question):
         return f"question/{post.id}/"
     return f"answer/{post.id}/"
+
+@register.simple_tag(takes_context=True)
+def if_main_topic(context, post):
+    is_question = isinstance(post, Question)
+    if is_question:
+        profile = context['request'].user.profile
+        bookmark = post.bookmarks.filter(profile=profile)
+        return [post, bookmark if bookmark else False]
+    return None

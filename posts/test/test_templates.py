@@ -1,11 +1,14 @@
 
 from unittest.mock import Mock, patch
 
-from django.test import SimpleTestCase, RequestFactory
+from django.contrib.auth import get_user_model
+from django.test import SimpleTestCase, TestCase, RequestFactory
 from django.utils.http import urlencode
 from django.urls import reverse
 from django.core.paginator import Page
 from ..templatetags import identifiers
+from authors.models import Profile
+from ..models import Tag, Question
 
 class TestRouteTemplateTag(SimpleTestCase):
     '''Verify that the {% route %} tag directs to a URL
@@ -66,3 +69,26 @@ class TestPaginatedPageLink(SimpleTestCase):
 
 class TestPreviousPageLink(SimpleTestCase):
     pass
+
+
+class TestMainTopicTemplateTag(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        user = get_user_model().objects.create_user("ItsMe")
+        profile = Profile.objects.create(user=user)
+        tag = Tag.objects.create(name="Tag1")
+        post = Question.objects.create(
+            title="This is Topic #0000000000000000000000000",
+            body="This is the content explaining the problem posted",
+            profile=profile
+        )
+        post.tags.add(tag)
+        mock_request = Mock()
+        mock_request.user = user
+        context = {'request': mock_request}
+        cls.post_is_question = identifiers.if_main_topic(context, post)
+
+    def test_post_is_question_instance(self):
+        print(vars(self))
+        self.assertTrue(self.post_is_question)
