@@ -27,7 +27,7 @@
       {% else %}
       <ul>
       {% for answer in answer.records %}
-        <li class="preview_post"><span class="post_data score_box">{{ answer.score }}</span><a href="{% url 'posts:question' question_id=answer.question.id %}">{{ answer.question }}</a></li>
+        <li class="preview_post"><span class="post_data score_box">{{ answer.score }}</span><a href="{% url 'posts:question' question_id=answer.question.id %}">{{ answer.question|truncatechars:35 }}</a><span class="post_data dated_span">{{ answer.question.date|date:"n/j/y" }}</span></li>
       {% endfor %}
       </ul>
       {% endif %}
@@ -60,7 +60,7 @@
       {% else %}
         {% for bookmark in bookmark.records %}
           <div class="bookmark_data">
-            <p class="bookmark_score">{{ bookmark.question.score }} {{ bookmark.question|truncatechars:40 }} {{ bookmark.question.date }}</p>
+            <p class="bookmark_score"><span class="post_data score_box">{{ bookmark.question.score }}</span> {{ bookmark.question|truncatechars:35 }}<span class="post_data dated_span">{{ bookmark.question.date|date:"n/j/y" }}</span></p>
           </div>
         {% endfor %}
       {% endif %}
