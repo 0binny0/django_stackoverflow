@@ -6,7 +6,7 @@ from django.conf import settings
 from django.db.models import Manager, Count, Subquery, OuterRef, F, Value
 from django.db.models.functions import Concat
 
-from posts.models import Question, Answer, Vote, Tag
+from posts.models import Question, Answer, Vote, Tag, Bookmark
 
 class User(AbstractUser):
 
@@ -75,10 +75,11 @@ class Profile(Model):
         }
 
     def get_bookmarked_posts(self, sort=None):
-        questions = Question.objects.filter(bookmarks__profile=self)
+        bookmarks = Bookmark.objects.filter(profile=self)
+        # import pdb; pdb.set_trace()
         return {
-            'records': questions,
-            'title': f"{questions.count()} bookmarks"
+            'records': bookmarks,
+            'title': f"{bookmarks.count()} bookmarks"
         }
 
     def collect_profile_data(self):
