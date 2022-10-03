@@ -415,4 +415,8 @@
     margin-top: 170px;
     width: 490px;
   }
+
+  .query_help_tips {
+    max-width: 375px;
+  }
 }
