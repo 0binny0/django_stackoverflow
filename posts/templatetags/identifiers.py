@@ -50,6 +50,7 @@ def route(context, button=None):
 def set_page_number_url(context, page=None, limit=None):
     request = context['request']
     request_resolver = resolve(request.path)
+    app = request_resolver.app_name
     query_string = QueryDict(request.META['QUERY_STRING'])
     query_tab, search_query = [
         query_string.get("tab", "newest"), query_string.get("q")
@@ -71,7 +72,15 @@ def set_page_number_url(context, page=None, limit=None):
             'page': 1,
             'tab': query_tab
         }
-    _path = f"posts:{request_resolver.url_name}"
+    query_string = urlencode(page_data)
+    if app == "authors":
+        _path = "authors:profile"
+    else:
+        _path = f"posts:{request_resolver.url_name}"
+    if request_resolver.url_name == "profile":
+        id = request.user.id
+        path =  reverse(_path, kwargs={'id': id})
+        return f"{path}?{query_string}"
     if request_resolver.url_name == "tagged":
         tags = "+".join(tag for tag in context['tags'])
         path = reverse(_path, kwargs={'tags': tags})
@@ -79,7 +88,6 @@ def set_page_number_url(context, page=None, limit=None):
         return f"{path}?{query_string}"
     if request_resolver.url_name == "search" and search_query:
         page_data.update({'q': search_query})
-    query_string = urlencode(page_data)
     path = reverse(_path)
     return f"{path}?{query_string}"
 
@@ -92,6 +100,7 @@ def set_previous_page_url(context, page):
         current_page = int(re.search(
             page_pattern, current_url
         ).groupdict().get("page_num"))
+        x = re.sub(page_pattern, f"{current_page - 1}", current_url)
         return re.sub(page_pattern, f"{current_page - 1}", current_url)
     return
 

@@ -1,5 +1,6 @@
 
 from django.contrib.auth import get_user_model
+from django.db.models import TextChoices
 from django.contrib.auth.forms import (
     UserCreationForm, AuthenticationForm,
 )
@@ -58,11 +59,18 @@ class LoginUserForm(AuthenticationForm):
 
 
 class ProfileSearchQueryForm(Form):
-    tab = ChoiceField(choices=[
-        ('question', "Questions"), ('answer', 'Answers'), ('tag', 'Tags'),
-        ('bookmark', "Bookmarks")
-    ])
+
+    class QueryProfile(TextChoices):
+        SUMMARY = 'summary'
+        QUESTIONS = 'question'
+        ANSWERS = 'answer'
+        TAGS = 'tags'
+        BOOKMARKS = 'bookmark'
+
+
+    tab = ChoiceField(choices=QueryProfile.choices)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['tab'].widget.attrs.update({"class": "profile_sort_menu"})
+        tab_field = self.fields['tab']
+        tab_field.widget.attrs.update({"class": "profile_sort_menu"})

@@ -13,6 +13,13 @@
   padding: 5px;
 }
 
+.paginated_nav_btn {
+  padding: 5px 10px;
+  background: orange;
+  color: white;
+  border: 2px solid;
+}
+
 .undelete {
   color: red;
 }

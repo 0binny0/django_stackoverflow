@@ -28,14 +28,14 @@ class Profile(Model):
             pass
         else:
             order_by = "-question__score"
-        questions_with_tag = Subquery(self.questions.filter(
-            tags__name=OuterRef("name")).only('id'))
+        questions_with_tag = self.questions.filter(
+            tags__name=OuterRef("name")).only('id')
         tags = Tag.objects.filter(
             question__profile=self
         ).distinct()
         return {
             'records': tags.annotate(
-                times_posted=Count(questions_with_tag)
+                times_posted=Count(Subquery(questions_with_tag))
             ).order_by("-times_posted"),
             'title': f"{tags.count()} Tags"
         }

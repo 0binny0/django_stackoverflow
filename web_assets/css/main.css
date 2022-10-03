@@ -286,7 +286,7 @@ p {
     width: 100%;
     top: 0;
     box-shadow: 0px 0px 2px 1px silver;
-    z-index: 2;
+    z-index: 10;
   }
 
   .search_query_container {

@@ -1,5 +1,5 @@
 from django.urls import reverse
-from django.http import HttpResponseRedirect, QueryDict
+from django.http import HttpResponseRedirect, QueryDict, Http404
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import login, logout, get_user_model
 from django.views.generic.detail import SingleObjectMixin
@@ -80,22 +80,27 @@ class UserProfilePage(Page, SingleObjectMixin):
     pk_url_kwarg = "id"
 
     def get_context_data(self, **kwargs):
-        self.object = self.get_object()
+        try:
+            self.object = self.get_object()
+        except ValueError:
+            raise Http404()
         context = super().get_context_data(object=self.object)
+        context |= {
+            'page_options': [
+                'Summary', 'Questions', 'Answers', 'Tags', 'Bookmarks'
+            ]
+        }
         return context
 
     def get(self, request, id):
         context = self.get_context_data()
-        context |= {
-            'form': ProfileSearchQueryForm,
-            'page_options': ['Questions', 'Answers', 'Tags', 'Bookmarks']
-        }
         query_page_filter = request.GET.get("tab", "summary").lower()
-        if (
-            query_page_filter not in ['summary', 'bookmarks', 'questions', 'answers', 'tags']
-            or query_page_filter == "summary"):
+        if query_page_filter not in ['bookmarks', 'questions', 'answers', 'tags']:
                 context |= context['object'].profile.collect_profile_data()
-                context |= {'query_page_filter': "summary"}
+                context |= {
+                    'query_page_filter': "summary",
+                    'form': ProfileSearchQueryForm,
+                }
         else:
             order_by = request.GET.get("sort")
             if query_page_filter == "tags":
@@ -120,6 +125,8 @@ class UserProfilePage(Page, SingleObjectMixin):
             context |= {
                 'page': page,
                 'page_query_filter': query_page_filter,
-                'requested_url': f"{request.path}?{query_string.urlencode()}"
+                'requested_url': f"{request.path}?{query_string.urlencode()}",
+                'form': ProfileSearchQueryForm,
+                'query_tabs': query_tabs
             }
         return self.render_to_response(context)

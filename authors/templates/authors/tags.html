@@ -1,0 +1,4 @@
+<div id="user_tag_{{ tag }}" class="user_tag">
+  <p class="inline_linked tag bg-blue main_tag_data"><a class="inline_anchor" href='{% url "posts:tagged" tags=tag|lower %}'>{{ tag }}</a></p>
+  <p class="main_tag_data">{{ tag.times_posted }} posts</p>
+</div>

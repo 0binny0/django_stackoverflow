@@ -1,10 +1,11 @@
 {% extends 'index.html' %}
 {% load static %}
 {% load listings %}
+{% load identifiers %}
 {% block user_page_content %}
   <div class="user_data_wrapper">
     <section class="posting_data">
-      <h2>{{ user }}</h2>
+      <h2 class="profile_user">{{ user }}</h2>
       {% block user_data %}
         <div class="user_data">
           <ul class="page_options">
@@ -14,14 +15,21 @@
           </ul>
           <h3>{{ title }}</h3>
           {% if request.resolver_match.url_name != "summary" %}
-            <ul class="user_data_query_options">
-            {% for page_query_button in query_buttons %}
-              <li><a href="{% url 'authors:user_data' %}?sort={{ page_query_button }}">page_query_button</a></li>
+            <ul class="user_data_query_options non_mobile">
+            {% for query_tab in query_tabs %}
+              <li class="query_box"><a href="{% url 'authors:profile' id=request.user.profile.id %}?tab={{ page_query_filter }}&sort={{ query_tab }}">{{ query_tab }}</a></li>
             {% endfor %}
             </ul>
           {% endif %}
           <div class="posts_listing">
             <div class="mobile_page_options_wrapper">
+              {% if request.resolver_match.url_name != "summary" %}
+                <ul class="user_data_query_options mobile">
+                {% for query_tab in query_tabs %}
+                  <li class="query_box"><a href="{% url 'authors:profile' id=request.user.profile.id %}?sort={{ query_tab }}">{{ query_tab }}</a></li>
+                {% endfor %}
+                </ul>
+              {% endif %}
               <p>View all activity pages</p>
               <form action="{% url 'authors:profile' id=user.id %}" class="mobile_page_options" method="get">
                 {% for field in form %}
@@ -32,35 +40,28 @@
           {% if query_page_filter == "summary" %}
             {% include './summary.html' %}
           {% else %}
-            {% for post in posts %}
-              {% if query_page_filter == "questions" %}
-                {% include './questions.html' with question=post only %}
-              {% elif query_page_filter == "answers" %}
-                {% include './answers.html' with answer=post only %}
-              {% elif query_page_filter == "bookmarks" %}
-                {% include './bookmarks.html' with bookmark=post only %}
-              {% endif %}
-            {% endfor %}
+            <div class="summary_listing">
+            {% if not page.object_list %}
+            {% else %}
+              {% for post in page %}
+                {% if page_query_filter == "questions" %}
+                  {% include 'posts/viewed_question.html' with question=post class="user_bookmark" %}
+                {% elif page_query_filter == "answers" %}
+                  {% include './answers.html' with answer=post only %}
+                {% elif page_query_filter == "tags" %}
+                  {% include './tags.html' with tag=post only %}
+                {% elif page_query_filter == "bookmarks" %}
+                  {% include './bookmark.html' with question=post.question %}
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+            </div>
             <div class="page_nav_buttons">
-              {% if posts.has_previous %}
-                <div class="nav_button">
-                  {% with previous_page_url=previous_page_url %}
-                    <a href="{{ previous_page_url }}"><svg width="25" height="25">
-                      <polygon points="0,12.5 25,25 25,0" fill="orange"></polygon>
-                    </svg></a>
-                  {% endwith %}
-                  <p>Previous Page</p>
-                </div>
+              {% if page.has_previous %}
+                <a class="paginated_nav_btn" href="{% set_previous_page_url page %}">Previous</a>
               {% endif %}
               {% if page.has_next %}
-                <div class="nav_button">
-                  <p>Next Page</p>
-                  {% with next_page_url=next_page_url %}
-                    <a href="{{ next_page_url }}"<svg width="25" height="25">
-                      <polygon points="0,0 0,25 25,12.5" fill="orange"></polygon>
-                    </svg></a>
-                  {% endwith %}
-                </div>
+                <a class="paginated_nav_btn" href="{% set_next_page_url page %}">Next</a>
               {% endif %}
             </div>
           {% endif %}

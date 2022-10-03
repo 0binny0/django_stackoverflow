@@ -1,19 +1,19 @@
 <div class="user_bookmark">
   <div class="question_data_wrapper">
     <ul class="question_data">
-      <li>{{ question.score }} votes</li>
-      <li>{{ question.answers.count }} answers</li>
-      <li>{{ question }} views</li>
+      <li class="question_stat">{{ question.score }} votes</li>
+      <li class="question_stat">{{ question.answers.count }} answers</li>
+      <li class="question_stat">{{ question.views }} views</li>
     </ul>
-    <svg width="20" height="25">
-      <polygon id="bookmark_question_{{ question.id }}" lines="0,0 0,25 10,17.5 20,25 20,0" fill="gold"/>
+    <svg width="15" height="20" class="bookmark">
+      <polygon id="bookmark_question_{{ question.id }}" points="0,0 0,20 7.5,15 15,20 15,0" fill="gold"/>
     </svg>
   </div>
   <h3>{{ question }}</h3>
   <div class="question_data_wrapper">
     <ul class="question_data">
     {% for tag in question.tags.all %}
-      <li>{{ tag }}</li>
+      <li class="inline_linked tag bg-blue"><a class="inline_anchor" href='{% url "posts:tagged" tags=tag|lower %}'>{{ tag }}</a></li>
     {% endfor %}
     </ul>
     <p><a href="{% url 'authors:profile' id=question.profile.user.id %}">{{ question.profile.user }}</a> asked {{ question.date }}</p>

@@ -1,0 +1,14 @@
+<div class="profile_answer">
+  <div class="answer_content">
+    <p class="answer_score">{{ answer.score }} vote{{ answer.score|pluralize }}</p>
+    <h3 class="answered_question"><a href="{% url 'posts:question' question_id=answer.question.id %}">{{ answer.question }}</a></h3>
+    <div class="inline_tags_author">
+      <div class="linked_tags_list">
+      {% for tag in answer.question.tags.all %}
+        <a class="linked tag bg-blue" href="{% url 'posts:tagged' tags=tag|lower %}">{{ tag }}</a>
+      {% endfor %}
+      </div>
+      <p class="authored_by">answered {{ answer.date }}</p>
+    </div>
+  </div>
+</div>
