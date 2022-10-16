@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import (
     Model, ManyToManyField, ForeignKey, CASCADE, SET_NULL, CharField,
-     TextField, PositiveIntegerField, IntegerField, DateTimeField, BooleanField,
+     TextField, PositiveIntegerField, IntegerField, DateField, DateTimeField, BooleanField,
      GenericIPAddressField, Manager, OuterRef, Subquery, Count, F,
      UniqueConstraint, QuerySet, Q
 )
@@ -91,49 +91,62 @@ class QuestionSearchManager(Manager):
             f"{self.week.__name__}": self.week,
             f"{self.month.__name__}": self.month,
         }
-        if not isinstance(user, get_user_model()):
-            return Question.objects.all()
         selected_tab = tab.lower()
-        if selected_tab not in qs_options.keys():
-            selected_tab = qs_options.keys()[0]
-        return qs_options.get(selected_tab, "interesting")(user.profile)
+        tabs = list(qs_options.keys())
+        if selected_tab not in tabs:
+            selected_tab = tabs[0]
+        return qs_options.get(selected_tab, "interesting")(user)
 
-    def interesting(self, profile):
+    def interesting(self, user):
+        if not hasattr(user, 'profile'):
+            return self.get_queryset()
         return self.get_queryset().filter(
-            tags__name__in=profile.questions.values_list(
+            tags__name__in=user.profile.questions.values_list(
                 "tags__name", flat=True
             )
         )
 
-    def hot(self, profile):
+    def hot(self, user):
         today = date.today()
         days_ago = today - timedelta(days=3)
+        if not hasattr(user, 'profile'):
+            return self.get_queryset().filter(
+                date__range=(days_ago, today)
+            )
         return self.get_queryset().filter(
             date__range=(days_ago, today)
         ).filter(
-            tags__name__in=profile.questions.filter(
+            tags__name__in=user.profile.questions.filter(
                 date__range=(days_ago, today)
             ).values_list("tags__name", flat=True)
         ).distinct()
 
-    def week(self, profile):
+    def week(self, user):
         today = date.today()
         weekago = today - timedelta(days=7)
+        if not hasattr(user, 'profile'):
+            return self.get_queryset().filter(
+                date__range=(weekago, today)
+            )
         return self.get_queryset().filter(
             date__range=(weekago, today)
         ).filter(
-            tags__name__in=profile.questions.values_list(
+            tags__name__in=user.profile.questions.values_list(
                 "tags__name", flat=True
             )
         ).distinct()
 
-    def month(self, profile):
+    def month(self, user):
         today = date.today()
         monthago = today - timedelta(days=31)
+        if not hasattr(user, 'profile'):
+            return self.get_queryset().filter(
+                date__range=(monthago, today)
+            )
         return self.get_queryset().filter(
             date__range=(monthago, today)
         ).filter(
-            tags__name__in=profile.questions.values_list(
+            tags__name__in=user.profile.questions.values_list(
                 "tags__name", flat=True
             )
         ).distinct()
@@ -276,6 +289,7 @@ class Bookmark(Model):
     profile = ForeignKey(
         "authors.Profile", on_delete=CASCADE, related_name="bookmarks"
     )
+    saved = DateField(default=timezone.now)
 
 
     class Meta:
