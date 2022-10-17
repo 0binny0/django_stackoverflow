@@ -77,7 +77,6 @@ function api_response(response) {
 form_fields.forEach((form_field) => {
   ['keyup', 'input'].forEach((user_action) => {
     form_field.addEventListener(user_action, function(event) {
-      debugger;
       try {
         var api_request = create_api_request.call(this);
       } catch (error) {
