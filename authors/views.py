@@ -95,11 +95,17 @@ class UserProfilePage(Page, SingleObjectMixin):
     def get(self, request, id):
         context = self.get_context_data()
         query_page_filter = request.GET.get("tab", "summary").lower()
-        if query_page_filter not in ['bookmarks', 'questions', 'answers', 'tags']:
+        post_queries = ['bookmarks', 'questions', 'answers', 'tags']
+        profile_url_path = reverse('authors:profile', kwargs={'id': self.object.id})
+        if query_page_filter not in post_queries:
                 context |= context['object'].profile.collect_profile_data()
                 context |= {
                     'query_page_filter': "summary",
                     'form': ProfileSearchQueryForm,
+                    'url': {
+                        f"profile_{post}": f"{profile_url_path}?tab={post}&sort=newest"
+                        for post in post_queries
+                    }
                 }
         else:
             order_by = request.GET.get("sort")
@@ -109,12 +115,12 @@ class UserProfilePage(Page, SingleObjectMixin):
             elif query_page_filter == "bookmarks":
                 query_tabs = ['newest', 'score', 'added']
                 query = context['object'].profile.get_bookmarked_posts
+            elif query_page_filter == "questions":
+                query_tabs = ['newest', 'score', 'views']
+                query = context['object'].profile.get_question_posts
             else:
-                query_tabs = ['newest', 'score', 'activity']
-                if query_page_filter == "questions":
-                    query = context['object'].profile.get_question_posts
-                else:
-                    query = context['object'].profile.get_answer_posts
+                query_tabs = ['newest', 'score']
+                query = context['object'].profile.get_answer_posts
             if not order_by or order_by not in query_tabs:
                 order_by = query_tabs[0]
             paginator = Paginator(query(order_by)['records'], 10)
