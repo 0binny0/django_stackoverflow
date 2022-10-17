@@ -7,7 +7,6 @@ query_buttons.forEach((button) => {
 
 document.addEventListener("DOMContentLoaded", function(event) {
   const url_query_string = new URLSearchParams(document.location.search);
-  debugger;
   const page_tab_query = url_query_string.has("tab");
   if (!page_tab_query) {
     var sort_query = query_buttons[0].textContent.toLowerCase()
