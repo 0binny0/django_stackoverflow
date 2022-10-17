@@ -78,8 +78,11 @@ def set_page_number_url(context, page=None, limit=None):
     else:
         _path = f"posts:{request_resolver.url_name}"
     if request_resolver.url_name == "profile":
-        id = request.user.id
-        path =  reverse(_path, kwargs={'id': id})
+        id = re.search(
+            r"(?<=users/)\d+", request.path
+        )[0]
+        # id = request.user.id
+        path =  reverse(_path, kwargs={'id': int(id)})
         return f"{path}?{query_string}"
     if request_resolver.url_name == "tagged":
         tags = "+".join(tag for tag in context['tags'])
@@ -123,7 +126,8 @@ def set_post_id(post):
 def if_main_topic(context, post):
     is_question = isinstance(post, Question)
     if is_question:
-        profile = context['request'].user.profile
-        bookmark = post.bookmarks.filter(profile=profile)
-        return [post, bookmark if bookmark else False]
+        user = context['request'].user
+        if hasattr(user, 'profile'):
+            bookmark = post.bookmarks.filter(profile=user.profile)
+            return [post, bookmark if bookmark else False]
     return None
