@@ -81,7 +81,7 @@
   {% endif %}
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script type="module" src="{% static 'posts/js/render_posts.js' %}"></script>
-  {% if request.resolver_match.url_name == 'ask' %}
+  {% if request.resolver_match.url_name == 'ask' or request.resolver_match.url_name == "question" %}
     <script type="module" src="{% static 'posts/js/create_answer.js' %}"></script>
   {% endif %}
   <script type="module" src="{% static 'posts/js/votings.js' %}"></script>
