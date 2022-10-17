@@ -3,7 +3,7 @@ from django.db.models import (
 )
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
-from django.db.models import Manager, Count, Subquery, OuterRef, F, Value
+from django.db.models import Manager, Count, Subquery, OuterRef, F, Value, Avg, IntegerField
 from django.db.models.functions import Concat
 
 from posts.models import Question, Answer, Vote, Tag, Bookmark
@@ -22,31 +22,30 @@ class Profile(Model):
     user = OneToOneField(settings.AUTH_USER_MODEL, on_delete=CASCADE)
 
     def get_tag_posts(self, order_by=None):
-        if not order_by:
-            order_by = "-question__score"
-        elif order_by == "name":
-            pass
-        else:
-            order_by = "-question__score"
-        questions_with_tag = self.questions.filter(
-            tags__name=OuterRef("name")).only('id')
         tags = Tag.objects.filter(
             question__profile=self
         ).distinct()
+        questions_with_tag = self.questions.filter(
+            tags__name=OuterRef("name")).only('id')
+        records = tags.annotate(
+            times_posted=Count(Subquery(questions_with_tag)),
+            avg_question_score=Avg("question__score", output_field=IntegerField())
+        )
+        if not order_by or order_by not in ['name', 'score']:
+            order_by = "name"
+        if order_by == "name":
+            records = records.order_by(order_by)
+        else:
+            records = records.order_by("-avg_question_score")
         return {
-            'records': tags.annotate(
-                times_posted=Count(Subquery(questions_with_tag))
-            ).order_by("-times_posted"),
+            'records': records,
             'title': f"{tags.count()} Tags"
         }
 
     def get_question_posts(self, order_by=None):
         if not order_by or order_by == "newest":
             order_by = "date"
-        if order_by == "score" or order_by == "date":
-            questions = self.questions.all().order_by(f"-{order_by}")
-        else:
-            questions = self.questions.all().order_by("-answer__date")
+        questions = self.questions.all().order_by(f"-{order_by}")
         return {
             'records': questions,
             'title': f"{questions.count()} Questions"
@@ -54,9 +53,7 @@ class Profile(Model):
 
     def get_answer_posts(self, order_by=None):
         if not order_by or order_by == "newest":
-            order_by = "date"
-        else:
-            order_by = f"-{order_by}"
+            order_by = "-date"
         answers = self.answers.all().order_by(order_by).annotate(
             in_response_to=Concat(Value("Question:"), "question__title")
         )
@@ -76,7 +73,15 @@ class Profile(Model):
 
     def get_bookmarked_posts(self, sort=None):
         bookmarks = Bookmark.objects.filter(profile=self)
-        # import pdb; pdb.set_trace()
+        if not sort:
+            pass
+        else:
+            if sort == "score":
+                bookmarks = bookmarks.order_by("-question__score")
+            elif sort == "newest":
+                bookmarks = bookmarks.order_by("-question__date")
+            else:
+                bookmarks = bookmarks.order_by(sort)
         return {
             'records': bookmarks,
             'title': f"{bookmarks.count()} bookmarks"
