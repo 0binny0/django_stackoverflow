@@ -2,7 +2,7 @@
     <div class="post_type_title">
       <h3>Questions</h3>
       {% if question.records.count == 5 %}
-        <p><a href="{% url 'authors:profile' id=request.user.id %}?tab=questions&sort=newest">View all {{ question.title }}</a></p>
+        <p><a href="{{ url.profile_questions }}">View all {{ question.title }}</a></p>
       {% endif %}
     </div>
     <div class="linked_posts">
@@ -19,7 +19,7 @@
   </div><div id="user_answers" class="postings">
     <h3>Answers</h3>
     {% if answer.records.count == 5 %}
-      <p><a href="{% url 'authors:profile' id=request.user.id %}?tab=answers&sort=newest">View all {{ answer.title }} answers</a></p>
+      <p><a href="{{ url.profile_answers }}">View all {{ answer.title }} answers</a></p>
     {% endif %}
     <div class="linked_posts">
       {% if not answer.records %}
@@ -35,7 +35,7 @@
   </div><div id="user_tags" class="postings">
     <h3>Tags</h3>
     {% if tag.records.count == 5 %}
-      <p><a href="{% url 'authors:profile' id=request.user.id %}?tab=tags&sort=name">View all {{ tag.title }} tags</a></p>
+      <p><a href="{{ url.profile_tags }}">View all {{ tag.title }}</a></p>
     {% endif %}
     <div class="linked_posts">
       {% if not tag.records %}
@@ -52,7 +52,7 @@
   </div><div id="user_bookmarks" class="postings">
     <h3>Bookmarks</h3>
     {% if bookmark.records.count == 5 %}
-      <p><a href="{% url 'authors:profile' id=request.user.id %}?tab=bookmarks&sort=newest">View all {{ tags.count }} bookmarks</a></p>
+      <p><a href="{{ url.profile_bookmarks }}">View all {{ tags.count }} bookmarks</a></p>
     {% endif %}
     <div class="linked_posts">
       {% if not bookmark.records %}
