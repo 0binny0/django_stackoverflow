@@ -49,9 +49,7 @@ class UserVoteEndpoint(APIView):
             context={'post': post, 'vote_type': request.data['type']} , partial=True
         )
         if serializer.is_valid(raise_exception=True):
-            valid_vote = request.cookies.get("allowedhhhhh")
-            if valid_vote:
-                serializer.save(type=request.data["type"], content_object=post)
+            serializer.save(type=request.data["type"], content_object=post)
             return Response(status=HTTP_201_CREATED)
 
     def put(self, request, id):

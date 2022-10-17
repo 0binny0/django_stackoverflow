@@ -21,7 +21,6 @@ class VoteSerializer(ModelSerializer):
         return value
 
     def create(self, validated_data):
-        import pdb; pdb.set_trace()
         post = self.context['post']
         if self.context['vote_type'] == "dislike":
             post.score = F("score") - 1
@@ -32,7 +31,6 @@ class VoteSerializer(ModelSerializer):
         return self.Meta.model.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        import pdb; pdb.set_trace()
         vote = self.context['type']
         instance.type = vote
         instance.save()
