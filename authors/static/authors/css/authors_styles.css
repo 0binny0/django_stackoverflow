@@ -1,5 +1,21 @@
 
 
+.active {
+  background: lightgrey;
+  padding: 5px 10px;
+  border-radius: 10px;
+}
+
+.selected_index {
+  background: lightgrey;
+}
+
+.tag_data_wrapper {
+  width: 200px;
+  display: flex;
+  align-items: center;
+}
+
 
 .widget_style {
   outline: none;
@@ -28,6 +44,11 @@ fieldset {
 .post_data {
   margin: 10px;
   display: inline-block;
+}
+
+.no_data {
+  text-align: center;
+  padding: 20px;
 }
 
 @media screen and (min-width: 400px) {
