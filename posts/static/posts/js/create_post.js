@@ -40,7 +40,7 @@ markdown_options.forEach((mkd_option, i, array) => {
     }
   })
 })
-
+console.log(text_input_fields);
 text_input_fields.forEach((input_field) => {
   input_field.addEventListener("focus", function(event) {
     this.style.cssText = "box-shadow: 0px 0px 2px 3px lightblue; border: 1px solid blue";

@@ -27,14 +27,10 @@ function send_api_request(button) {
   var user_voted = current_vote_buttons.find((button) => button.classList.contains("voted"));
   if (user_voted && user_voted === button) {
     request_method = "delete";
-    // this.classList.replace("voted", "not_voted");
   } else if (user_voted && user_voted != button) {
     request_method = "put";
-    // this.classList.replace("not_voted", "voted");
-    // user_voted.classList.replace("voted", "not_voted");
   } else {
     request_method = "post";
-    // this.classList.replace("not_voted", "voted");
   }
   var request = new Request(`http://localhost:8000/api/v1/votes/${id}/`, {
             'method': request_method,
@@ -45,7 +41,7 @@ function send_api_request(button) {
 }
 
 //Returns the state of voting on a given question/answer
-window.addEventListener("DOMContentLoaded", (e) => {
+window.addEventListener("load", (e) => {
   var question_target = document.querySelector("h2[id*=question]");
   const id = question_target.id.split("_")[1];
   const request = fetch(`http://localhost:8000/api/v1/votes/${id}`, {
@@ -73,16 +69,16 @@ window.addEventListener("DOMContentLoaded", (e) => {
   })
 })
 
-post_voting_buttons.forEach((button) => {
-  button.addEventListener('mouseover', (event) => {
-    const request = send_api_request(button);
-    fetch(request).then(json_response).then(
-      (json) => {
-
-      }
-    )
-  })
-})
+// post_voting_buttons.forEach((button) => {
+//   button.addEventListener('mouseover', (event) => {
+//     const request = send_api_request(button);
+//     fetch(request).then(json_response).then(
+//       (json) => {
+//
+//       }
+//     )
+//   })
+// })
 
 
 
@@ -93,29 +89,15 @@ post_voting_buttons.forEach((button) => {
     fetch(request).then(json_response).then(
       (json) => {
         let new_post_score;
-        const target_post = button.id.match(/question_\d+|answer_\d+/)[0];
-        const [post, id] = target_post.split("_");
-        var all_post_voting_buttons = Array.from(document.querySelectorAll(`svg > polygon[id*=${target_post}]`));
-        // var post_voting_buttons = Array.from(document.querySelectorAll(`svg > polygon[id*=${post}_${id}]`));
+        const [vote, post, id] = button.id.split("_");
+        var all_post_voting_buttons = Array.from(document.querySelectorAll(`svg > polygon[id*=${post}_${id}]`));
         var post_score = document.querySelector(`#${post}_${id}_score`);
         // Find whether a User has voted on the post
-        // var request_method;
-        // var user_voted = all_post_voting_buttons.find((button) => button.classList.contains("voted"));
-        // if (user_voted && user_voted === this) {
-        //   request_method = "delete";
-        //   // this.classList.replace("voted", "not_voted");
-        // } else if (user_voted && user_voted != this) {
-        //   request_method = "put";
-        //   // this.classList.replace("not_voted", "voted");
-        //   // user_voted.classList.replace("voted", "not_voted");
-        // } else {
-        //   request_method = "post";
-        //   // this.classList.replace("not_voted", "voted");
-        // }
+        var user_voted = all_post_voting_buttons.find((button) => button.classList.contains("voted"));
         switch(json.status) {
           case 201:
             this.classList.replace("not_voted", "voted");
-            if (vote_type === "like") {
+            if (vote === "like") {
               new_post_score = `${parseInt(post_score.textContent) + 1}`
             } else {
               new_post_score = `${parseInt(post_score.textContent) - 1}`
@@ -126,7 +108,7 @@ post_voting_buttons.forEach((button) => {
             const current_score = parseInt(post_score.textContent);
             if (request.method === "DELETE") {
               this.classList.replace("voted", "not_voted");
-              if (vote_type === "like") {
+              if (vote === "like") {
                 post_score.textContent = `${current_score - 1}`;
               } else {
                 post_score.textContent = `${current_score + 1}`;
@@ -134,7 +116,7 @@ post_voting_buttons.forEach((button) => {
             } else {
               this.classList.replace("not_voted", "voted");
               user_voted.classList.replace("voted", "not_voted");
-              if (vote_type === "like") {
+              if (vote === "like") {
                 new_post_score = `${current_score + 2}`
               } else {
                 new_post_score = `${current_score - 2}`
