@@ -13,7 +13,8 @@
         <a class="linked tag bg-blue" href="{% url 'posts:tagged' tags=tag|lower %}">{{ tag }}</a>
       {% endfor %}
       </div>
-      <p class="authored_by"><a href="{% url 'authors:profile' id=question.profile.id %}">{{ question.profile.user }}</a> {% if question.answers.count %}answered{% else %}asked{% endif %} {{ question.date|timesince }} ago</p>
+      <!-- <p class="authored_by"><a href="{% url 'authors:profile' id=question.profile.id %}">{{ question.profile.user }}</a> {% if question.answers.count %}answered{% else %}asked{% endif %} {{ question.date|timesince }} ago</p> -->
     </div>
   </div>
 </div>
+<script src="{% static 'authors/js/tabbed.js' %}"></script>
