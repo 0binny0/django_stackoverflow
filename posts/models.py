@@ -25,7 +25,6 @@ class QueryStringSearchManager(Manager):
     def lookup(self, tab, query=None):
         qs_options = {
             f"{self.unanswered.__name__}": self.unanswered,
-            f"{self.active.__name__}": self.active,
             f"{self.newest.__name__}": self.newest,
             f"{self.score.__name__}": self.score
         }
@@ -33,6 +32,7 @@ class QueryStringSearchManager(Manager):
         if current_tab not in qs_options.keys():
             current_tab = "newest"
         queryset = super().get_queryset().order_by("-date", "views", "-score")
+        import pdb; pdb.set_trace()
         if query:
             query_data = resolve_search_query(query)
             if 'tags' in query_data and query_data['tags']:
@@ -51,7 +51,7 @@ class QueryStringSearchManager(Manager):
                 queryset = queryset.filter(title__contains=f"{query_data['title']}")
             if 'user' in query_data and query_data['user']:
                 queryset = queryset.filter(profile_id=query_data['user'])
-            queryset = qs_options.get(f"{tab}", "_newest")(queryset)
+            queryset = qs_options.get(f"{current_tab}", "_newest")(queryset)
             return queryset, query_data
         queryset = qs_options.get(current_tab, "newest")(queryset)
         return queryset, None
