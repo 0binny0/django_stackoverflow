@@ -24,12 +24,12 @@ from authors import endpoints as authors_api
 
 posts_patterns = ([
     path("", pv.QuestionListingPage.as_view(), name="main"),
-    path("questions", pv.AllQuestionsPage.as_view(), name="main_paginated"),
-    path("questions/ask/", pv.AskQuestionPage.as_view(), name="ask"),
-    path("questions/<question_id>/edit/", pv.EditQuestionPage.as_view(), name="edit"),
-    path("questions/<question_id>/edit/answers/<answer_id>/", pv.EditPostedAnswerPage.as_view(), name="answer_edit"),
-    path("questions/<question_id>/", pv.PostedQuestionPage.as_view(), name="question"),
-    path("questions/search", pv.SearchResultsPage.as_view(), name="search"),
+    re_path(r"questions/?", pv.AllQuestionsPage.as_view(), name="main_paginated"),
+    re_path(r"questions/ask/?", pv.AskQuestionPage.as_view(), name="ask"),
+    re_path(r"questions/<question_id>/edit/?", pv.EditQuestionPage.as_view(), name="edit"),
+    re_path("questions/<question_id>/edit/answers/<answer_id>/?", pv.EditPostedAnswerPage.as_view(), name="answer_edit"),
+    re_path("questions/<question_id>/?", pv.PostedQuestionPage.as_view(), name="question"),
+    re_path(r"questions/search/?", pv.SearchResultsPage.as_view(), name="search"),
     path("questions/tagged/<tags>", pv.TaggedSearchResultsPage.as_view(), name="tagged")
 ], "posts")
 
