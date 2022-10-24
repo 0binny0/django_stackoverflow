@@ -1,0 +1,24 @@
+{% extends 'index.html' %}
+{% block page_content %}
+  {% include './page_header.html' %}
+  <table class="search_menu_help">
+    <thead class="row_sep">
+      <th span="col" class="column_name">Search type</th>
+      <th span="col" class="column_name">Search syntax</th>
+    </thead>
+    <tbody class="main_table">
+      <tr class="row_sep">
+        <th class="table_row_header table_info" scope="row">Tags</th>
+        <td class="table_info"><code>[tag]</code></td>
+      </tr>
+      <tr class="row_sep">
+        <th class="table_row_header table_info"scope="row">Author</th>
+        <td class="table_info"><code>user:0123</code></td>
+      </tr>
+      <tr class="row_sep">
+        <th class="table_row_header table_info" scope="row">Title</th>
+        <td class="table_info"><code>title:"post title"</code></td>
+      </tr>
+    </tbody>
+  </table>
+{% endblock %}
