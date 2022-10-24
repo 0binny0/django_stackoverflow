@@ -42,9 +42,9 @@ def route(context, button=None):
     re_button_pattern = re.compile(r"(?<=tab=)\w+")
     search_query_filter = re_button_pattern.search(query_string)
     if not search_query_filter:
-        return f"{reverse('posts:search')}?{query_string}&tab={button}"
+        return f"{reverse('posts:search_results')}?{query_string}&tab={button}"
     query_string = re_button_pattern.sub(button, query_string)
-    return f"{reverse('posts:search')}?{query_string}"
+    return f"{reverse('posts:search_results')}?{query_string}"
 
 @register.simple_tag(takes_context=True)
 def set_page_number_url(context, page=None, limit=None):

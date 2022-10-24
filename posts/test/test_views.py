@@ -245,7 +245,7 @@ class TestGetPaginatedPage(SimpleTestCase):
     def setUp(self):
         query = urlencode({'q': 'title:django views', 'pagesize': 10, 'page': ""})
         request = RequestFactory().get(
-            f'reverse("posts:search")?{query}'
+            f'reverse("posts:search_results")?{query}'
         )
         self.page = PaginatedPage.as_view()(request)
         self.page_context = self.page.context_data
@@ -263,7 +263,7 @@ class TestGetSearchPageNoResults(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        url_path = reverse(f"{'posts:search'}")
+        url_path = reverse(f"{'posts:search_results'}")
         cls.url = f"{url_path}?{urlencode({'q': 'user:4  [ d  jango]'})}"
         cls.url2 = f"{url_path}?{urlencode({'q': 'title:hamburgerbun  '})}"
 
@@ -285,7 +285,7 @@ class TestRedirectTaggedPaginatedPage(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        url_path = reverse("posts:search")
+        url_path = reverse("posts:search_results")
         query_string = urlencode({"q":"[django-rest-framework] [restful-api]"})
         cls.url = f"{url_path}?{query_string}"
 
@@ -295,3 +295,14 @@ class TestRedirectTaggedPaginatedPage(TestCase):
         self.assertTemplateUsed(response, "posts/main.html")
         self.assertContains(response, "All Questions")
         self.assertContains(response, "Tagged with")
+
+
+class TestRedirectSearchView(TestCase):
+
+    def setUp(self):
+        self.request_url = reverse('posts:search_menu')
+        self.response_url = f"{reverse('posts:search_results')}?q="
+
+    def test_search_page_response(self):
+        response = self.client.get(self.request_url, follow=True)
+        self.assertRedirects(response, self.response_url)

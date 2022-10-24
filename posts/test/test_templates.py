@@ -25,7 +25,7 @@ class TestRouteTemplateTag(SimpleTestCase):
         )
 
         self.request3 = RequestFactory().get(
-            f"{reverse('posts:search')}?page=2&pagesize=10"
+            f"{reverse('posts:search_results')}?page=2&pagesize=10"
         )
 
     # def test_directed_to_link_url(self):
@@ -50,7 +50,7 @@ class TestPaginatedPageLink(SimpleTestCase):
     def setUp(self):
         query = urlencode({'pagesize': 20, 'tab': 'week', 'page': 3, 'q': "python mocks"})
         request = RequestFactory().get(
-            f"{reverse('posts:search')}?{query}"
+            f"{reverse('posts:search_results')}?{query}"
         )
         self.context = {'request': request}
 
