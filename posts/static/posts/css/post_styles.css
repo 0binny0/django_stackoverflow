@@ -30,6 +30,33 @@
 
 @media screen and (min-width: 400px) {
 
+  /* ---------------------*
+    Search query tips table
+  ------------------------*/
+
+  .search_menu_help {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 50px;
+  }
+
+  caption {
+    caption-side: bottom;
+  }
+
+  .table_row_header,
+  .column_name {
+    text-align: left;
+  }
+
+  .table_row_header {
+    font-weight: normal;
+  }
+
+  .table_info {
+    border-bottom: 1px solid;
+    padding: 10px;
+  }
 
   /*---------------
     page title layout
