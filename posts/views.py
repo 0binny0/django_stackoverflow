@@ -2,11 +2,11 @@
 from functools import reduce
 import re
 
-from django.views.generic.base import TemplateView
+from django.views.generic.base import TemplateView, RedirectView
 from django.contrib import messages
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
-from django.urls import reverse
+from django.urls import reverse, reverse
 from django.core.paginator import Paginator
 
 from authors.models import Profile
@@ -240,8 +240,17 @@ class AllQuestionsPage(PaginatedPage):
 class SearchResultsPage(PaginatedPage):
 
     def get(self, request):
-        query, tab_index = request.GET.get('q'), request.GET.get('tab', 'newest')
-        queryset, query_data = Question.searches.lookup(tab_index, query=query)
+        context = self.get_context_data()
+        query_string = request.GET
+        search_query, tab_index = query_string.get('q'), query_string.get('tab', 'newest')
+        if not query_string or 'q' not in query_string or not search_query:
+            context |= {
+                'title': 'Search'
+            }
+            self.template_name = "posts/search_menu.html"
+            return self.render_to_response(context)
+        queryset, query_data = Question.searches.lookup(tab_index, query=search_query)
+
         if query_data['tags'] and not query_data['title'] and not query_data['user']:
             tags = "".join([
                 f"{tag}+" if i != len(query_data["tags"]) - 1 else f"{tag}"
@@ -277,6 +286,20 @@ class SearchResultsPage(PaginatedPage):
         return self.render_to_response(context)
 
 
+class SearchMenuPage(RedirectView):
+
+    pattern_name = "posts:search_results"
+
+    def get_redirect_url(self, *args, **kwargs):
+        url = reverse(self.pattern_name)
+        return f"{url}?q="
+
+
+class SearchTaggedRedirect(RedirectView):
+
+    pattern_name = "posts:main_paginated"
+
+
 class TaggedSearchResultsPage(PaginatedPage):
 
     def get(self, request, tags):
@@ -284,6 +307,7 @@ class TaggedSearchResultsPage(PaginatedPage):
         query = "".join(f" [{tag}] " for tag in tags.split("+"))
         tab_index = request.GET.get('tab', "newest")
         context['search_form'].fields['q'].widget.attrs.update({"value": query})
+
         queryset, query_data = Question.searches.lookup(tab_index, query=query)
         context['paginator'].object_list = queryset
         page = context['paginator'].get_page(
