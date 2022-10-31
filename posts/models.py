@@ -32,7 +32,6 @@ class QueryStringSearchManager(Manager):
         if current_tab not in qs_options.keys():
             current_tab = "newest"
         queryset = super().get_queryset().order_by("-date", "views", "-score")
-        import pdb; pdb.set_trace()
         if query:
             query_data = resolve_search_query(query)
             if 'tags' in query_data and query_data['tags']:

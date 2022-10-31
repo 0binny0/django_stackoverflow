@@ -101,7 +101,7 @@ class TestQuestionScoreUpVote(TestCase):
                 "post": cls.question, 'vote_type': "like"
             }
         )
-        import pdb; pdb.set_trace()
+         
         serializer.is_valid()
         serializer.save(profile=cls.profile2, type="like", content_object=cls.question)
         cls.score = Question.objects.get(title="Question__001").score

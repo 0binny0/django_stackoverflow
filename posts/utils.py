@@ -2,7 +2,7 @@
 import re
 
 def retrieve_exact_phrase(string):
-    import pdb; pdb.set_trace()
+
     string_pattern = re.compile(r"([\"|\'])+(?P<phrase>.+)\1+")
     phrase = string_pattern.search(string)
     if phrase:
@@ -55,7 +55,7 @@ def retrieve_query_tags(string):
     return tag_content
 
 def retrieve_query_user_id(string):
-    # import pdb; pdb.set_trace()
+    #
     user_id_search = re.compile(r"(?<=user:)(\d+)")
     searching_by_user = user_id_search.search(string)
     if searching_by_user:
