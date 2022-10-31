@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
   if (!page_tab_query) {
     var sort_query = query_buttons[0].textContent.toLowerCase()
   } else {
-    var sort_query = url_query_string.get("tab");
+    var sort_query = url_query_string.get("tab").toLowerCase();
   }
   const query_types = query_buttons.map((query_button) => query_button.textContent.toLowerCase());
   if (!sort_query || !query_types.includes(sort_query)) {
