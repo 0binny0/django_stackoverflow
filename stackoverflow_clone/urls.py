@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include, re_path
+from django.urls import path, include, re_path, reverse
 
 from posts import views as pv
 from posts import endpoints as posts_api
@@ -24,13 +24,16 @@ from authors import endpoints as authors_api
 
 posts_patterns = ([
     path("", pv.QuestionListingPage.as_view(), name="main"),
-    re_path(r"questions/?", pv.AllQuestionsPage.as_view(), name="main_paginated"),
-    re_path(r"questions/ask/?", pv.AskQuestionPage.as_view(), name="ask"),
-    re_path(r"questions/<question_id>/edit/?", pv.EditQuestionPage.as_view(), name="edit"),
-    re_path("questions/<question_id>/edit/answers/<answer_id>/?", pv.EditPostedAnswerPage.as_view(), name="answer_edit"),
-    re_path("questions/<question_id>/?", pv.PostedQuestionPage.as_view(), name="question"),
-    re_path(r"questions/search/?", pv.SearchResultsPage.as_view(), name="search"),
-    path("questions/tagged/<tags>", pv.TaggedSearchResultsPage.as_view(), name="tagged")
+    re_path(r"questions/ask/?$", pv.AskQuestionPage.as_view(), name="ask"),
+    re_path(r"questions/<int:question_id>/edit/?$", pv.EditQuestionPage.as_view(), name="edit"),
+    re_path("questions/<int:question_id>/edit/answers/<answer_id>/?$", pv.EditPostedAnswerPage.as_view(), name="answer_edit"),
+    re_path(r"questions/(?P<question_id>\d+)/?$", pv.PostedQuestionPage.as_view(), name="question"),
+    re_path(r"questions/tagged/(?P<tags>[a-zA-Z]+(?:\+[a-zA-Z]+)*)$", pv.TaggedSearchResultsPage.as_view(), name="tagged"),
+    re_path(r"questions/tagged/$", pv.SearchTaggedRedirect.as_view(), name="tagged_redirect"),
+    re_path(r"questions/search/$", pv.SearchMenuPage.as_view(), name="search_menu"),
+    re_path(r"questions/search$", pv.SearchResultsPage.as_view(), name="search_results"),
+    re_path(r"questions/?$", pv.AllQuestionsPage.as_view(), name="main_paginated"),
+
 ], "posts")
 
 votes_api_patterns = ([
