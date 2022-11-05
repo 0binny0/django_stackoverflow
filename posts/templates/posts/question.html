@@ -82,10 +82,13 @@
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script type="module" src="{% static 'posts/js/render_posts.js' %}"></script>
   {% if request.resolver_match.url_name == 'ask' or request.resolver_match.url_name == "question" %}
-    <script type="module" src="{% static 'posts/js/create_answer.js' %}"></script>
+    <!-- <script type="module" src="{% static 'posts/js/create_answer.js' %}"></script> -->
   {% endif %}
   <script type="module" src="{% static 'posts/js/votings.js' %}"></script>
-  <script type="module" src="{% static 'posts/js/bookmark_post.js' %}"></script>
+  {% if request.user.is_authenticated %}
+    <script type="module" src="{% static 'posts/js/create_answer.js' %}"></script>
+    <script type="module" src="{% static 'posts/js/bookmark_post.js' %}"></script>
+  {% endif %}
   {% if request.resolver_match.url_name == "question" %}
     <script type="module" src="{% static 'posts/js/delete_post.js' %}"></script>
   {% endif %}
