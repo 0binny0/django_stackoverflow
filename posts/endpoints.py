@@ -43,7 +43,8 @@ class UserVoteEndpoint(APIView):
 
     def post(self, request, id):
         '''In the event that an anonymous user attempts to vote on a post'''
-
+        if not hasattr(request.user, 'profile'):
+            return Response(status=HTTP_400_BAD_REQUEST)
         post = retrieve_user_post(id, request.data['post'])
         serializer = VoteSerializer(data={'profile': request.user.profile.id},
             context={'post': post, 'vote_type': request.data['type']} , partial=True
