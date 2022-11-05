@@ -11,7 +11,7 @@
       {% else %}
       <ul>
       {% for question in question.records %}
-        <li class="preview_post"><span class="post_data score_box">{{ question.score }}</span><a href="{% url 'posts:question' question_id=question.id %}">{{ question|truncatechars:35 }}</a><span class="post_data dated_span">{{ question.date|date:"n/j/y" }}</span></li>
+        <li class="preview_post"><span class="post_data score_box">{{ question.score }}</span><a href="{% url 'posts:question' question_id=question.id %}/">{{ question|truncatechars:35 }}</a><span class="post_data dated_span">{{ question.date|date:"n/j/y" }}</span></li>
       {% endfor %}
       </ul>
       {% endif %}
@@ -27,7 +27,7 @@
       {% else %}
       <ul>
       {% for answer in answer.records %}
-        <li class="preview_post"><span class="post_data score_box">{{ answer.score }}</span><a href="{% url 'posts:question' question_id=answer.question.id %}">{{ answer.question|truncatechars:35 }}</a><span class="post_data dated_span">{{ answer.question.date|date:"n/j/y" }}</span></li>
+        <li class="preview_post"><span class="post_data score_box">{{ answer.score }}</span><a href="{% url 'posts:question' question_id=answer.question.id %}/">{{ answer.question|truncatechars:35 }}</a><span class="post_data dated_span">{{ answer.question.date|date:"n/j/y" }}</span></li>
       {% endfor %}
       </ul>
       {% endif %}
@@ -60,7 +60,7 @@
       {% else %}
         {% for bookmark in bookmark.records %}
           <div class="bookmark_data">
-            <p class="bookmark_score"><span class="post_data score_box">{{ bookmark.question.score }}</span> {{ bookmark.question|truncatechars:35 }}<span class="post_data dated_span">{{ bookmark.question.date|date:"n/j/y" }}</span></p>
+            <p class="bookmark_score"><span class="post_data score_box">{{ bookmark.question.score }}</span> <a href="{% url 'posts:question' question_id=bookmark.question.id %}/">{{ bookmark.question|truncatechars:35 }}</a><span class="post_data dated_span">{{ bookmark.question.date|date:"n/j/y" }}</span></p>
           </div>
         {% endfor %}
       {% endif %}
