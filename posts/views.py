@@ -213,7 +213,7 @@ class PaginatedPage(Page):
         paginator = Paginator(Question.objects.none(), page_size)
         context.update({
             'paginator': paginator,
-            'query_buttons': ["Newest", "Active", "Unanswered", "Score"],
+            'query_buttons': ["Newest", "Unanswered", "Score"],
             'page_listing_limits': [f"{n}" for n in page_sizes.values()]
         })
         return context
