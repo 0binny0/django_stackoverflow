@@ -25,10 +25,10 @@ from authors import endpoints as authors_api
 posts_patterns = ([
     path("", pv.QuestionListingPage.as_view(), name="main"),
     re_path(r"questions/ask/?$", pv.AskQuestionPage.as_view(), name="ask"),
-    re_path(r"questions/<int:question_id>/edit/?$", pv.EditQuestionPage.as_view(), name="edit"),
-    re_path("questions/<int:question_id>/edit/answers/<answer_id>/?$", pv.EditPostedAnswerPage.as_view(), name="answer_edit"),
+    re_path(r"questions/(?P<question_id>\d+)/edit/?$", pv.EditQuestionPage.as_view(), name="edit"),
+    re_path(r"questions/(?P<question_id>\d+)/edit/answers/(?P<answer_id>\d+)/?$", pv.EditPostedAnswerPage.as_view(), name="answer_edit"),
     re_path(r"questions/(?P<question_id>\d+)/?$", pv.PostedQuestionPage.as_view(), name="question"),
-    re_path(r"questions/tagged/(?P<tags>[a-zA-Z]+(?:\+[a-zA-Z]+)*)$", pv.TaggedSearchResultsPage.as_view(), name="tagged"),
+    re_path(r"questions/tagged/(?P<tags>[0-9a-zA-Z\.\-#]+(?:\+[0-9a-zA-Z\.\-#]+)*)$", pv.TaggedSearchResultsPage.as_view(), name="tagged"),
     re_path(r"questions/tagged/$", pv.SearchTaggedRedirect.as_view(), name="tagged_redirect"),
     re_path(r"questions/search/$", pv.SearchMenuPage.as_view(), name="search_menu"),
     re_path(r"questions/search$", pv.SearchResultsPage.as_view(), name="search_results"),

@@ -1,8 +1,8 @@
 
 import re
+from functools import reduce
 
 def retrieve_exact_phrase(string):
-
     string_pattern = re.compile(r"([\"|\'])+(?P<phrase>.+)\1+")
     phrase = string_pattern.search(string)
     if phrase:
@@ -10,6 +10,7 @@ def retrieve_exact_phrase(string):
     return None
 
 def retrieve_query_title(string):
+    '''Extracts the title of a performed search query'''
     title_pattern = re.compile(r'(?<=title:)\s*(?P<title>([^\[\]<>]+))')
     # title_pattern = re.compile(r"(?<=title:)\s*(?<=[\"|'])(?P<title>\w+)(?=[\"|'])")
     query_title = title_pattern.search(string)
@@ -36,34 +37,46 @@ def retrieve_query_title(string):
     return None
 
 def retrieve_query_tags(string):
-
-    contained_tags = list(map(
-        lambda match: re.sub(r"[*!$&'\"()%*,/:;=@\[\]<>\s]", "", match[0])
+    '''Clean each tag of unaccepted characters'''
+    contained_tags = list(map(lambda cleaned_match: "" if not cleaned_match else reduce(
+        lambda acc, cur: (
+            acc + "" if cur == "-" and acc[-1] == "-" else acc + cur
+        ), cleaned_match
+    ), map(
+        lambda match: re.sub(r"[*!$&'\"()%*,/:;?^=@\[\]<>_`~{}|\s\\]", "", match[0])
         , re.finditer(r"(?<=\[)[^\[\]]+(?=\])", string)
-    ))
+    )))[:3]
     if all(not tag for tag in contained_tags):
         return None
-    tag_content = list(map(
-        lambda string_match: string_match[1:]
-        if string_match[0] == "#" and re.search(r"(?<=#)\w", string_match) else string_match,
-        map(
-            lambda match: "-".join(
-                re.findall(r"([a-zA-Z0-9#+]+)", match.lower())
-            ), filter(lambda tag: tag, contained_tags)
+    returned_tags = list(map(
+        lambda tag: clean_tag_version(tag), filter(
+            lambda tag: tag, map(
+                lambda tag: tag.strip("-").lstrip("#+."), contained_tags
+            )
         )
-    ))[:3]
-    return tag_content
+    ))
+    return returned_tags
+
+def clean_tag_version(tag):
+    '''Clean the version provided of a given tag'''
+    tag_version_match = re.search(r"\d+(\.+\d+)*", tag)
+    if tag_version_match:
+        user_provided_version = tag_version_match.start()
+        version = reduce(
+            lambda string, char: (
+                string + "" if char == "." and string[-1] == "." else string + char
+            ), tag[user_provided_version:]
+        )
+        tag = f"{tag_version_match.string[:user_provided_version]}{version}".lower()
+    tag = re.sub(r"(?<=[A-Za-z])?\.*(?=[A-Za-z])", "", tag).lower()
+    return tag
 
 def retrieve_query_user_id(string):
-    #
+    '''Returns the id of a given registered user'''
     user_id_search = re.compile(r"(?<=user:)(\d+)")
     searching_by_user = user_id_search.search(string)
     if searching_by_user:
-        # user_id = re.search(r"(\d+)", searching_by_user[0])
         return int(searching_by_user[0])
-        # user_id = "".join(re.search(r"(\d+)", searching_by_user[0]))
-        # if user_id:
-        #     return int(user_id)
     return None
 
 def resolve_search_query(string):
@@ -77,6 +90,7 @@ def resolve_search_query(string):
     }
 
 def get_page_links(page):
+    '''Returns a list of page links'''
     paginator = page.paginator
     page_links = list(paginator.page_range)
     total_pages = paginator.num_pages
