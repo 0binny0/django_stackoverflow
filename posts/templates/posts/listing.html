@@ -5,44 +5,8 @@
   {% include './viewed_question.html' with class="user_question_info" %}
 {% endfor %}
 {% if request.resolver_match.url_name == "main" %}
-  <h3 class="page_footer">Looking for more? Browse the complete list of questions. Help us answer <a href="{% url 'posts:main_paginated' %}">unanswered questions</a>.</h3>
+  <h3 class="page_footer">Looking for more? Browse the <a href="{% url 'posts:main_paginated' %}?tab=newest">complete list of questions</a>. Help us answer <a href="{% url 'posts:main_paginated' %}?tab=unanswered">unanswered questions</a>.</h3>
 {% else %}
-  <div class="main_pagination">
-    <div class="page_through_wrapper">
-    {% if questions.has_previous %}
-      <a class="inactive_page" href="{% set_previous_page_url page=questions %}">Prev</a>
-    {% endif %}
-    {% for page in page_links %}
-      {% if page.number == questions.number %}
-        <a class="active_page page_num" href="{% set_page_number_url page=page %}">{{ page.number }}</a>
-      {% else %}
-        <a class="inactive_page page_num" href="{% set_page_number_url page=page %}">{{ page.number }}</a>
-      {% endif %}
-    {% endfor %}
-    {% if questions.has_next %}
-      <a class="inactive_page" href="{% set_next_page_url page=questions %}">Next</a>
-    {% endif %}
-    </div>
-    <div class="page_range_options_wrapper">
-      {% if request.GET.pagesize not in page_listing_limits %}
-        {% for limit in page_listing_limits %}
-          {% if forloop.counter0 == 0 %}
-            <a class="active_page page_num" href="{% set_page_number_url limit=limit %}">{{ limit }}</a>
-          {% else %}
-            <a class="inactive_page page_num" href="{% set_page_number_url limit=limit %}">{{ limit }}</a>
-          {% endif %}
-        {% endfor %}
-      {% else %}
-        {% for limit in page_listing_limits %}
-          {% if limit == request.GET.pagesize %}
-            <a class="active_page page_num" href="{% set_page_number_url limit=limit %}">{{ limit }}</a>
-          {% else %}
-            <a class="inactive_page page_num" href="{% set_page_number_url limit=limit %}">{{ limit }}</a>
-          {% endif %}
-        {% endfor %}
-      {% endif %}
-      <span>per page</span>
-    </div>
-  </div>
+  {% include "./paginated.html" %}
 {% endif %}
 <script src="{% static 'posts/js/listing.js' %}"></script>
