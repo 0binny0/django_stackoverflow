@@ -1,0 +1,10 @@
+{% extends 'index.html' %}
+{% block page_content %}
+  <h1>{{ title }}</h1>
+  <ul class="user_listing">
+  {% for user in users %}
+    <li><a href="{% url 'authors:profile' id=user.id %}">{{ user }}</a></li>
+  {% endfor %}
+  </ul>
+  {% include 'posts/paginated.html' %}
+{% endblock %}
