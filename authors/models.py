@@ -3,10 +3,22 @@ from django.db.models import (
 )
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
-from django.db.models import Manager, Count, Subquery, OuterRef, F, Value, Avg, IntegerField
+from django.db.models import Manager, Count, Subquery, OuterRef, F, Value, Avg, IntegerField, QuerySet
 from django.db.models.functions import Concat
 
 from posts.models import Question, Answer, Vote, Tag, Bookmark
+
+class UserQueryManager(Manager):
+
+    def get_queryset(self):
+        return super().get_queryset().annotate(
+            post_count=Count("profile__question")
+        )
+
+    def by_name(self, name):
+        return self.get_queryset().filter(
+            username__icontains=name
+        )
 
 class User(AbstractUser):
 
@@ -16,6 +28,8 @@ class User(AbstractUser):
             "unique": "Username not available"
         }
     )
+
+    posted = UserQueryManager()
 
 
 class Profile(Model):
