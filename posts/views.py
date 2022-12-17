@@ -230,7 +230,7 @@ class AllQuestionsPage(PaginatedPage):
         )
         context.update({
             'title': "All Questions",
-            "questions": page,
+            "page": page,
             "page_links": get_page_links(page),
             "count": page.paginator.count
         })
@@ -250,7 +250,6 @@ class SearchResultsPage(PaginatedPage):
             self.template_name = "posts/search_menu.html"
             return self.render_to_response(context)
         queryset, query_data = Question.searches.lookup(tab_index, query=search_query)
-
         if query_data['tags'] and not query_data['title'] and not query_data['user']:
             tags = "".join([
                 f"{tag}+" if i != len(query_data["tags"]) - 1 else f"{tag}"
@@ -279,7 +278,7 @@ class SearchResultsPage(PaginatedPage):
             context.update({
                 'title': "Search Results",
                 'query_data': query_data,
-                'questions': page,
+                'page': page,
                 'page_links': get_page_links(page),
                 'count': page.paginator.count
             })
@@ -316,7 +315,7 @@ class TaggedSearchResultsPage(PaginatedPage):
         tags = query_data['tags']
         context.update({
             "title": "All Questions" if len(tags) > 1 else f"Questions tagged {tags[0]}",
-            'questions': page,
+            'page': page,
             'page_links': get_page_links(page),
             'tags': tags,
             'count': page.paginator.count

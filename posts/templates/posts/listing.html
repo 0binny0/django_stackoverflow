@@ -1,7 +1,7 @@
 {% load static %}
 {% load identifiers %}
 <h3>{{ count }} questions</h3>
-{% for question in questions %}
+{% for question in page %}
   {% include './viewed_question.html' with class="user_question_info" %}
 {% endfor %}
 {% if request.resolver_match.url_name == "main" %}
