@@ -74,3 +74,15 @@ class ProfileSearchQueryForm(Form):
         super().__init__(*args, **kwargs)
         tab_field = self.fields['tab']
         tab_field.widget.attrs.update({"class": "profile_sort_menu"})
+
+
+class UserSearchForm(Form):
+
+    search = CharField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['search'].widget.attrs.update({
+            "placeholder": "Filter by user",
+            "autocomplete": False
+        })
