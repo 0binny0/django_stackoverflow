@@ -1,10 +1,25 @@
 {% extends 'index.html' %}
 {% block page_content %}
   <h1>{{ title }}</h1>
-  <ul class="user_listing">
-  {% for user in users %}
-    <li><a href="{% url 'authors:profile' id=user.id %}">{{ user }}</a></li>
-  {% endfor %}
-  </ul>
-  {% include 'posts/paginated.html' %}
+  <form>
+    {% for field in form %}
+      {{ field }}
+    {% endfor %}
+  </form>
+  {% if not page %}
+    <p class="empty_user_result">No users matched your search</p>
+  {% else %}
+    <div class="user_listing">
+    {% for user in page %}
+      <div class="user_listing_data">
+        <p><a href="{% url 'authors:profile' id=user.id %}">{{ user }}</a></p>
+        <p class="user_subdata">Signed up: {{ user.date_joined|date:"n/j/Y" }}</p>
+        <p class="user_subdata">Last login: {{ user.last_login|date:"n/j/Y" }}</p>
+        <p class="user_subdata">{{ user.post_count }} post{{ user.post_count|pluralize }}</p>
+        <!-- <p class="user_subdata">Last post: {{ user.last_post|date:"n/j/Y" }}</p> -->
+      </div>
+    {% endfor %}
+    </div>
+    {% include 'posts/paginated.html' %}
+  {% endif %}
 {% endblock %}

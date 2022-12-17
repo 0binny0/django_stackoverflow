@@ -8,8 +8,9 @@ from django.views import View
 from django.http import HttpResponse
 from django.core.paginator import Paginator
 
-from posts.views import Page
-from .forms import RegisterUserForm, LoginUserForm, ProfileSearchQueryForm
+from posts.views import Page, PaginatedPage
+from posts.utils import get_page_links
+from .forms import RegisterUserForm, LoginUserForm, ProfileSearchQueryForm, UserSearchForm
 from .models import Profile, User
 
 from .http_status import SeeOtherHTTPRedirect
@@ -135,4 +136,37 @@ class UserProfilePage(Page, SingleObjectMixin):
                 'form': ProfileSearchQueryForm,
                 'query_tabs': query_tabs
             }
+        return self.render_to_response(context)
+
+
+class UserDirectory(PaginatedPage):
+
+    template_name = "authors/listing.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context |= {
+            'title': 'Users',
+            'form': UserSearchForm
+        }
+        return context
+
+    def get(self, request):
+        context = self.get_context_data()
+        query_string = request.GET
+        if 'search' in query_string:
+            searched_username = query_string['search']
+            users = get_user_model().posted.by_name(searched_username)
+        else:
+            users = get_user_model().posted.all()
+        context['paginator'].object_list = users
+        context['paginator'].per_page = 15
+        current_page = context['paginator'].get_page(
+            request.GET.get('page')
+        )
+        context |= {
+            'page': current_page,
+            'page_links': get_page_links(current_page)
+        }
+
         return self.render_to_response(context)

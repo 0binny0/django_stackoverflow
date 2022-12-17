@@ -309,6 +309,44 @@ fieldset {
   .profile_user {
     margin-left: 20px;
   }
+
+  .user_listing {
+    display: flex;
+    /* justify-content: space-between; */
+    flex-wrap: wrap;
+    width: 450px;
+  }
+
+  .user_listing_data {
+    height: 100px;
+    width: 130px;
+    margin: 10px 20px 10px 0;
+  }
+
+  .user_listing_data > p {
+    font-size: 12px;
+  }
+
+  .user_listing_data:first-child,
+  .user_listing_data:nth-child(2),
+  .user_listing_data:nth-child(3) {
+    margin-top: 10px;
+  }
+
+  .empty_user_result {
+    text-align: center;
+    border: 2px solid;
+    padding: 10px;
+    margin-top: 20px;
+  }
+
+  /* .user_listing_data:nth-child(4n) {
+    margin: 10px 10px 10px 0;
+  }
+
+  .user_listing_data:nth-child(6n) {
+    margin: 10px 0px 10px 10px;
+  } */
 }
 
 @media screen and (min-width: 675px) {
