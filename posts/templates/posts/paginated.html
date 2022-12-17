@@ -1,0 +1,43 @@
+{% load static %}
+{% load identifiers %}
+<div class="main_pagination">
+  <div class="page_through_wrapper">
+  {% if page.has_previous %}
+    <a class="inactive_page" href="{% set_previous_page_url page=page %}">Prev</a>
+  {% endif %}
+  {% for linked_page in page_links %}
+    {% if linked_page.number == page.number %}
+      <a class="active_page page_num" href="{% set_page_number_url page=linked_page %}">{{ linked_page.number }}</a>
+    {% else %}
+      <a class="inactive_page page_num" href="{% set_page_number_url page=linked_page %}">{{ linked_page.number }}</a>
+    {% endif %}
+  {% endfor %}
+  {% if page.has_next %}
+    <a class="inactive_page" href="{% set_next_page_url page=page %}">Next</a>
+  {% endif %}
+  </div>
+  {% with page_url_name=request.resolver_match.url_name %}
+    {% if page_url_name != "user_listing" %}
+    <div class="page_range_options_wrapper">
+      {% if request.GET.pagesize not in page_listing_limits %}
+        {% for limit in page_listing_limits %}
+          {% if forloop.counter0 == 0 %}
+            <a class="active_page page_num" href="{% set_page_number_url limit=limit %}">{{ limit }}</a>
+          {% else %}
+            <a class="inactive_page page_num" href="{% set_page_number_url limit=limit %}">{{ limit }}</a>
+          {% endif %}
+        {% endfor %}
+      {% else %}
+        {% for limit in page_listing_limits %}
+          {% if limit == request.GET.pagesize %}
+            <a class="active_page page_num" href="{% set_page_number_url limit=limit %}">{{ limit }}</a>
+          {% else %}
+            <a class="inactive_page page_num" href="{% set_page_number_url limit=limit %}">{{ limit }}</a>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+      <span>per page</span>
+    </div>
+    {% endif %}
+  {% endwith %}
+</div>
