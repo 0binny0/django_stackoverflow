@@ -72,24 +72,31 @@ def set_page_number_url(context, page=None, limit=None):
             'page': 1,
             'tab': query_tab
         }
+    # if app == "authors":
+    #     _path = "authors:profile"
+    # else:
+    _path = f"{app}:{request_resolver.url_name}"
+    page_name = request_resolver.url_name
+    if page_name == "user_listing":
+        del page_data['tab']
+        del page_data['pagesize']
+        if 'search' in query_string:
+            page_data['search'] = query_string['search']
+        query_string = urlencode(page_data)
+        return f"{reverse(_path)}?{query_string}"
     query_string = urlencode(page_data)
-    if app == "authors":
-        _path = "authors:profile"
-    else:
-        _path = f"posts:{request_resolver.url_name}"
-    if request_resolver.url_name == "profile":
+    if page_name == "profile":
         id = re.search(
             r"(?<=users/)\d+", request.path
         )[0]
-        # id = request.user.id
         path =  reverse(_path, kwargs={'id': int(id)})
         return f"{path}?{query_string}"
-    if request_resolver.url_name == "tagged":
+    if page_name == "tagged":
         tags = "+".join(tag for tag in context['tags'])
         path = reverse(_path, kwargs={'tags': tags})
         query_string = urlencode(page_data)
         return f"{path}?{query_string}"
-    if request_resolver.url_name == "search" and search_query:
+    if page_name == "search" and search_query:
         page_data.update({'q': search_query})
     path = reverse(_path)
     return f"{path}?{query_string}"
