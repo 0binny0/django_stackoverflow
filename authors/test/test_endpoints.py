@@ -162,4 +162,4 @@ class TestUserListingEndpoint(APITestCase):
 
     def test_object_instance_attributes(self):
         response = self.client.get(self.url)
-        self.assertEqual(len(response.data['users']), 3)
+        self.assertEqual(len(response.data['users']), 3)S
