@@ -144,3 +144,22 @@ class TestAccountsEndpointLoginSuccess(APITestCase):
     def test_valid_user_login(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
+
+
+class TestUserListingEndpoint(APITestCase):
+    '''Verify that a list of users are returned based
+    on a search query of username.'''
+
+    @classmethod
+    def setUpTestData(cls):
+        user1 = get_user_model().objects.create_user(username="ItsMe")
+        user2 = get_user_model().objects.create_user(username="ItsMeAgain")
+        user3 = get_user_model().objects.create_user(username="YouAgain")
+        user4 = get_user_model().objects.create_user(username="MeMeMe")
+
+        cls.url = f"{reverse('api_authors:main')}?search=Me"
+
+
+    def test_object_instance_attributes(self):
+        response = self.client.get(self.url)
+        self.assertEqual(len(response.data['users']), 3)
