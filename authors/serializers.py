@@ -2,13 +2,14 @@
 import re
 
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 from django.contrib.auth.password_validation import validate_password as review_user_password
 from django.contrib.auth.hashers import check_password
 from django.core.validators import RegexValidator
 # from django.core.exceptions import ValidationError
 
 from rest_framework.serializers import (
-    ModelSerializer, RegexField, CharField
+    ModelSerializer, BaseSerializer, RegexField, CharField, ReadOnlyField
 )
 from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueValidator
@@ -111,3 +112,18 @@ class RegisterSerializer(ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ["username", "password", "password2"]
+
+
+class UserListingSerializer(BaseSerializer):
+
+    def to_representation(self, instance):
+        object = {
+            'name': str(instance),
+            'profile': {
+                'url': reverse("authors:profile", kwargs={"id": instance.id}),
+                'total_posts': instance.post_count,
+                'date_joined': instance.date_joined,
+                'last_login': instance.last_login
+            }
+        }
+        return object
