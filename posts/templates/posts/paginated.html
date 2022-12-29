@@ -3,7 +3,7 @@
 <div class="main_pagination">
   <div class="page_through_wrapper">
   {% if page.has_previous %}
-    <a class="inactive_page" href="{% set_previous_page_url page=page %}">Prev</a>
+    <a id="paginated_page_previous" class="inactive_page" href="{% set_previous_page_url page=page %}">Prev</a>
   {% endif %}
   {% for linked_page in page_links %}
     {% if linked_page.number == page.number %}
@@ -13,7 +13,7 @@
     {% endif %}
   {% endfor %}
   {% if page.has_next %}
-    <a class="inactive_page" href="{% set_next_page_url page=page %}">Next</a>
+    <a id="paginated_page_next" class="inactive_page" href="{% set_next_page_url page=page %}">Next</a>
   {% endif %}
   </div>
   {% with page_url_name=request.resolver_match.url_name %}
