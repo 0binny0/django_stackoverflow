@@ -1,4 +1,5 @@
 {% extends 'index.html' %}
+{% load static %}
 {% block page_content %}
   <h1>{{ title }}</h1>
   <form>
@@ -6,20 +7,23 @@
       {{ field }}
     {% endfor %}
   </form>
-  {% if not page %}
-    <p class="empty_user_result">No users matched your search</p>
-  {% else %}
-    <div class="user_listing">
-    {% for user in page %}
-      <div class="user_listing_data">
-        <p><a href="{% url 'authors:profile' id=user.id %}">{{ user }}</a></p>
-        <p class="user_subdata">Signed up: {{ user.date_joined|date:"n/j/Y" }}</p>
-        <p class="user_subdata">Last login: {{ user.last_login|date:"n/j/Y" }}</p>
-        <p class="user_subdata">{{ user.post_count }} post{{ user.post_count|pluralize }}</p>
-        <!-- <p class="user_subdata">Last post: {{ user.last_post|date:"n/j/Y" }}</p> -->
-      </div>
-    {% endfor %}
+  <div class="user_listing_container">
+    <div class="users_list">
+      {% if not page %}
+        <p class="empty_user_result">No users matched your search</p>
+      {% else %}
+        {% for user in page %}
+          <div class="user_listing_data">
+            <p><a href="{% url 'authors:profile' id=user.id %}">{{ user }}</a></p>
+            <p class="user_subdata">Signed Up: {{ user.date_joined|date:"n/j/Y" }}</p>
+            <p class="user_subdata">Last Login: {{ user.last_login|date:"n/j/Y" }}</p>
+            <p class="user_subdata">{{ user.post_count }} Post{{ user.post_count|pluralize }}</p>
+            <!-- <p class="user_subdata">Last post: {{ user.last_post|date:"n/j/Y" }}</p> -->
+          </div>
+        {% endfor %}
+      {% endif %}
     </div>
-    {% include 'posts/paginated.html' %}
-  {% endif %}
+  {% include 'posts/paginated.html' %}
+  </div>
+  <script src="{% static 'authors/js/listings.js' %}"></script>
 {% endblock %}
