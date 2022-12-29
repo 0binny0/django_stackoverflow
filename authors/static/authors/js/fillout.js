@@ -369,7 +369,7 @@ form_fields.forEach((form_field) => {
 // }
 //
 // function validate_empty_field(field, event) {
-//   debugger;
+//   
 //   const form = field.form.elements;
 //   form['form_button'].setAttribute("disabled", true);
 //   if (event.key === "Backspace" || event.key === "Delete") {
@@ -436,7 +436,7 @@ form_fields.forEach((form_field) => {
 // form_fields.forEach((form_field) => {
 //   ['keydown', 'keyup'].forEach((action) => {
 //     form_field.addEventListener(action, function(event) {
-//       debugger;
+//       
 //       try {
 //         var request = create_api_request.call(this);
 //       } catch (error) {
@@ -444,7 +444,7 @@ form_fields.forEach((form_field) => {
 //         return
 //       }
 //       fetch(request).then(json_response).then((json) => {
-//         // debugger;
+//         // 
 //         var form = this.form;
 //         const [json_keys, json_values] = resolve_json(json.data)
 //         // response sent with a 200 status code
