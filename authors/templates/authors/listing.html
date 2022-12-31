@@ -2,7 +2,7 @@
 {% load static %}
 {% block page_content %}
   <h1>{{ title }}</h1>
-  <form>
+  <form id="api_user_search_form" novalidate>
     {% for field in form %}
       {{ field }}
     {% endfor %}

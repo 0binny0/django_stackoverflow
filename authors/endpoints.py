@@ -15,7 +15,7 @@ class AccountsEndpoint(APIView):
         if 'search' in query_string:
             users = get_user_model().posted.by_name(query_string['search'])
             if not users:
-                return Response(status=status.HTTP_200_OK)
+                return Response(status=status.HTTP_400_BAD_REQUEST)
             else:
                 serializer = UserListingSerializer(users, many=True)
                 return Response(data={"users": serializer.data})

@@ -82,24 +82,29 @@ def set_page_number_url(context, page=None, limit=None):
         del page_data['pagesize']
         if 'search' in query_string:
             page_data['search'] = query_string['search']
+        path = reverse(_path)
         query_string = urlencode(page_data)
-        return f"{reverse(_path)}?{query_string}"
+        url = re.sub(r"(?<=users)\/", "", f"{path}?{query_string}")
+        return url
     query_string = urlencode(page_data)
     if page_name == "profile":
         id = re.search(
             r"(?<=users/)\d+", request.path
         )[0]
         path =  reverse(_path, kwargs={'id': int(id)})
-        return f"{path}?{query_string}"
+        url = re.sub(r"(?<=users)\/", "", f"{path}?{query_string}")
+        return url
     if page_name == "tagged":
         tags = "+".join(tag for tag in context['tags'])
         path = reverse(_path, kwargs={'tags': tags})
         query_string = urlencode(page_data)
-        return f"{path}?{query_string}"
+        url = re.sub(r"(?<=users)\/", "", f"{path}?{query_string}")
+        return url
     if page_name == "search" and search_query:
         page_data.update({'q': search_query})
     path = reverse(_path)
-    return f"{path}?{query_string}"
+    url = re.sub(r"(?<=users)\/", "", f"{path}?{query_string}")
+    return url
 
 
 @register.simple_tag(takes_context=True)

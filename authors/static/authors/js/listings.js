@@ -1,6 +1,8 @@
 
 
 var user_search_query = document.getElementById("id_search");
+user_search_query.removeAttribute("required");
+let form = document.querySelector("#api_user_search_form");
 
 function set_user_listing_api_request(obj) {
   let search;
@@ -21,8 +23,11 @@ function set_user_listing_api_request(obj) {
   return request
 }
 
+form.addEventListener("submit", function(event) {
+  event.preventDefault()
+})
+
 function get_json_response(response) {
-  debugger;
   if (response.ok) {
     return response.json().then((data) => {
       data['http_status'] = response.status;
@@ -32,24 +37,47 @@ function get_json_response(response) {
   return {}
 }
 
+window.addEventListener("load", function(event) {
+  const current_url = window.location.href.replace(/(?<=users)\//ig, "");
+  window.location.href = current_url;
+
+})
+
+
 user_search_query.addEventListener("keyup", function(event) {
+  let page_warning_exists = document.querySelector("#no_users_warning");
+  let page_listing = document.querySelector(".users_list");
+  const pagination = document.querySelector(".main_pagination");
+  console.log(this.value);
   const request = set_user_listing_api_request(this);
   fetch(request).then(get_json_response).then((data) => {
-    let page_listing = document.querySelector(".users_list");
-    if (!data) {
-      let page_warning = document.createElement("h3");
-      page_warning.textContent = `No users exist with the username ${this.value}`;
-      page_listing.appendChild(page_warning);
+    if (Object.keys(data).length === 0) {
+      const message = `No users exist with the username ${this.value}`;
+      if (page_listing) {
+        let page_warning = document.createElement("h3");
+        page_warning.setAttribute("id", "no_users_warning");
+        page_warning.style.cssText = `margin-top: 20px; text-align: center; border: 2px solid; padding: 10px; width: 500px; word-break: break-all;`;
+        page_warning.textContent = message
+        page_listing.replaceChildren(page_warning);
+      }
+      else {
+        page_warning_exists = message
+      }
+      pagination.classList.add("hide");
     } else {
+      pagination.classList.remove("hide");
       let page_buttons = Array.from(document.getElementsByClassName("page_num"));
-      page_buttons.forEach((page_button) => {
-        page_button.href = `${document.location.href.replace(/(?<=users)\//ig,'')}?page=${page_button.textContent}&search=${this.value}`;
+      let paginated_buttons = Array.from(document.querySelectorAll(`a[id*=paginated_page]`));
+      const navigation_buttons = [...page_buttons, ...paginated_buttons];
+      page_buttons.forEach((page_button, index, array, user_search_query) => {
+        let paginated_link;
+        if (this.value) {
+          paginated_link = `${document.location.href.replace(/(?<=users)\//ig,'')}?page=${page_button.textContent}&search=${this.value}`;
+        } else {
+          paginated_link = `${document.location.href.replace(/(?<=users)\//ig,'')}?page=${page_button.textContent}`;
+        }
+        page_button.href = paginated_link
       })
-      let paginated_buttons = document.querySelectorAll(`a[id*=paginated_page]`);
-      paginated_buttons.forEach((button) => {
-        button.href = `${button.href.replace(/(?<=users)\//ig,'')}&search=${this.value}`;
-      });
-      debugger;
       let users = data['users'];
       let new_displayed_users = [];
       for (let user of users) {
@@ -84,6 +112,7 @@ user_search_query.addEventListener("keyup", function(event) {
       page_listing.replaceChildren(...new_displayed_users);
     }
   })
+
 })
 
 

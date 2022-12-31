@@ -316,6 +316,10 @@ fieldset {
     width: 450px;
   } */
 
+  .hide {
+    visibility: hidden;
+  }
+
   .users_list {
     display: flex;
     flex-wrap: wrap;

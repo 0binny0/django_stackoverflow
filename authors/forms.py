@@ -84,5 +84,5 @@ class UserSearchForm(Form):
         super().__init__(*args, **kwargs)
         self.fields['search'].widget.attrs.update({
             "placeholder": "Filter by user",
-            "autocomplete": False
+            "autocomplete": False,
         })
