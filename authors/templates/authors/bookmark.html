@@ -13,7 +13,7 @@
     </svg>
     {% endif %}
   </div>
-  <h3>{{ question }}</h3>
+  <h3><a href="{% url 'posts:question' question_id=question.id %}">{{ question }}</a></h3>
   <div class="question_data_wrapper">
     <ul class="question_data">
     {% for tag in question.tags.all %}
