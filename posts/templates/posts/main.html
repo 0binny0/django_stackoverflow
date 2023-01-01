@@ -15,7 +15,7 @@
     </div> -->
     <ul class="list query_buttons">
     {% for button in query_buttons %}
-      <li class="query_button"><a href="{% route button %}">{{ button }}</a></li>
+      <li class="query_button"><a href="{% route button %}">{{ button|title }}</a></li>
     {% endfor %}
     </ul>
   </div>

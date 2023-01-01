@@ -55,6 +55,7 @@ def set_page_number_url(context, page=None, limit=None):
     query_tab, search_query = [
         query_string.get("tab", "newest"), query_string.get("q")
     ]
+    tab = query_tab if query_tab in context['query_buttons'] else context['query_buttons'][0]
     if page is not None:
         '''
             a Page object is Falsey in a boolean context
@@ -64,13 +65,13 @@ def set_page_number_url(context, page=None, limit=None):
         page_data = {
             "pagesize": page.paginator.per_page,
             "page": page.number,
-            "tab": query_tab,
+            "tab": tab,
         }
     else:
         page_data = {
             'pagesize': limit,
             'page': 1,
-            'tab': query_tab
+            'tab': tab
         }
     # if app == "authors":
     #     _path = "authors:profile"
