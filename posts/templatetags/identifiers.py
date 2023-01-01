@@ -143,3 +143,14 @@ def if_main_topic(context, post):
             bookmark = post.bookmarks.filter(profile=user.profile)
             return [post, bookmark if bookmark else False]
     return None
+
+@register.simple_tag(takes_context=True)
+def is_bookmarked(context, question):
+    request = context['request']
+    if hasattr(request.user, 'profile'):
+        current_user_bookmarked_question = question.bookmarks.filter(
+            profile=request.user.profile
+        ).exists()
+        if current_user_bookmarked_question:
+            return True
+    return False

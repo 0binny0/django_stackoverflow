@@ -53,6 +53,7 @@
                   {% include './tags.html' with tag=post only %}
                 {% elif page_query_filter == "bookmarks" %}
                   {% include './bookmark.html' with question=post.question %}
+                  <script type="module" src="{% static 'authors/js/bookmarks.js' %}"></script>
                 {% endif %}
               {% endfor %}
             {% endif %}

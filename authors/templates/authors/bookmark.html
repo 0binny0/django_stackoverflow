@@ -1,3 +1,4 @@
+{% load identifiers %}
 <div class="user_bookmark">
   <div class="question_data_wrapper">
     <ul class="question_data">
@@ -5,9 +6,12 @@
       <li class="question_stat">{{ question.answers.count }} answers</li>
       <li class="question_stat">{{ question.views }} views</li>
     </ul>
+    {% is_bookmarked question as bookmarked %}
+    {% if request.user.is_authenticated and bookmarked %}
     <svg width="15" height="20" class="bookmark">
       <polygon id="bookmark_question_{{ question.id }}" points="0,0 0,20 7.5,15 15,20 15,0" fill="gold"/>
     </svg>
+    {% endif %}
   </div>
   <h3>{{ question }}</h3>
   <div class="question_data_wrapper">
