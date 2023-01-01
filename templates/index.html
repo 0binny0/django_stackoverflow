@@ -16,7 +16,7 @@
       <div class="search_query_container">
         <!-- svg icon absolutely positioned to sit inline with form widget  -->
         <div class="icon_search_form">
-          <form class="search_form" method="get" action="{% url 'posts:search_results' %}">
+          <form class="search_form" method="get" action="{% url 'posts:search_results' %}" novalidate>
           {% for field in search_form %}
             {{ field }}
           {% endfor %}
