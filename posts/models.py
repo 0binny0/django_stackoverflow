@@ -1,5 +1,5 @@
 
-from datetime import date, timedelta
+from datetime import datetime, timedelta
 from functools import reduce
 
 from django.conf import settings
@@ -16,6 +16,8 @@ from django.contrib.contenttypes.fields import (
     GenericForeignKey,  GenericRelation
 )
 from django.contrib.contenttypes.models import ContentType
+
+import pytz
 
 from .utils import resolve_search_query
 
@@ -94,61 +96,70 @@ class QuestionSearchManager(Manager):
         tabs = list(qs_options.keys())
         if selected_tab not in tabs:
             selected_tab = tabs[0]
+        # import pdb; pdb.set_trace()
         return qs_options.get(selected_tab, "interesting")(user)
 
     def interesting(self, user):
         if not hasattr(user, 'profile'):
-            return self.get_queryset()
-        return self.get_queryset().filter(
-            tags__name__in=user.profile.questions.values_list(
-                "tags__name", flat=True
+            queryset = self.get_queryset()
+        else:
+            queryset = self.get_queryset().filter(
+                tags__name__in=user.profile.questions.values_list(
+                    "tags__name", flat=True
+                )
             )
-        )
+        return queryset
 
     def hot(self, user):
-        today = date.today()
+        today = datetime.now(pytz.utc)
         days_ago = today - timedelta(days=3)
         if not hasattr(user, 'profile'):
-            return self.get_queryset().filter(
+            queryset = self.get_queryset().filter(
                 date__range=(days_ago, today)
             )
-        return self.get_queryset().filter(
-            date__range=(days_ago, today)
-        ).filter(
-            tags__name__in=user.profile.questions.filter(
+        else:
+            queryset = self.get_queryset().filter(
                 date__range=(days_ago, today)
-            ).values_list("tags__name", flat=True)
-        ).distinct()
+            ).filter(
+                tags__name__in=user.profile.questions.filter(
+                    date__range=(days_ago, today)
+                ).values_list("tags__name", flat=True)
+            ).distinct()
+        return queryset
 
     def week(self, user):
-        today = date.today()
+        today = datetime.now(pytz.utc)
         weekago = today - timedelta(days=7)
         if not hasattr(user, 'profile'):
-            return self.get_queryset().filter(
+            queryset = self.get_queryset().filter(
                 date__range=(weekago, today)
             )
-        return self.get_queryset().filter(
-            date__range=(weekago, today)
-        ).filter(
-            tags__name__in=user.profile.questions.values_list(
-                "tags__name", flat=True
-            )
-        ).distinct()
+        else:
+            queryset = self.get_queryset().filter(
+                date__range=(weekago, today)
+            ).filter(
+                tags__name__in=user.profile.questions.values_list(
+                    "tags__name", flat=True
+                )
+            ).distinct()
+        return queryset
 
     def month(self, user):
-        today = date.today()
+        today = datetime.now(pytz.utc)
         monthago = today - timedelta(days=31)
         if not hasattr(user, 'profile'):
-            return self.get_queryset().filter(
+            queryset = self.get_queryset().filter(
                 date__range=(monthago, today)
             )
-        return self.get_queryset().filter(
-            date__range=(monthago, today)
-        ).filter(
-            tags__name__in=user.profile.questions.values_list(
-                "tags__name", flat=True
-            )
-        ).distinct()
+        else:
+            queryset = self.get_queryset().filter(
+                date__range=(monthago, today)
+            ).filter(
+                tags__name__in=user.profile.questions.values_list(
+                    "tags__name", flat=True
+                )
+            ).distinct()
+        return queryset
 
 
 class Tag(Model):

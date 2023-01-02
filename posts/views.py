@@ -33,16 +33,17 @@ class QuestionListingPage(Page):
     template_name = "posts/main.html"
     extra_context = {
         "title": "Top Questions",
-        "query_buttons": ["Interesting", "Hot", "Week", "Month"]
+        "query_buttons": ["interesting", "hot", "week", "month"]
     }
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         tab_index = self.request.GET.get("tab", "interesting").lower()
+        # import pdb; pdb.set_trace()
         questions = Question.postings.lookup(
             self.request.user, tab_index
         )[:21]
-        context.update({"questions": questions, "count": questions.count()})
+        context.update({"page": questions, "count": questions.count()})
         return context
 
     def get(self, request):
