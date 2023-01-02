@@ -152,6 +152,7 @@ def is_bookmarked(context, question):
         current_user_bookmarked_question = question.bookmarks.filter(
             profile=request.user.profile
         ).exists()
-        if current_user_bookmarked_question:
+        viewed_profile = int(re.search(r"(?<=users/)\d+", request.path)[0])
+        if current_user_bookmarked_question and viewed_profile == request.user.id:
             return True
     return False
