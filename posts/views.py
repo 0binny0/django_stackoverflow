@@ -11,7 +11,7 @@ from django.core.paginator import Paginator
 
 from authors.models import Profile
 from .forms import SearchForm, QuestionForm, AnswerForm
-from .models import Question, Tag, Answer
+from .models import Question, Tag, Answer, QuestionPageHit
 
 from django.http import HttpResponseRedirect, Http404
 from authors.http_status import SeeOtherHTTPRedirect
@@ -147,9 +147,14 @@ class PostedQuestionPage(Page):
         question = get_object_or_404(Question, id=question_id)
         if question.profile.user != request.user and not question.visible:
             raise Http404
+        hit = {"question": question, "profile": request.user, "address": request.META["REMOTE_ADDR"]}
+        user_already_viewed = QuestionPageHit.objects.filter(**hit).exists()
+        if not user_already_viewed:
+            QuestionPageHit.objects.create(**hit)
         context |= {
             'question': question,
-            'answer_count': question.answers.count()
+            'answer_count': question.answers.count(),
+            'hit_count': question.page_hits.count()
         }
 
         return self.render_to_response(context)

@@ -3,8 +3,8 @@
   <div class="question_data_wrapper">
     <ul class="question_data">
       <li class="question_stat">{{ question.score }} votes</li>
-      <li class="question_stat">{{ question.answers.count }} answers</li>
-      <li class="question_stat">{{ question.views }} views</li>
+      <li class="question_stat">{{ question.answers.count }} answer{{ question.answers.count|pluralize }}</li>
+      <li class="question_stat">{{ question.page_hits.count }} view{{ question.page_hits.count|pluralize }}</li>
     </ul>
     {% is_bookmarked question as bookmarked %}
     {% if request.user.is_authenticated and bookmarked %}
