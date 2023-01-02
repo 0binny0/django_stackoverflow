@@ -273,7 +273,7 @@ class Vote(Model):
 
 class QuestionPageHit(Model):
 
-    question = ForeignKey("Question", on_delete=CASCADE, related_name="_views")
+    question = ForeignKey("Question", on_delete=CASCADE, related_name="page_hits")
     profile = ForeignKey(settings.AUTH_USER_MODEL, on_delete=SET_NULL, null=True)
     address = GenericIPAddressField()
 

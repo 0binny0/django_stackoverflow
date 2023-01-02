@@ -15,7 +15,7 @@
         {% endif %}
         <h2 class="question_title" id="question_{{ question.id }}">{{ question.title }}</h2>
         <div class="page_stats">
-          <p class="page_stat">asked {{ question.date }} </p>{% if request.resolver_match.url_name == "question" %}<p class="page_stat">  - viewed {{ question.views.all }} times</p>{% endif %}
+          <p class="page_stat">asked {{ question.date }} </p>{% if request.resolver_match.url_name == "question" %}<p class="page_stat">  - viewed {{ hit_count }} time{{ hit_count|pluralize }}</p>{% endif %}
         </div>
         {% voting_booth question %}
         {% if request.resolver_match.url_name == "question" %}

@@ -306,3 +306,34 @@ class TestRedirectSearchView(TestCase):
     def test_search_page_response(self):
         response = self.client.get(self.request_url, follow=True)
         self.assertRedirects(response, self.response_url)
+
+
+class TestQuestionIPAddressHit(TestCase):
+    '''Verify that a page hit is recorded from a user of a given IP address
+    on a posted question.'''
+
+    @classmethod
+    def setUpTestData(cls):
+        user_author = get_user_model().objects.create_user("ItsNotYou")
+        user_me = get_user_model().objects.create_user("ItsMe")
+        author_profile = Profile.objects.create(user=user_author)
+        user_me = Profile.objects.create(user=user_me)
+        question = Question.objects.create(
+            title="Blah blahhhhhhhhh blahhh I'm bord blah blah zzzzzzzzzzzzz",
+            body="This is zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz...zzzzz",
+            profile=author_profile
+        )
+        authenticated_user = user_me.user
+        request = RequestFactory().get(
+            reverse("posts:question", kwargs={"question_id": 1}),
+            headers={
+                "REMOTE_ADDR": "110.89.112.61"
+            }
+        )
+        request.user = authenticated_user
+        cls.view = PostedQuestionPage.as_view()(request, question_id="1")
+        cls.question_view_context = cls.view.context_data
+
+
+    def test_question_page_hit_count(self):
+        self.assertEqual(self.question_view_context['hit_count'], 1)
