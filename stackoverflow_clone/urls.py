@@ -23,7 +23,7 @@ from authors import endpoints as authors_api
 
 
 posts_patterns = ([
-    path("", pv.QuestionListingPage.as_view(), name="main"),
+    path(r"", pv.QuestionListingPage.as_view(), name="main"),
     re_path(r"questions/ask/?$", pv.AskQuestionPage.as_view(), name="ask"),
     re_path(r"questions/(?P<question_id>\d+)/edit/?$", pv.EditQuestionPage.as_view(), name="edit"),
     re_path(r"questions/(?P<question_id>\d+)/edit/answers/(?P<answer_id>\d+)/?$", pv.EditPostedAnswerPage.as_view(), name="answer_edit"),
@@ -53,7 +53,7 @@ authors_patterns =  ([
     path("login/", av.LoginUserPage.as_view(), name="login"),
     path("logout/", av.LogoutUser.as_view(), name="logout"),
     path("", av.UserDirectory.as_view(), name="user_listing"),
-    path("<id>/", av.UserProfilePage.as_view(), name="profile")
+    re_path(r"(?P<id>\d+)/?$", av.UserProfilePage.as_view(), name="profile")
 ], "authors")
 
 authors_api_patterns = ([
