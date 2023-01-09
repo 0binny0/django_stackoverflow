@@ -92,10 +92,10 @@ class Profile(Model):
         else:
             if sort == "score":
                 bookmarks = bookmarks.order_by("-question__score")
-            elif sort == "newest":
-                bookmarks = bookmarks.order_by("-question__date")
+            elif sort == "added":
+                bookmarks = bookmarks.order_by("saved")
             else:
-                bookmarks = bookmarks.order_by(sort)
+                bookmarks = bookmarks.order_by("-question__date")
         return {
             'records': bookmarks,
             'title': f"{bookmarks.count()} bookmarks"
