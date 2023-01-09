@@ -212,8 +212,9 @@ class PaginatedPage(Page):
             '15': 15,
             '25': 25
         }
+        import pdb; pdb.set_trace()
         size = r.GET.get('pagesize')
-        if not size or size not in page_sizes.values():
+        if not size or size not in page_sizes.keys():
             size = '10'
         page_size = page_sizes.get(size)
         paginator = Paginator(Question.objects.none(), page_size)
@@ -249,12 +250,20 @@ class SearchResultsPage(PaginatedPage):
         context = self.get_context_data()
         query_string = request.GET
         search_query, tab_index = query_string.get('q'), query_string.get('tab', 'newest')
+        title_or_tag_search = re.search(r"(?:title)|\[[a-zA-Z.0-9]+\]", search_query)
         if not query_string or 'q' not in query_string or not search_query:
             context |= {
                 'title': 'Search'
             }
             self.template_name = "posts/search_menu.html"
             return self.render_to_response(context)
+        elif not title_or_tag_search:
+            user_id_match = re.search(r"\d+", search_query)
+            if user_id_match:
+                user_id = user_id_match[0].replace("0", "")
+                if not user_id:
+                    user_id = 1
+                return HttpResponseRedirect(reverse("authors:profile", kwargs={'id': int(user_id)}))
         queryset, query_data = Question.searches.lookup(tab_index, query=search_query)
         if query_data['tags'] and not query_data['title'] and not query_data['user']:
             tags = "".join([
