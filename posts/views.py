@@ -39,7 +39,6 @@ class QuestionListingPage(Page):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         tab_index = self.request.GET.get("tab", "interesting").lower()
-        # import pdb; pdb.set_trace()
         questions = Question.postings.lookup(
             self.request.user, tab_index
         )[:21]
@@ -212,7 +211,6 @@ class PaginatedPage(Page):
             '15': 15,
             '25': 25
         }
-        import pdb; pdb.set_trace()
         size = r.GET.get('pagesize')
         if not size or size not in page_sizes.keys():
             size = '10'

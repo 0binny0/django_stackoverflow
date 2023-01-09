@@ -33,7 +33,6 @@ class QueryStringSearchManager(Manager):
         current_tab = tab.lower()
         if current_tab not in qs_options.keys():
             current_tab = "newest"
-        import pdb; pdb.set_trace()
         queryset = super().get_queryset().order_by("-date", "views", "-score")
         if query:
             query_data = resolve_search_query(query)
@@ -55,7 +54,6 @@ class QueryStringSearchManager(Manager):
                 queryset = queryset.filter(profile_id=query_data['user'])
             queryset = qs_options.get(f"{current_tab}", "newest")(queryset)
             return queryset, query_data
-        import pdb; pdb.set_trace()
         queryset = qs_options.get(current_tab, "newest")(queryset)
         return queryset, None
 
@@ -114,7 +112,6 @@ class QuestionSearchManager(Manager):
     def hot(self, user):
         today = datetime.now(pytz.utc)
         days_ago = today - timedelta(days=3)
-        import pdb; pdb.set_trace()
         if not hasattr(user, 'profile'):
             queryset = self.get_queryset().filter(
                 date__range=(days_ago, today)
