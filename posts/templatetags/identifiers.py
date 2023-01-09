@@ -33,18 +33,23 @@ def route(context, button=None):
     button = button.lower()
     url_name = resolve(request.path).url_name
     if url_name == "main":
-        return f'{reverse("posts:main")}?tab={button}'
+        url = re.sub(r"/(?=\?)", "", f'{reverse("posts:main")}?tab={button}')
+        return url
     elif url_name == "main_paginated":
-        return f"{reverse('posts:main_paginated')}?tab={button}"
+        url = re.sub(r"/(?=\?)", "", f"{reverse('posts:main_paginated')}?tab={button}")
+        return url
     elif url_name == "tagged":
         tags = "+".join(tag for tag in context['tags'])
-        return f"{reverse('posts:tagged', kwargs={'tags': tags})}?tab={button}"
+        url = re.sub(r"/(?=\?)", "", f"{reverse('posts:tagged', kwargs={'tags': tags})}?tab={button}")
+        return url
     re_button_pattern = re.compile(r"(?<=tab=)\w+")
     search_query_filter = re_button_pattern.search(query_string)
     if not search_query_filter:
-        return f"{reverse('posts:search_results')}?{query_string}&tab={button}"
+        url = re.sub(r"/(?=\?)", "", f"{reverse('posts:search_results')}?{query_string}&tab={button}")
+        return url
     query_string = re_button_pattern.sub(button, query_string)
-    return f"{reverse('posts:search_results')}?{query_string}"
+    url = re.sub(r"/(?=\?)", "", f"{reverse('posts:search_results')}?{query_string}")
+    return url
 
 @register.simple_tag(takes_context=True)
 def set_page_number_url(context, page=None, limit=None):
@@ -93,7 +98,7 @@ def set_page_number_url(context, page=None, limit=None):
             r"(?<=users/)\d+", request.path
         )[0]
         path =  reverse(_path, kwargs={'id': int(id)})
-        url = re.sub(r"(?<=users)\/", "", f"{path}?{query_string}")
+        url = re.sub(r"\/(?=\?)", "", context['requested_url'])
         return url
     if page_name == "tagged":
         tags = "+".join(tag for tag in context['tags'])
