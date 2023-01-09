@@ -111,30 +111,30 @@ class UserProfilePage(Page, SingleObjectMixin):
         else:
             order_by = request.GET.get("sort")
             if query_page_filter == "tags":
-                query_tabs = ['name', 'score']
+                query_buttons = ['name', 'score']
                 query = context['object'].profile.get_tag_posts
             elif query_page_filter == "bookmarks":
-                query_tabs = ['newest', 'score', 'added']
+                query_buttons = ['newest', 'score', 'added']
                 query = context['object'].profile.get_bookmarked_posts
             elif query_page_filter == "questions":
-                query_tabs = ['newest', 'score', 'views']
+                query_buttons = ['newest', 'score', 'views']
                 query = context['object'].profile.get_question_posts
             else:
-                query_tabs = ['newest', 'score']
+                query_buttons = ['newest', 'score']
                 query = context['object'].profile.get_answer_posts
-            if not order_by or order_by not in query_tabs:
-                order_by = query_tabs[0]
+            if not order_by or order_by not in query_buttons:
+                order_by = query_buttons[0]
             paginator = Paginator(query(order_by)['records'], 10)
             page = paginator.get_page(request.GET.get('page', 1))
             query_string = QueryDict(
-                f"tab={query_page_filter}&page={page}&sort={order_by}"
+                f"tab={query_page_filter}&page={page.number}&sort={order_by}"
             )
             context |= {
                 'page': page,
                 'page_query_filter': query_page_filter,
                 'requested_url': f"{request.path}?{query_string.urlencode()}",
                 'form': ProfileSearchQueryForm,
-                'query_tabs': query_tabs
+                'query_buttons': query_buttons
             }
         return self.render_to_response(context)
 
