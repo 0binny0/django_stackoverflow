@@ -21,7 +21,7 @@
   </div>
   <div class="content_wrapper">
     {% with view_name=request.resolver_match.url_name %}
-      {% if view_name == "search_results" and questions|length == 0 or view_name == "tagged" and questions|length == 0 %}
+      {% if view_name == "search_results" and page.object_list|length == 0 or view_name == "tagged" and page.object_list|length == 0 %}
         <div class="empty_listing">
           {% include './empty_results.html'  %}
         </div>
