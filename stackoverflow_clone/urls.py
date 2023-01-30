@@ -52,8 +52,8 @@ authors_patterns =  ([
     path("signup/", av.RegisterNewUserPage.as_view(), name="register"),
     path("login/", av.LoginUserPage.as_view(), name="login"),
     path("logout/", av.LogoutUser.as_view(), name="logout"),
-    path("", av.UserDirectory.as_view(), name="user_listing"),
-    re_path(r"(?P<id>\d+)/?$", av.UserProfilePage.as_view(), name="profile")
+    re_path(r"/(?P<id>\d+)/?$", av.UserProfilePage.as_view(), name="profile"),
+    re_path(r"/?$", av.UserDirectory.as_view(), name="user_listing"),
 ], "authors")
 
 authors_api_patterns = ([
@@ -62,9 +62,9 @@ authors_api_patterns = ([
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("users/", include(authors_patterns, namespace="authors")),
+    path("users", include(authors_patterns, namespace="authors")),
     path("", include(posts_patterns, namespace="posts")),
-    path("api/v1/users/", include(authors_api_patterns), name="authors_api"),
+    path("api/v1/users", include(authors_api_patterns), name="authors_api"),
     path("api/v1/votes/", include(votes_api_patterns, namespace="api_votes")),
     path("api/v1/posts/", include(post_api_patterns, namespace="api_posts")),
     path("api/v1/bookmarks/", include(bookmark_api_patterns, namespace="api_bookmarks"))

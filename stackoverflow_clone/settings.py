@@ -58,7 +58,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'stackoverflow_clone.urls'
-
+APPEND_SLASH = False
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -146,4 +146,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ]
 }
