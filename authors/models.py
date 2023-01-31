@@ -16,6 +16,8 @@ class UserQueryManager(Manager):
         )
 
     def by_name(self, name):
+        if not name:
+            return self.get_queryset()
         return self.get_queryset().filter(
             username__icontains=name
         )

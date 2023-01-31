@@ -13,12 +13,14 @@ class AccountsEndpoint(APIView):
     def get(self, request):
         query_string = request.query_params.copy()
         if 'search' in query_string:
-            users = get_user_model().posted.by_name(query_string['search'])
-            if not users:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
+            if query_string['search']:
+                users = get_user_model().posted.by_name(query_string['search'])
+                if not users:
+                    return Response(status=status.HTTP_400_BAD_REQUEST)
             else:
-                serializer = UserListingSerializer(users, many=True)
-                return Response(data={"users": serializer.data})
+                users = get_user_model().posted.by_name("")
+            serializer = UserListingSerializer(users, many=True)
+            return Response(data={"users": serializer.data})
         action = query_string.pop("action")[0]
         if action == "login":
             serializer = LoginSerializer
