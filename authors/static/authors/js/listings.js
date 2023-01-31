@@ -35,7 +35,7 @@ window.addEventListener("DOMContentLoaded", function(event) {
   }
 })
 
-
+function get_json_response(response) {
   if (response.ok) {
     return response.json().then((data) => {
       data['http_status'] = response.status;
@@ -45,12 +45,6 @@ window.addEventListener("DOMContentLoaded", function(event) {
   return {}
 }
 
-// window.addEventListener("load", function(event) {
-//   const current_url = window.location.href.replace(/(?<=users)\//ig, "");
-//   window.location.href = current_url;
-//
-// })
-
 
 user_search_query.addEventListener("keyup", function(event) {
   let page_warning_exists = document.querySelector("#no_users_warning");
@@ -59,7 +53,7 @@ user_search_query.addEventListener("keyup", function(event) {
   const request = set_user_listing_api_request(this);
   fetch(request).then(get_json_response).then((data) => {
     let users = data['users'];
-    let users_count = data['users'] ? Object.keys(data['users']).length : 0;
+    let users_count = users !== undefined ? Object.keys(users).length : 0;
     if (users_count === 0) {
       const message = `No users exist with the username ${this.value}`;
       if (page_listing) {
@@ -118,19 +112,15 @@ user_search_query.addEventListener("keyup", function(event) {
               paginated_link = document.location.href.replace(/(?<=users)\/?.*/ig,`?page=2&search=${this.value}`);
               page_button.href = paginated_link;
               page_button.classList.remove("hide")
-              // page_button.style.display = "inline-block";
             } else {
               page_button.classList.add("hide");
-              // page_button.style.display = "none";
             }
 
           } else {
             if (button_label === "Prev") {
               page_button.classList.add("hide");
-              // page_button.style.display = "none";
             } else if (button_label === "Next") {
               page_button.classList.remove("hide");
-              // page_button.style.display = "inline-block";
             } else {
               if (button_label === "1") {
                 page_button.style.cssText = `background: darkorange; color: white; border: 1px solid darkorange`;
@@ -204,23 +194,8 @@ user_search_query.addEventListener("keyup", function(event) {
         }
       }
       page_listing.replaceChildren(...new_displayed_users);
-      // if (users.length === 15) {
-      //   numbered_page_buttons.forEach((button, i, array) => {
-      //     button.style.visibility = "visible";
-      //   })
-      // } else {
-      //   active_page_buttons.forEach((button, i, array) => {
-      //     button.style.visibility = "visible";
-      //   })
-      //
-      //   inactive_page_buttons.forEach((button, i, array) => {
-      //     button.style.visibility = "hidden";
-      //   })
-      // }
-      // pagination.classList.remove("hide");
     }
   })
-
 })
 
 
