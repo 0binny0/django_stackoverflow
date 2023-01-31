@@ -121,8 +121,8 @@ class UserListingSerializer(BaseSerializer):
             'name': str(instance),
             'profile': {
                 'url': reverse("authors:profile", kwargs={"id": instance.id}),
-                'signed_up': instance.date_joined.strftime("%m/%d/%Y"),
-                'last_login': instance.last_login.strftime("%m/%d/%Y"),
+                'signed_up': instance.date_joined.strftime("%m/%d/%Y").lstrip("0"),
+                'last_login': instance.last_login.strftime("%m/%d/%Y").lstrip("0"),
                 'total_posts': instance.post_count
             }
         }
