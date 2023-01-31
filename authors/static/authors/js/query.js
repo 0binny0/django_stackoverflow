@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", (e) => {
 
 Array.prototype.forEach.call(query_post_types, (post_type) => {
   post_type.addEventListener("click", function(event) {
-    const other_query_index_links = this.parentElement.children.filter((link) => {
+    const other_query_index_links = Array.from(this.parentElement.children).filter((link) => {
       return link.textContent.toLowerCase() !== this.textContent.toLowerCase()
     });
     other_query_index_links.forEach((link) => {
