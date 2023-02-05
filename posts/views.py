@@ -148,9 +148,10 @@ class PostedQuestionPage(Page):
         if question.profile.user != request.user and not question.visible:
             raise Http404
         hit = {"question": question, "profile": request.user, "address": request.META["REMOTE_ADDR"]}
-        user_already_viewed = QuestionPageHit.objects.filter(**hit).exists()
-        if not user_already_viewed:
-            QuestionPageHit.objects.create(**hit)
+        if hasattr(request.user, 'profile'):
+            user_already_viewed = QuestionPageHit.objects.filter(**hit).exists()
+            if not user_already_viewed:
+                QuestionPageHit.objects.create(**hit)
         context |= {
             'question': question,
             'answer_count': question.answers.count(),
