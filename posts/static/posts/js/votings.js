@@ -44,7 +44,7 @@ function send_api_request(button) {
 window.addEventListener("load", (e) => {
   var question_target = document.querySelector("h2[id*=question]");
   const id = question_target.id.split("_")[1];
-  const request = fetch(`http://localhost:8000/api/v1/votes/${id}`, {
+  const request = fetch(`http://localhost:8000/api/v1/votes/${id}/`, {
     'method': "GET"
   });
   request.then(json_response).then((json) => {
