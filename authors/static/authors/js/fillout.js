@@ -3,6 +3,13 @@ let username_field = document.querySelector("#id_username");
 let password_fields = Array.from(document.querySelectorAll(`input[id*=password]`));
 let form_fields = [username_field, ...password_fields];
 
+window.addEventListener("DOMContentLoaded", function(event) {
+  let password_field = document.getElementById("id_password1");
+  if (password_field) {
+    password_field.id = "id_password"
+  }
+})
+
 function create_api_request() {
   if (!this.value) {
     throw new Error();
@@ -75,7 +82,7 @@ function api_response(response) {
 
 
 form_fields.forEach((form_field) => {
-  ['keyup', 'input'].forEach((user_action) => {
+  ['input'].forEach((user_action) => {
     form_field.addEventListener(user_action, function(event) {
       try {
         var api_request = create_api_request.call(this);
@@ -100,6 +107,7 @@ form_fields.forEach((form_field) => {
               form_field.classList.add("valid_status");
             }
           } else {
+            debugger;
             form['button'].setAttribute("disabled", true);
             if (form['password2'] && !form['password2'].value && !form['password2'].hasAttribute("disabled")) {
               form['password2'].setAttribute("disabled", true);
@@ -138,6 +146,7 @@ form_fields.forEach((form_field) => {
                   break;
                 case error === "password":
                 case error === "password2":
+                  let password_field = document.getElementById(`id_${error}`);
                   if (!json_keys.includes("username") && username_field.value) {
                     username_field.classList.remove("error_status");
                     username_field.classList.add("valid_status");
@@ -161,8 +170,8 @@ form_fields.forEach((form_field) => {
                     }
                   }
                   if (!json_keys.includes('username') && username_field.value) {
-                    username_field.classList.remove("error_status");
-                    username_field.classList.add("valid_status");
+                    password_field.classList.remove("valid_status");
+                    password_field.classList.add("error_status");
                   }
                   break;
                 case error === "username":
@@ -191,7 +200,11 @@ form_fields.forEach((form_field) => {
                       }
                     }
                   break;
-              }
+              } else {
+                    let password_field = document.getElementById("id_password");
+                    password_field.classList.remove("valid_status");
+                    password_field.classList.add("error_status");
+                  }
             }
           }
         }}
@@ -369,7 +382,7 @@ form_fields.forEach((form_field) => {
 // }
 //
 // function validate_empty_field(field, event) {
-//   
+//
 //   const form = field.form.elements;
 //   form['form_button'].setAttribute("disabled", true);
 //   if (event.key === "Backspace" || event.key === "Delete") {
@@ -436,7 +449,7 @@ form_fields.forEach((form_field) => {
 // form_fields.forEach((form_field) => {
 //   ['keydown', 'keyup'].forEach((action) => {
 //     form_field.addEventListener(action, function(event) {
-//       
+//
 //       try {
 //         var request = create_api_request.call(this);
 //       } catch (error) {
@@ -444,7 +457,7 @@ form_fields.forEach((form_field) => {
 //         return
 //       }
 //       fetch(request).then(json_response).then((json) => {
-//         // 
+//         //
 //         var form = this.form;
 //         const [json_keys, json_values] = resolve_json(json.data)
 //         // response sent with a 200 status code
