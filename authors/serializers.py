@@ -16,7 +16,6 @@ from rest_framework.validators import UniqueValidator
 
 from .validators import character_validator, total_digits_validator
 
-
 class LoginSerializer(ModelSerializer):
 
     username = CharField()
@@ -108,6 +107,15 @@ class RegisterSerializer(ModelSerializer):
         elif username == password:
             raise ValidationError({"non_field_errors": "password cannot be username"})
         return data
+
+    def to_representation(self, instance):
+        json_object = {
+            'username': instance.username,
+            'password': instance.password,
+            'password2': instance.password2
+        }
+        return json_object
+
 
     class Meta:
         model = get_user_model()
