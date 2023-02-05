@@ -6,7 +6,6 @@ let profile_bookmarks = document.querySelectorAll("polygon[id*=bookmark_question
 profile_bookmarks.forEach(function(bookmark) {
   bookmark.addEventListener("click", function(event) {
     const bookmark_id = this.id.match(/([0-9]*$)/ig)[0];
-    debugger;
     const api_url = `http://${document.location.host}/api/v1/bookmarks/${bookmark_id}/`;
     const active_bookmark = this.getAttribute("fill");
     let http_method;
