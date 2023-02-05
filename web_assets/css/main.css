@@ -206,6 +206,11 @@ p {
     width: 33.33%;
     text-align: center;
     line-height: 3;
+    color: black;
+  }
+
+  .nav_btn:not(:last-child) {
+    border-right: 1px solid grey;
   }
 
   /*------------
@@ -316,6 +321,7 @@ p {
     position: static;
     display: inline-block;
     width: initial;
+    background: white;
     /* margin-left: 40px; */
   }
 
@@ -331,6 +337,10 @@ p {
     line-height: 1.25;
     background: ghostwhite;
     border: 1px solid silver;
+  }
+
+  .nav_btn:not(:last-child) {
+    border-right: 1px solid silver;
   }
 
   /*--------------
