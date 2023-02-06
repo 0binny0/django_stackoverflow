@@ -49,15 +49,15 @@ bookmark_api_patterns = ([
 ], "posts")
 
 authors_patterns =  ([
-    path("signup/", av.RegisterNewUserPage.as_view(), name="register"),
-    path("login/", av.LoginUserPage.as_view(), name="login"),
-    path("logout/", av.LogoutUser.as_view(), name="logout"),
+    re_path(r"/signup/", av.RegisterNewUserPage.as_view(), name="register"),
+    re_path(r"/login/", av.LoginUserPage.as_view(), name="login"),
+    re_path(r"/logout/", av.LogoutUser.as_view(), name="logout"),
     re_path(r"/(?P<id>\d+)/?$", av.UserProfilePage.as_view(), name="profile"),
     re_path(r"/?$", av.UserDirectory.as_view(), name="user_listing"),
 ], "authors")
 
 authors_api_patterns = ([
-    path("", authors_api.AccountsEndpoint.as_view(), name="main")
+    re_path(r"$", authors_api.AccountsEndpoint.as_view(), name="main")
 ], "api_authors")
 
 urlpatterns = [
