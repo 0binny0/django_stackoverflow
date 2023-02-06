@@ -62,10 +62,10 @@ class ProfileSearchQueryForm(Form):
 
     class QueryProfile(TextChoices):
         SUMMARY = 'summary'
-        QUESTIONS = 'question'
-        ANSWERS = 'answer'
+        QUESTIONS = 'questions'
+        ANSWERS = 'answers'
         TAGS = 'tags'
-        BOOKMARKS = 'bookmark'
+        BOOKMARKS = 'bookmarks'
 
 
     tab = ChoiceField(choices=QueryProfile.choices)
