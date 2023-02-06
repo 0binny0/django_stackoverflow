@@ -106,8 +106,9 @@ def set_page_number_url(context, page=None, limit=None):
         query_string = urlencode(page_data)
         url = re.sub(r"(?<=users)\/", "", f"{path}?{query_string}")
         return url
-    if page_name == "search" and search_query:
-        page_data.update({'q': search_query})
+    if page_name == "search_results" and search_query:
+        data = {'q': search_query} | page_data
+        query_string = urlencode(data)
     path = reverse(_path)
     url = re.sub(r"(?<=users)\/", "", f"{path}?{query_string}")
     return url
