@@ -153,4 +153,5 @@ REST_FRAMEWORK = {
     ]
 }
 
-from local_settings import *
+
+from .local_settings import *
