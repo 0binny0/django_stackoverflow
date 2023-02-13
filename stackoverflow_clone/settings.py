@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 ALLOWED_HOSTS = ["ittybitty.pythonanywhere.com", ]
 
-with open("../config.ini") as config_file:
+with open("config.ini") as config_file:
     ini_reader = configparser.ConfigParser()
     init_reader.read(config_file)
     SECRET_KEY = ini_reader.get("SENSITIVE", "SECRET_KEY")
