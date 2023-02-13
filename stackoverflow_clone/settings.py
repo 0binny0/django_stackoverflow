@@ -18,6 +18,8 @@ import configparser
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+ALLOWED_HOSTS = ["ittybitty.pythonanywhere.com", ]
+
 with open("../config.ini") as config_file:
     ini_reader = configparser.ConfigParser()
     init_reader.read(config_file)
