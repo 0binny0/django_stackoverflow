@@ -20,10 +20,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 ALLOWED_HOSTS = ["ittybitty.pythonanywhere.com", ]
 
-with open("config.ini") as config_file:
-    init_reader = configparser.ConfigParser()
-    init_reader.read(config_file)
-    SECRET_KEY = init_reader.get("SENSITIVE", "SECRET_KEY")
+init_reader = configparser.ConfigParser()
+init_reader.read("config.ini")
+SECRET_KEY = init_reader.get("SENSITIVE", "SECRET_KEY")
 
 
 # Quick-start development settings - unsuitable for production
