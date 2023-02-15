@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
-import configparser
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,9 +20,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 ALLOWED_HOSTS = ["ittybitty.pythonanywhere.com", ]
 
-init_reader = configparser.ConfigParser()
-init_reader.read("config.ini")
-SECRET_KEY = init_reader.get("SENSITIVE", "SECRET_KEY")
 
 
 # Quick-start development settings - unsuitable for production
