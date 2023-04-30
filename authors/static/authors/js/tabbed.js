@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
   const page_url = new URL(this.location);
   let query_string = new URLSearchParams(page_url.search);
   if (page_url.pathname.includes("user")) {
-    debugger;
     let select_menu_tabs = Array.from(document.querySelectorAll("option"));
     if (query_string.has("tab")) {
       const url_tab_selected = query_string.get("tab").toLowerCase();
