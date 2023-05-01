@@ -2,6 +2,7 @@ from django.db.models import (
     Model, OneToOneField, ForeignKey, CharField, CASCADE
 )
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import UserManager
 from django.conf import settings
 from django.db.models import Manager, Count, Subquery, OuterRef, F, Value, Avg, IntegerField, QuerySet
 from django.db.models.functions import Concat
@@ -31,6 +32,7 @@ class User(AbstractUser):
         }
     )
 
+    objects = UserManager()
     posted = UserQueryManager()
 
 
