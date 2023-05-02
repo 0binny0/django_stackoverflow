@@ -122,6 +122,7 @@ form.addEventListener("input", function(event) {
     } else {
       this['button'].setAttribute("disabled", true);
       var form_elements = Array.from(this.elements).filter((field) => !field.hidden);
+      let password_field = password_fields.at(0);
       for (let error in response_data) {
         switch (true) {
           case error === "non_field_errors" && response_data[error][0] === "registration failed":
@@ -142,13 +143,13 @@ form.addEventListener("input", function(event) {
             })
             break;
           case error === "non_field_errors" && response_data[error][0] === "password cannot be username":
-            const password_field = this["id_password"];
+            // const password_field = this["id_password"];
             [username_field, password_field].forEach((field) => {
               let active_field_error = field.classList.contains("error_status");
               if (!active_field_error) {
                 field.classList.remove("valid_status");
-                field.classList.add("error_status");
               }
+              field.classList.add("error_status");
             })
             if (form_fields.length === 3) {
               let confirmation_field = this['id_password2'];
@@ -162,59 +163,63 @@ form.addEventListener("input", function(event) {
             }
             break;
           case error === "username":
-            let active_error = username_field.classList.contains("error_status");
-            if (!active_error) {
-              username_field.classList.remove("valid_status");
-              username_field.classList.add("error_status");
+          case error === "password":
+            let field = document.querySelector(`#id_${error}`);
+            let active_field_error = username_field.classList.contains("error_status");
+            if (!active_field_error) {
+              field.classList.remove("valid_status");
             }
+            field.classList.add("error_status");
             if (form_fields.length == 3) {
-              let [password_field, confirmation_field] = password_fields;
-              const confirmation_disabled = confirmation_field.hasAttribute("disabled");
+              var password_confirmation_field = password_fields.at(1);
+              const confirmation_disabled = password_confirmation_field.hasAttribute("disabled");
               if (!confirmation_disabled) {
-                const password_min = password_field.getAttribute("min_length");
-                const password_max = password_field.getAttribute("max_length");
-                if (password_field.value === confirmation_field.value && password_min <= password_field.value.length <= password_max) {
-                  password_fields.forEach((field) => {
-                    field.classList.remove("error_status");
-                    field.classList.add("valid_status");
-                  })
-                } else {
-                  password_fields.forEach((field) => {
-                    field.classList.remove("valid_status");
-                    field.classList.add("error_status");
-                  })
-                }
+                password_confirmation_field.value = "";
+                ['valid_status', 'error_status'].forEach(
+                  (css_rule) => password_confirmation_field.classList.remove(css_rule)
+                );
+                password_confirmation_field.setAttribute("disabled", true);
               }
             }
-            break;
-          case error === "password":
-            let word_field = password_fields[0];
-            word_field.classList.remove("valid_status");
-            word_field.classList.add("error_status");
-            if (form_fields.length === 3) {
-              let confirmation_field = this['id_password2'];
-              if (!confirmation_field.hasAttribute("disabled")) {
-                  if (confirmation_field.value) {
-                    confirmation_field.classList.remove("valid_status");
-                    confirmation_field.classList.add("error_status");
-                  } else {
-                    confirmation_field.setAttribute("disabled", true);
-                  }
+            if (!response_data.hasOwnProperty("password")) {
+              let p_field = password_fields.at(0);
+              if (p_field.value) {
+                p_field.classList.remove("error_status");
+                p_field.classList.add("valid_status");
               }
             }
             break;
           case error === "password2":
+            debugger;
             let confirmation = password_fields.at(-1);
-            let field_has_error = confirmation.classList.contains("error_status");
-            if (!field_has_error) {
+            let active_error = confirmation.classList.contains("error_status");
+            if (!active_error) {
+              confirmation.classList.remove("valid_status");
+            }
+            if (confirmation.value) {
               confirmation.classList.add("error_status");
             }
-            const username_min = username_field.getAttribute("minlength");
-            const username_max = username_field.getAttribute("maxlength");
-            if (username_min <= username_field.value.length <= username_max) {
-              username_field.classList.remove("error_status");
-              username_field.classList.add("valid_status");
-            }
+            // if (confirmation.value && !field_has_error) {
+            //   confirmation.classList.add("error_status");
+            //   if (password_field.value != confirmation.value) {
+            //     password_fields.forEach((field) => {
+            //       field.classList.remove("valid_status");
+            //       field.classList.add("error_status");
+            //     })
+            //   }
+            // }
+            // const username_min = parseInt(username_field.getAttribute("min_length"));
+            // const username_max = parseInt(username_field.getAttribute("max_length"));
+            // if (username_min <= username_field.value.length && username_field.value.length <= username_max) {
+            //   username_field.classList.remove("error_status");
+            //   username_field.classList.add("valid_status");
+            // }
+            // if (!Object.hasOwnProperty("password") && password_field.value) {
+            //   let password_field = password_fields.at(0);
+            //   password_field.classList.remove("error_status");
+            //   password_field.classList.add("valid_status");
+            // }
+            break;
         }
       }
     }

@@ -91,21 +91,36 @@ class RegisterSerializer(ModelSerializer):
 
     def validate(self, data):
         username, password, password2 = [
-            data[key].lower().strip() if data.get(key) else None for key in [
+            data[key].strip() if key in data else None for key in [
                 "username", "password", "password2"
             ]
         ]
-        if len(data) == 3 and (username == password
-                        and username == password2 and password == password2):
+        number_of_fields_submitted = len(data)
+        if number_of_fields_submitted == 3:
+            _username = username.lower()
+            _password = password.lower()
+            _password2 = password2.lower()
+            if _password == _password2 and _username == _password and _username == _password2:
                 raise ValidationError(
                     {"non_field_errors": "registration failed"}
                 )
-        elif password != password2 and (len(data) == 3 or (len(data) == 2 and not username)):
+            elif password != password2 and _username != _password:
                 raise ValidationError(
-                    {"non_field_errors": "password confirmation failed"}
+                    {'non_field_errors': "password confirmation failed"}
                 )
-        elif username == password:
-            raise ValidationError({"non_field_errors": "password cannot be username"})
+        elif number_of_fields_submitted == 2:
+            if not username:
+                _password = password.lower()
+                _password2 = password2.lower()
+                if _password != _password2:
+                    raise ValidationError(
+                        {'non_field_errors': "password confirmation failed"}
+                    )
+            else:
+                _username = username.lower()
+                _password = password.lower()
+                if _username == _password:
+                    raise ValidationError({"non_field_errors": "password cannot be username"})
         return data
 
     def to_representation(self, instance):
