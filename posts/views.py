@@ -248,6 +248,8 @@ class SearchResultsPage(PaginatedPage):
     def get(self, request):
         context = self.get_context_data()
         query_string = request.GET
+        if 'q' not in query_string:
+            return HttpResponseRedirect(reverse("posts:main_paginated"))
         search_query, tab_index = query_string.get('q'), query_string.get('tab', 'newest')
         title_or_tag_search = re.search(r"(?:title)|\[[a-zA-Z.0-9]+\]", search_query)
         if not query_string or 'q' not in query_string or not search_query:
