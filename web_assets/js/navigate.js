@@ -31,9 +31,9 @@ search_widget.addEventListener("keyup", function(event) {
 })
 
 search_icon.addEventListener("click", function(event) {
-
+  let domain = document.location
   const search_query = new URLSearchParams({'q': search_widget.value}).toString();
-  let url = `http://localhost:8000/questions/search?${search_query}`;
+  let url = `${document.location.origin}questions/search?${search_query}`;
   document.location.assign(url);
 })
 
