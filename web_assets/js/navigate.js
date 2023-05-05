@@ -24,14 +24,15 @@ search_widget.addEventListener("blur", function(event) {
 
 search_widget.addEventListener("keyup", function(event) {
   if (event.key === "Enter" && this.value) {
-    const search_query = new URLSearchParams({'q': this.value}).toString();
-    let url = `http://localhost:8000/questions/search?${search_query}`;
-    document.location.assign(url);
+    //pass
+    // const search_query = new URLSearchParams({'q': search_widget.value}).toString();
+    // let url = `${document.location.origin}questions/search?${search_query}`;
+    // console.log(url);
+    // document.location.assign(url);
   }
 })
 
 search_icon.addEventListener("click", function(event) {
-  let domain = document.location
   const search_query = new URLSearchParams({'q': search_widget.value}).toString();
   let url = `${document.location.origin}questions/search?${search_query}`;
   document.location.assign(url);
