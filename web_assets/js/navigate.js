@@ -25,10 +25,6 @@ search_widget.addEventListener("blur", function(event) {
 search_widget.addEventListener("keyup", function(event) {
   if (event.key === "Enter" && this.value) {
     //pass
-    // const search_query = new URLSearchParams({'q': search_widget.value}).toString();
-    // let url = `${document.location.origin}questions/search?${search_query}`;
-    // console.log(url);
-    // document.location.assign(url);
   }
 })
 
