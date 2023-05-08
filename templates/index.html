@@ -46,9 +46,10 @@
       <section>
     {% else %}
       <section class="content_box">
-      {% block page_content %}{% endblock %}
+      {% block page_content %}
+        <script type="module" src="{% static 'js/navigate.js' %}"></script>
+      {% endblock %}
       </section>
     {% endif %}
-    <script src="{% static 'js/navigate.js' %}"></script>
   </body>
 </html>
