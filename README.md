@@ -1,23 +1,40 @@
 # Stack Overflow (clone) - built with Django 3.2
 
-todo
+Project: https://binnybit.pythonanywhere.com/
+
+Todo (Non-Windows)
 ```
 mkdir [folder name]
 cd [folder name]
 python -m venv venv
 venv\scripts\activate
-git clone [repo url]
+git clone https://github.com/BenLHedgepeth/django_stackoverflow
 cd django_stackoverflow
 pip install -r requirements.txt
-
 touch .env
-echo SECRET_KEY=kt^e2&(7s7p3swjj2#9^szchrsx%xt%rm1pm4t!v-^n$3+^9is >> .env
-echo DEBUG=True >> .env
-
+echo SECRET_KEY='kt^e2&(7s7p3swjj2#9^szchrsx%xt%rm1pm4t!v-^n$3+^9is' >> .env
+echo DEBUG='True' >> .env
+python manage.py migrate
 python manage.py runserver
 ```
 
-
+Todo (Windows-Powershell)
+```
+mkdir [folder name]
+cd [folder name]
+python -m venv venv
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope Process
+venv\Scripts\activate.ps1
+git clone https://github.com/BenLHedgepeth/django_stackoverflow
+pip install -r requirements.txt
+New-Item .env (*See note below*)
+echo SECRET_KEY='kt^e2&(7s7p3swjj2#9^szchrsx%xt%rm1pm4t!v-^n$3+^9is' >> .env
+echo DEBUG='True' >> .env
+python manage.py migrate
+python manage.py runserver
+```
+*Note: BOM must removed from the `.env` file. Otherwise a `UnicodeDecodeError`
+will be raised when executing `python manage.py migrate`
 
 ### Django features used
 - Models
