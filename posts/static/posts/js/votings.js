@@ -32,7 +32,8 @@ function send_api_request(button) {
   } else {
     request_method = "post";
   }
-  var request = new Request(`http://localhost:8000/api/v1/votes/${id}/`, {
+  let domain = window.location.origin;
+  var request = new Request(`${domain}/api/v1/votes/${id}/`, {
             'method': request_method,
             'headers': headers,
             'body': JSON.stringify({"type": vote_type, "post": post})
@@ -44,7 +45,8 @@ function send_api_request(button) {
 window.addEventListener("load", (e) => {
   var question_target = document.querySelector("h2[id*=question]");
   const id = question_target.id.split("_")[1];
-  const request = fetch(`http://localhost:8000/api/v1/votes/${id}/`, {
+  let page_domain = document.location.origin;
+  const request = fetch(`${page_domain}/api/v1/votes/${id}/`, {
     'method': "GET"
   });
   request.then(json_response).then((json) => {

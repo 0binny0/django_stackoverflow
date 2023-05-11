@@ -5,8 +5,9 @@ console.log(user_posted_answers);
 
 function set_api_request(id) {
   const [method, post, post_id] = id.split("_");
+  let url_domain = document.location.origin;
   const request = new Request(
-    `http://localhost:8000/api/v1/posts/${post_id}?post=${post}`, {
+    `${url_domain}/api/v1/posts/${post_id}?post=${post}`, {
       'method': 'PUT',
       'headers': {
         'Content-Type': 'application/json',
@@ -63,8 +64,9 @@ window.addEventListener("DOMContentLoaded", function(event) {
   const page_url = window.location.href;
   const page_num_pattern = /(?<=questions\/)\d+/;
   const page_id = page_url.match(page_num_pattern)[0];
+  let url_domain = window.location.origin;
   const request = new Request(
-    `http://localhost:8000/api/v1/posts/${page_id}`, {
+    `${url_domain}/api/v1/posts/${page_id}`, {
       'method': "GET",
       'Content-Type': "application/json",
       "Accept": "application/json",

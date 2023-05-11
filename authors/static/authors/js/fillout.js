@@ -36,7 +36,8 @@ function create_api_request(event) {
   } else {
     query_string.append("action", "login")
   }
-  const api_url = `http://localhost:8000/api/v1/users?${query_string}`;
+  let url_domain = document.location.origin;
+  const api_url = `${url_domain}/api/v1/users?${query_string}`;
   return new Request(api_url, {
     'headers': {
       'Accept': "application/json"

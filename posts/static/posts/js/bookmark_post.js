@@ -11,8 +11,9 @@ bookmark.addEventListener("click", function(event) {
     request_method = "delete";
   }
   const [post, id] = this.id.split("_");
+  let url_domain = document.location.origin;
   const request = new Request(
-    `http://localhost:8000/api/v1/bookmarks/${id}/`, {
+    `${url_domain}/api/v1/bookmarks/${id}/`, {
       'method': request_method,
       'headers': {
         "Content-Type": "application/json",
