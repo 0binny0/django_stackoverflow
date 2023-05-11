@@ -35,7 +35,7 @@ if DEBUG:
     import mimetypes
     mimetypes.add_type("text/javascript", ".js")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.localhost', "binnybit.pythonanywhere.com"]
 
 AUTH_USER_MODEL = "authors.User"
 
