@@ -13,6 +13,9 @@
     {% endfor %}
       <button name="button" id="account_submit_btn" class="submit_btn">Sign up</button>
     </form>
+    {% if request.resolver_match.url_name == "register" %}
+      {% include './requirements.html' %}
+    {% endif %}
   </div>
   <script type="module" src="{% static 'authors/js/fillout.js' %}"></script>
 {% endblock %}
