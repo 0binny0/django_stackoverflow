@@ -37,6 +37,8 @@ class QueryStringSearchManager(Manager):
         if query:
             query_data = resolve_search_query(query)
             if 'tags' in query_data and query_data['tags']:
+                '''Combining many Q() objects and passing into query'''
+                # https://docs.djangoproject.com/en/4.2/topics/db/queries/#complex-lookups-with-q-objects
                 q_objects = map(
                     lambda tag: Q(name__iexact=tag), query_data['tags']
                 )
@@ -52,6 +54,10 @@ class QueryStringSearchManager(Manager):
                 queryset = queryset.filter(title__contains=f"{query_data['title']}")
             if 'user' in query_data and query_data['user']:
                 queryset = queryset.filter(profile_id=query_data['user'])
+            if 'phrases' in query_data and query_data['phrases']:
+                q_objects = map(lambda phrase: Q(body__contains=phrase), query_data['phrases'])
+                phrase_query = reduce(lambda q1, q2: q1 | q2, q_objects)
+                queryset = queryset.filter(phrase_query)
             queryset = qs_options.get(f"{current_tab}", "newest")(queryset)
             return queryset, query_data
         queryset = qs_options.get(current_tab, "newest")(queryset)
