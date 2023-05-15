@@ -30,7 +30,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECRET_KEY = config['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = (os.environ.get("debug", "true").upper() == "TRUE")
+DEBUG = (os.environ.get("DEBUG", "true").upper() == "TRUE")
 if DEBUG:
     import mimetypes
     mimetypes.add_type("text/javascript", ".js")
