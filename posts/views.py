@@ -265,7 +265,7 @@ class SearchResultsPage(PaginatedPage):
                     user_id = 1
                 return HttpResponseRedirect(reverse("authors:profile", kwargs={'id': int(user_id)}))
         queryset, query_data = Question.searches.lookup(tab_index, query=search_query)
-        if query_data['tags'] and not query_data['title'] and not query_data['user']:
+        if query_data['tags'] and all(not query_data[search] for search in ['title', 'user', 'phrases']):
             tags = "".join([
                 f"{tag}+" if i != len(query_data["tags"]) - 1 else f"{tag}"
                 for i, tag in enumerate(query_data["tags"])
