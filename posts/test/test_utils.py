@@ -7,7 +7,7 @@ from django.core.paginator import Paginator
 
 from ..utils import (
     resolve_search_query, retrieve_query_title, retrieve_query_tags,
-    retrieve_query_user_id, get_page_links,
+    retrieve_query_user_id, get_page_links, retrieve_exact_phrases
 )
 
 class TestSearchQueryTitle(SimpleTestCase):
@@ -125,3 +125,15 @@ class TestCustomDynamicPageSelector(SimpleTestCase):
                 self.assertEqual(
                     page_links_returned[-1].number, self.max_page_links[i]
                 )
+
+class TestGetSearchPhrase(SimpleTestCase):
+
+    def setUp(self):
+        user = '2'
+        title = "'I dunno lol'"
+        tags = ['abc', 'xyz']
+        string = "title:'I dunno lol' user:2 [abc] [xyz] Python  decorators"
+        self.phrases = retrieve_exact_phrases(user, tags, title, string)
+
+    def test_filtered_search_phrases(self):
+        self.assertEqual(self.phrases, ['python', 'decorators'])

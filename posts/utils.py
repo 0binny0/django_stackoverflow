@@ -2,11 +2,21 @@
 import re
 from functools import reduce
 
-def retrieve_exact_phrase(string):
-    string_pattern = re.compile(r"([\"|\'])+(?P<phrase>.+)\1+")
-    phrase = string_pattern.search(string)
-    if phrase:
-        return phrase.groupdict()['phrase']
+def retrieve_exact_phrases(user, tags, title, string):
+    '''Searches for phrases not associated with a title, user, or tag'''
+
+    phrases = string
+    if user:
+        leading_zeros_pattern = re.compile(r"(?<=user:)0*")
+        zeros = leading_zeros_pattern.search(string)[0]
+        phrases = re.sub(f"user:{zeros}{user}", "", phrases)
+    if title:
+        phrases = re.sub(f"title:{title}", "", phrases)
+    if tags:
+        phrases = re.sub(r"(\[)\1*[^\[\]].*(\])\2*", "", phrases)
+    phrases = re.sub(r"\s+", " ", phrases).lower().strip(" ").split(" ")
+    if phrases:
+        return phrases
     return None
 
 def retrieve_query_title(string):
@@ -76,17 +86,20 @@ def retrieve_query_user_id(string):
     user_id_search = re.compile(r"(?<=user:)(\d+)")
     searching_by_user = user_id_search.search(string)
     if searching_by_user:
-        return int(searching_by_user[0])
+        id = searching_by_user[0].lstrip("0")
+        return int(id)
     return None
 
 def resolve_search_query(string):
     search_query_title = retrieve_query_title(string)
     search_tags = retrieve_query_tags(string)
     search_user = retrieve_query_user_id(string)
+    phrases = retrieve_exact_phrases(search_user, search_tags, search_query_title, string)
     return {
         'title': search_query_title,
         'tags': search_tags,
-        'user': search_user
+        'user': search_user,
+        'phrases': phrases
     }
 
 def get_page_links(page):
