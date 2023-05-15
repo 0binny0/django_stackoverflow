@@ -16,7 +16,7 @@ from .models import Question, Tag, Answer, QuestionPageHit
 from django.http import HttpResponseRedirect, Http404
 from authors.http_status import SeeOtherHTTPRedirect
 
-from .utils import get_page_links
+from .utils import get_page_links, resolve_search_query
 
 
 class Page(TemplateView):
@@ -248,20 +248,19 @@ class SearchResultsPage(PaginatedPage):
     def get(self, request):
         context = self.get_context_data()
         query_string = request.GET
-        if 'q' not in query_string:
-            return HttpResponseRedirect(reverse("posts:main_paginated"))
-        search_query, tab_index = query_string.get('q'), query_string.get('tab', 'newest')
-        title_or_tag_search = re.search(r"(?:title)|\[[a-zA-Z.0-9]+\]", search_query)
-        if not query_string or 'q' not in query_string or not search_query:
+        if not query_string or 'q' not in query_string:
             context |= {
                 'title': 'Search'
             }
             self.template_name = "posts/search_menu.html"
             return self.render_to_response(context)
-        elif not title_or_tag_search:
-            user_id_match = re.search(r"\d+", search_query)
+        search_query, tab_index = query_string.get('q'), query_string.get('tab', 'newest')
+        title_or_tag_search = re.search(r"(?:title)|\[[a-zA-Z.0-9]+\]", search_query)
+        if not title_or_tag_search:
+            user_id_match = re.fullmatch(r"user:(\d+)", search_query)
             if user_id_match:
-                user_id = user_id_match[0].replace("0", "")
+                searched_id = user_id_match.group(1)
+                user_id = searched_id.replace("0", "")
                 if not user_id:
                     user_id = 1
                 return HttpResponseRedirect(reverse("authors:profile", kwargs={'id': int(user_id)}))
@@ -273,19 +272,8 @@ class SearchResultsPage(PaginatedPage):
             ])
             return HttpResponseRedirect(reverse("posts:tagged", kwargs={'tags': tags}))
         else:
-            context = super().get_context_data()
-            search_value = "".join(list(reduce(
-                lambda main_string, dict_item: (
-                    main_string + f" {dict_item[0]}:\"{dict_item[1]}\" "
-                    if not isinstance(dict_item[1], list) and dict_item[0] == "title" else (
-                        main_string + f" {dict_item[0]}:{dict_item[1]} "
-                        if not isinstance(dict_item[1], list) and dict_item[0] == "user" else
-                        main_string + "".join([f"[{value}] " for value in dict_item[1] if value]).strip()
-                    )
-                ), list(filter(lambda value: value[1] is not None, query_data.items())), ""
-            ))).strip()
             context['search_form'].fields['q'].widget.attrs.update(
-                {"value": search_value}
+                {"value": search_query}
             )
             context['paginator'].object_list = queryset
             page = context['paginator'].get_page(
