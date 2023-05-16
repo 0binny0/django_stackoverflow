@@ -1,6 +1,7 @@
 {% extends 'index.html' %}
 {% load static %}
 {% block page_content %}
+  {{ block.super }}
   <div class="form_wrapper">
     <h2 class="page_form_title">{{ title }}</h2>
     <form name={{form}} class="user_credentials_form" method="post" action="{{ request.path }}">

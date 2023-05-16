@@ -1,6 +1,7 @@
 {% extends 'index.html' %}
 {% load static %}
 {% block page_content %}
+  {{ block.super }}
   <div class="question_posting_form">
     <h2>{{ title }}</h2>
     <!-- {% if form.non_field_errors %}
