@@ -2,6 +2,8 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.template.loader import render_to_string
+from django.http import HttpRequest
+from django.urls import reverse
 
 from ..models import Profile
 from posts.models import Question, Bookmark, Tag, Vote
@@ -25,9 +27,12 @@ class TestQuestionsBookmookedTemplate(TestCase):
         question1.tags.add(tag1)
 
         b1 = Bookmark.objects.create(profile=profile2, question=question1)
+        request = HttpRequest()
+        request.user = user2
+        request.path = reverse("authors:profile", kwargs={"id": user1.id})
 
         cls.template = render_to_string(
-            "authors/bookmark.html", {'question': question1}
+            "authors/bookmark.html", {'question': question1, 'request': request}
         )
 
     def test_bookmark_template_context(self):
