@@ -16,7 +16,7 @@ from .models import Question, Tag, Answer, QuestionPageHit
 from django.http import HttpResponseRedirect, Http404
 from authors.http_status import SeeOtherHTTPRedirect
 
-from .utils import get_page_links, resolve_search_query
+from .utils import get_page_links, resolve_search_query, clean_tag_version
 
 
 class Page(TemplateView):
@@ -78,7 +78,7 @@ class AskQuestionPage(Page):
         form = context['form'](request.POST)
         if form.is_valid():
             tags = self.attach_question_tags(
-                [tag.lower() for tag in form.cleaned_data.pop("tags")]
+                [clean_tag_version(tag.lower()) for tag in form.cleaned_data.pop("tags")]
             )
             try:
                 question = form.save(commit=False)
@@ -123,13 +123,17 @@ class EditQuestionPage(AskQuestionPage):
         if form.is_valid():
             if form.has_changed():
                 messages.success(request, "Question updated!")
-            x = [tag.lower() for tag in form.cleaned_data.pop("tags")]
+            x = [clean_tag_version(tag.lower()) for tag in form.cleaned_data.pop("tags")]
             tags = self.attach_question_tags(x)
             question = form.save()
             question.tags.set(tags)
             return SeeOtherHTTPRedirect(reverse(
                 "posts:question", kwargs={"question_id": question_id}
             ))
+        if 'tags' in form.errors:
+            tag_errors = [f"Invalid tag: {form.data[tag]}" for tag in form.errors['tags']]
+            form.errors.update({"tags": tag_errors})
+        context.update({"form": form})
         return self.render_to_response(context)
 
 
