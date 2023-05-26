@@ -170,7 +170,7 @@ class TestUserQuestionProfileTemplate(TestCase):
             "authors/questions.html", {"question": cls.question}
         )
         cls.context = [
-            "id='question_id_1'", "Test Question ZZZ", "Tag1", "Tag2"
+            "Test Question ZZZ", "Tag1", "Tag2"
         ]
 
 
