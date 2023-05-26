@@ -27,7 +27,8 @@ class TagField(MultiValueField):
         for i in range(4):
             field = CharField(**{
                 "min_length": 1, "max_length": 25, "validators":[
-                    RegexValidator("[<>`':;,.\"]", inverse_match=True)
+                    RegexValidator("[<>`':;,^\"]", message=f"tags_{i}",
+                    inverse_match=True)
                 ]
             })
             if i == 0:
