@@ -90,8 +90,7 @@ class PageStatusEndpoint(APIView):
 
     def put(self, request, id):
         '''Toggles the visibility of a given Question resource'''
-
-        post = retrieve_user_post(id, request.query_params['post'])
+        post = retrieve_user_post(id, request.data['post'])
         if isinstance(post, Question):
             if not post.visible:
                 Question.objects.filter(id=id).update(visible=True)

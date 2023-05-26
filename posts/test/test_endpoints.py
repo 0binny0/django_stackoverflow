@@ -47,7 +47,7 @@ class TestUserVoteEndpointNewVote(APIStateTestCase):
 
     def test_user_vote_on_new_question(self):
         self.client.login(username="adummy101", password="nuclearsecrets")
-        response = self.client.post(
+        response = self.client.put(
             reverse("api_posts:posts", kwargs={"id": 1}),
             data={"type": "up", "post": "question"}
         )
@@ -68,7 +68,7 @@ class TestUserVoteEndpointChangedVote(APIStateTestCase):
     def test_user_changed_vote_from_positive_to_negative(self):
         self.client.login(username="adummy101", password="nuclearsecrets")
         response = self.client.put(
-            reverse("api_posts:posts", kwargs={"id": 1}),
+            reverse("api_posts:post", kwargs={"id": 1}),
             data={"type": "up", "post": "question"}
         )
         self.assertEqual(response.status_code, 204)
