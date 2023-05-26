@@ -1,3 +1,4 @@
+{% load static %}
 <div class="user_question_info user_bookmark">
   <div class="question_stats">
     <p class="stat">{{ question.score }} vote{{ question.score|pluralize }}</p>{% if question.answers.count %}<p class="stat answered_post">{{ question.answers.count }} answer{{ question.answers.count|pluralize  }}</p>{% else %}<p class="stat">{{ question.answers.count }} answer{{ question.answers.count|pluralize  }}</p>{% endif %}<p class="stat">{{ question.page_hit.count }} view{{ question.page_hit.count|pluralize  }}</p>
