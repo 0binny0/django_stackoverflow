@@ -106,7 +106,7 @@ class TestUserVoteEndpointVoteOnOwnPost(APIStateTestCase):
     def test_user_vote_on_own_question(self):
         self.client.login(username="MainUser", password="mypassword")
         response = self.client.post(
-            reverse("api_posts:posts", kwargs={"id": 1}),
+            reverse("api_votes:vote", kwargs={"id": 1}),
             data={"type": "down", "post": "question"}
         )
         self.assertEqual(response.status_code, 400)
