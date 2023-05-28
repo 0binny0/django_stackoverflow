@@ -147,7 +147,7 @@ class TestUserVoteEndpointGetExistingVotes(APIStateTestCase):
     def test_get_vote_state_upon_viewing_post(self):
         self.client.login(username="adummy101", password="nuclearsecrets")
         response = self.client.get(
-            f"{reverse('api_posts:posts', kwargs={'id': 1})}?post=question"
+            f"{reverse('api_votes:vote', kwargs={'id': 1})}?post=question"
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers['Content-Type'], "application/json")

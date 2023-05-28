@@ -82,7 +82,6 @@ class PageStatusEndpoint(APIView):
     def get(self, request, id):
         '''Determines if the requested resource was created by the current user
         accessing this endpoint and whether it can be viewed by other users'''
-
         question = Question.objects.get(id=id)
         return Response({
             'posted': question.profile.user == request.user, 'visible': question.visible
