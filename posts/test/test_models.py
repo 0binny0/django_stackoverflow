@@ -23,7 +23,7 @@ class TestQuestionManager(TestCase):
         cls.user = get_user_model().objects.get(id=3)
 
     def test_questions_selected_within_week(self):
-        with patch("posts.models.date") as mock_date:
+        with patch("posts.models.Post.date") as mock_date:
             mock_date.today = Mock(return_value=date(2022, 2, 15))
             questions = Question.postings.lookup(self.user, tab="week")
         self.assertEqual(questions.count(), 2)
@@ -35,7 +35,7 @@ class TestQuestionManager(TestCase):
         )
 
     def test_all_questions_selected_within_month(self):
-        with patch("posts.models.date") as mock_date:
+        with patch("posts.models.Post.date") as mock_date:
             mock_date.today = Mock(return_value=date(2022, 2, 15))
             questions = Question.postings.lookup(self.user, tab="month")
         self.assertEqual(questions.count(), 3)
@@ -48,7 +48,7 @@ class TestQuestionManager(TestCase):
         )
 
     def test_all_questions_selected_past_few_days(self):
-        with patch("posts.models.date") as mock_date:
+        with patch("posts.models.Post.date") as mock_date:
             mock_date.today = Mock(return_value=date(2022, 2, 15))
             questions = Question.postings.lookup(self.user, "hot")
         self.assertEqual(questions.count(), 2)
@@ -101,7 +101,7 @@ class TestQuestionScoreUpVote(TestCase):
                 "post": cls.question, 'vote_type': "like"
             }
         )
-         
+
         serializer.is_valid()
         serializer.save(profile=cls.profile2, type="like", content_object=cls.question)
         cls.score = Question.objects.get(title="Question__001").score
