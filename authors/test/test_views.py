@@ -95,7 +95,7 @@ class TestUserProfilePage(TestCase):
 
     def test_user_profile_page_content(self):
         self.client.force_login(self.user)
-        response = self.client.get(reverse("authors:profile", kwargs={'id': 2}))
+        response = self.client.get(reverse("authors:profile", kwargs={'id': 1}))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "authors/profile.html")
         for page_element in self.page_context:
