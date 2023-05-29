@@ -293,8 +293,8 @@ class TestRedirectTaggedPaginatedPage(TestCase):
         response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "posts/main.html")
-        self.assertContains(response, "All Questions")
-        self.assertContains(response, "Tagged with")
+        self.assertContains(response, "Search Results")
+        self.assertContains(response, "We couldn't find anything tagged")
 
 
 class TestRedirectSearchView(TestCase):

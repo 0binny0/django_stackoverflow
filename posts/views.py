@@ -259,7 +259,7 @@ class SearchResultsPage(PaginatedPage):
             self.template_name = "posts/search_menu.html"
             return self.render_to_response(context)
         search_query, tab_index = query_string.get('q'), query_string.get('tab', 'newest')
-        title_or_tag_search = re.search(r"(?:title)|\[[a-zA-Z.0-9]+\]", search_query)
+        title_or_tag_search = re.search(r"(?:title)|\[[^\[\]]+\]", search_query)
         if not title_or_tag_search:
             user_id_match = re.fullmatch(r"user:(\d+)", search_query)
             if user_id_match:
