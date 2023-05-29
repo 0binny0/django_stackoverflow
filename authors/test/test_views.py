@@ -126,7 +126,7 @@ class TestUserProfileContext(TestCase):
     def setUpTestData(cls):
         cls.viewed_user = get_user_model().objects.create_user("ItsYou")
         Profile.objects.create(user=cls.viewed_user)
-        cls.url = reverse("authors:profile", kwargs={'id': 2})
+        cls.url = reverse("authors:profile", kwargs={'id': 1})
 
     def test_viewed_profile_of_user(self):
         response = self.client.get(f"{self.url}")
