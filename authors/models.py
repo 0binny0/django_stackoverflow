@@ -40,6 +40,7 @@ class Profile(Model):
     user = OneToOneField(settings.AUTH_USER_MODEL, on_delete=CASCADE)
 
     def get_tag_posts(self, order_by=None):
+        
         tags = Tag.objects.filter(
             question__profile=self
         ).distinct()
