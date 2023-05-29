@@ -108,9 +108,10 @@ class TestViewUserQuestionsPostedPage(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.viewed_user = get_user_model().objects.create_user("ItsYou")
+        Profile.objects.create(user=cls.viewed_user)
         request = RequestFactory().get(reverse("authors:profile", kwargs={'id': 1}))
         cls.view = UserProfilePage()
-        cls.view.setup(request, id=2)
+        cls.view.setup(request, id=1)
         cls.view_context = cls.view.get_context_data()
 
     def test_viewed_profile_of_user(self):
