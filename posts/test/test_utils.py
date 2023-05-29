@@ -63,7 +63,7 @@ class TestQueryStringSearches(SimpleTestCase):
     def setUp(self):
         self.query_strings = [
             "[s   python ] [ django models ]",
-            "[]  [django-forms] title://django form inheritance [  python---]",
+            "  [django-forms] title://django form inheritance [  python---]",
             "user:333         [Python]   [___________Django  ---- Models]",
             "[--i- Python-   _   - ------]",
             "title://django form inheritance user:228 [  oop---]",
@@ -71,12 +71,12 @@ class TestQueryStringSearches(SimpleTestCase):
 
         ]
         self.query_data = [
-            {"title": None, "tags": ["spython", "djangomodels"], "user": None},
-            {"title": "//django form inheritance", "tags": ["django-forms", "python"], "user": None},
-            {"title": None, "tags": ["python", "django-models"], "user": 333},
-            {"title": None, "tags": ["i-python"], "user": None},
-            {"title": "//django form inheritance", "tags": ["oop"], "user": 228},
-            {"title": None, "tags": ['javascript', 'django-rest-framework'], "user": 729}
+            {"title": None, "tags": ["spython", "djangomodels"], "user": None, "phrases": [""]},
+            {"title": "//django form inheritance", "tags": ["django-forms", "python"], "user": None, "phrases": [""]},
+            {"title": None, "tags": ["python", "django-models"], "user": 333, "phrases": [""]},
+            {"title": None, "tags": ["i-python"], "user": None, "phrases": [""]},
+            {"title": "//django form inheritance", "tags": ["oop"], "user": 228, "phrases": [""]},
+            {"title": None, "tags": ['javascript', 'django-rest-framework'], "user": 729, "phrases": [""]}
         ]
 
     def test_query_string_contains_tags(self):
