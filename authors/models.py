@@ -43,9 +43,9 @@ class Profile(Model):
         tags = Tag.objects.filter(
             question__profile=self
         ).distinct()
-        questions_with_tag = self.questions.filter(tags__name=OuterRef("name")).count()
+        questions_with_tag = self.questions.filter(tags__name=OuterRef("name")).only("id")
         records = tags.annotate(
-            times_posted=questions_with_tag,
+            times_posted=Count(Subquery(questions_with_tag)),
             avg_question_score=Avg("question__score", output_field=IntegerField())
         )
         if not order_by or order_by not in ['name', 'score']:
