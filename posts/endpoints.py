@@ -100,7 +100,8 @@ class PageStatusEndpoint(APIView):
         return Response(status=HTTP_204_NO_CONTENT)
 
     def delete(self, request, id):
-        post = retrieve_user_post(id, request.data['post'])
+        import pdb; pdb.set_trace()
+        post = retrieve_user_post(id, request.query_params['post'])
         post.delete()
         return Response(status=HTTP_204_NO_CONTENT)
 
