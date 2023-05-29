@@ -52,7 +52,9 @@ class TestPaginatedPageLink(SimpleTestCase):
         request = RequestFactory().get(
             f"{reverse('posts:search_results')}?{query}"
         )
-        self.context = {'request': request}
+        query_buttons = ['recent', 'hot', 'week', 'month']
+
+        self.context = {'request': request, 'query_buttons': query_buttons}
 
     @patch("django.core.paginator.Page", autospec=True)
     @patch("django.core.paginator.Paginator", autospec=True)
@@ -63,7 +65,7 @@ class TestPaginatedPageLink(SimpleTestCase):
         ]
         numbered_page_url = identifiers.set_page_number_url(self.context, limit=25)
         self.assertEqual(
-            numbered_page_url, "/questions/search?pagesize=25&page=1&tab=week&q=python+mocks"
+            numbered_page_url, "/questions/search?q=python+mocks&pagesize=25&page=1&tab=week"
         )
 
 
