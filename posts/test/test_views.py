@@ -39,6 +39,7 @@ class TestRequestQuestionListPage(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.resolver_match.view_name, "posts:main")
         self.assertTemplateUsed(response, "posts/main.html")
+        print(response.content)
         self.assertContains(response, "Looking for more?")
         for query_button in ["Interesting", "Hot", "Week", "Month"]:
             with self.subTest(query_button=query_button):
@@ -69,6 +70,7 @@ class TestDuplicateQuestionPostAttempt(TestCase):
             question.tags.add(self.tag)
             del self.data['profile']
             self.data.update({"tags_0": "Tag1"})
+            self.data['date'] = mock_date
             posted_question_today = Question.objects.filter(
                 title="This is a pretty dumb question", profile=self.profile
             ).count()
