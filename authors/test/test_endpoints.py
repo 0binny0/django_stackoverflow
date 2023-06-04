@@ -158,8 +158,10 @@ class TestUserListingEndpoint(APITestCase):
         user4 = get_user_model().objects.create_user(username="MeMeMe")
 
         cls.url = f"{reverse('api_authors:main')}?search=Me"
-
+        cls.users = [user1, user2, user3, user4]
 
     def test_object_instance_attributes(self):
+        for user in self.users:
+            self.client.force_login(user)
         response = self.client.get(self.url)
-        self.assertEqual(len(response.data['users']), 3)S
+        self.assertEqual(len(response.data), 3)

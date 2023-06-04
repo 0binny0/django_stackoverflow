@@ -19,8 +19,9 @@ class AccountsEndpoint(APIView):
                     return Response(status=status.HTTP_400_BAD_REQUEST)
             else:
                 users = get_user_model().posted.by_name("")
-            serializer = UserListingSerializer(users, many=True)
-            return Response(data={"users": serializer.data})
+            serializer = UserListingSerializer(data=list(users), many=True)
+            if serializer.is_valid():
+                return Response(data=serializer.data)
         action = query_string.pop("action")[0]
         if action == "login":
             serializer = LoginSerializer
