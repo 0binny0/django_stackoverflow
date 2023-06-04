@@ -9,7 +9,7 @@ from django.core.validators import RegexValidator
 # from django.core.exceptions import ValidationError
 
 from rest_framework.serializers import (
-    ModelSerializer, BaseSerializer, RegexField, CharField, ReadOnlyField
+    ModelSerializer, BaseSerializer, ListSerializer, RegexField, CharField, ReadOnlyField
 )
 from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueValidator
@@ -140,13 +140,17 @@ class RegisterSerializer(ModelSerializer):
 class UserListingSerializer(BaseSerializer):
 
     def to_representation(self, instance):
-        object = {
-            'name': str(instance),
-            'profile': {
-                'url': reverse("authors:profile", kwargs={"id": instance.id}),
-                'signed_up': instance.date_joined.strftime("%m/%d/%Y").lstrip("0"),
-                'last_login': instance.last_login.strftime("%m/%d/%Y").lstrip("0"),
-                'total_posts': instance.post_count
+        if instance:
+            object = {
+                'name': str(instance),
+                'profile': {
+                    'url': reverse("authors:profile", kwargs={"id": instance.id}),
+                    'signed_up': instance.date_joined.strftime("%m/%d/%Y").lstrip("0"),
+                    'last_login': instance.last_login.strftime("%m/%d/%Y").lstrip("0"),
+                    'total_posts': instance.post_count
+                }
             }
-        }
-        return object
+            return object
+
+    def to_internal_value(self, data):
+        return data
