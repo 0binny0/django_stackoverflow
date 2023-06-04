@@ -92,5 +92,4 @@ class TestMainTopicTemplateTag(TestCase):
         cls.post_is_question = identifiers.if_main_topic(context, post)
 
     def test_post_is_question_instance(self):
-        print(vars(self))
         self.assertTrue(self.post_is_question)
