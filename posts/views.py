@@ -268,8 +268,9 @@ class SearchResultsPage(PaginatedPage):
                 if not user_id:
                     user_id = 1
                 return HttpResponseRedirect(reverse("authors:profile", kwargs={'id': int(user_id)}))
+        import pdb; pdb.set_trace()
         queryset, query_data = Question.searches.lookup(tab_index, query=search_query)
-        if query_data.get("tags") and all(not query_data[search] for search in ['title', 'user', 'phrases']):
+        if query_data.get("tags") and all(not search not in query_data for search in ['title', 'user', 'phrases']):
             tags = "".join([
                 f"{tag}+" if i != len(query_data["tags"]) - 1 else f"{tag}"
                 for i, tag in enumerate(query_data["tags"])
