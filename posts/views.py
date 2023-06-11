@@ -78,7 +78,7 @@ class AskQuestionPage(Page):
         form = context['form'](request.POST)
         if form.is_valid():
             tags = self.attach_question_tags(
-                [clean_tag_version(tag.lower()) for tag in form.cleaned_data.pop("tags")]
+                clean_tag_version(tag.lower()) for tag in form.cleaned_data.pop("tags")
             )
             try:
                 question = form.save(commit=False)
