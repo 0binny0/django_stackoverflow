@@ -79,7 +79,7 @@ def clean_tag_version(tag):
         )
         tag = f"{tag_version_match.string[:user_provided_version]}{version}".lower()
     tag = re.sub(r"(?<=[A-Za-z])?\.*(?=[A-Za-z])", "", tag).lower()
-    tag = re.sub(r"[*!$&'\"()%*,/:;?^=@\[\]<>_`~{}|\s\\]", "", tag)
+    tag = re.sub(r"[\*!$&'\"()%*,/:;?^=@\[\]<>_`~{}|\s\\]", "", tag)
     tag = re.sub(r"\s+", "", tag)
     tag = re.sub(r"-+", "-", tag)
     return tag
